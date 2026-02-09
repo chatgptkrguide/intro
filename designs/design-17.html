@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio - Clay Morphism</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#F0EBE3;--bg-dark:#E8E0D5;--shadow-dark:#d1ccc4;--shadow-light:#ffffff;--mint:#B5EAD7;--peach:#FFD7BA;--lavender:#C7CEEA;--sky:#A0D2DB;--text:#4a4540;--text-light:#8a847c}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;min-height:100vh}
+
+/* Background blobs */
+.bg-blobs{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;overflow:hidden}
+.blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.3;animation:blobFloat 12s ease-in-out infinite}
+.blob:nth-child(1){width:400px;height:400px;background:var(--mint);top:-100px;left:-100px;animation-delay:0s}
+.blob:nth-child(2){width:350px;height:350px;background:var(--peach);top:30%;right:-80px;animation-delay:2s}
+.blob:nth-child(3){width:300px;height:300px;background:var(--lavender);bottom:10%;left:20%;animation-delay:4s}
+.blob:nth-child(4){width:250px;height:250px;background:var(--sky);top:50%;left:60%;animation-delay:6s}
+@keyframes blobFloat{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(30px,-20px) scale(1.05)}66%{transform:translate(-20px,30px) scale(0.95)}}
+
+/* Navigation */
+.nav{position:fixed;top:0;left:0;width:100%;padding:20px 40px;display:flex;justify-content:space-between;align-items:center;z-index:100;background:rgba(240,235,227,0.8);backdrop-filter:blur(20px)}
+.nav-logo{font-weight:800;font-size:24px;color:var(--text)}
+.lang-switcher{display:flex;gap:8px}
+.lang-btn{background:var(--bg);border:none;color:var(--text);padding:8px 14px;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:600;font-size:14px;border-radius:12px;box-shadow:4px 4px 8px var(--shadow-dark),-4px -4px 8px var(--shadow-light);transition:all 0.3s}
+.lang-btn:hover{box-shadow:2px 2px 4px var(--shadow-dark),-2px -2px 4px var(--shadow-light);transform:scale(0.97)}
+.lang-btn.active{background:var(--mint);box-shadow:inset 2px 2px 4px rgba(0,0,0,0.1),inset -2px -2px 4px rgba(255,255,255,0.5);color:var(--text)}
+.gallery-link{color:var(--text);text-decoration:none;font-weight:700;font-size:16px;transition:color 0.3s}
+.gallery-link:hover{color:#8a847c}
+
+/* Content */
+.content{position:relative;z-index:10;max-width:1000px;margin:0 auto;padding:120px 24px 80px}
+
+/* Clay card base */
+.clay-card{border-radius:24px;background:var(--bg);box-shadow:8px 8px 16px var(--shadow-dark),-8px -8px 16px var(--shadow-light),inset 0 0 0 1px rgba(255,255,255,0.4);transition:all 0.4s cubic-bezier(0.25,0.46,0.45,0.94)}
+.clay-card:hover{box-shadow:12px 12px 24px var(--shadow-dark),-12px -12px 24px var(--shadow-light),inset 0 0 0 1px rgba(255,255,255,0.6);transform:translateY(-4px)}
+
+/* Hero */
+.hero{text-align:center;padding:80px 0 100px}
+.hero-emoji{font-size:64px;margin-bottom:20px;animation:bounce 2s ease-in-out infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.hero-name{font-size:52px;font-weight:800;margin-bottom:12px;background:linear-gradient(135deg,#e8a0bf,var(--lavender),var(--mint));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-title{font-size:22px;color:var(--text-light);font-weight:600}
+.hero-pills{display:flex;gap:12px;justify-content:center;margin-top:32px;flex-wrap:wrap}
+.hero-pill{padding:10px 20px;border-radius:50px;font-weight:600;font-size:14px;box-shadow:4px 4px 8px var(--shadow-dark),-4px -4px 8px var(--shadow-light);transition:all 0.3s}
+.hero-pill:nth-child(1){background:var(--mint);color:#2d7a5a}
+.hero-pill:nth-child(2){background:var(--peach);color:#b8734a}
+.hero-pill:nth-child(3){background:var(--lavender);color:#6b6fa0}
+.hero-pill:hover{transform:scale(1.05);box-shadow:6px 6px 12px var(--shadow-dark),-6px -6px 12px var(--shadow-light)}
+
+/* Section */
+.section{margin-bottom:80px;opacity:0;transform:translateY(30px);transition:all 0.7s cubic-bezier(0.25,0.46,0.45,0.94)}
+.section.visible{opacity:1;transform:translateY(0)}
+.section-label{display:inline-block;padding:8px 20px;border-radius:50px;font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:24px}
+.section-label.mint{background:var(--mint);color:#2d7a5a}
+.section-label.peach{background:var(--peach);color:#b8734a}
+.section-label.lavender{background:var(--lavender);color:#6b6fa0}
+.section-label.sky{background:var(--sky);color:#3a7a8a}
+.section-title{font-size:36px;font-weight:800;margin-bottom:32px}
+
+/* About */
+.about-card{padding:40px;line-height:1.8;font-size:18px;color:var(--text-light)}
+.about-card .emoji-accent{font-size:28px;margin-right:8px}
+
+/* Skills */
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px}
+.skill-pill{padding:24px;text-align:center;border-radius:24px;background:var(--bg);box-shadow:6px 6px 12px var(--shadow-dark),-6px -6px 12px var(--shadow-light),inset 0 0 0 1px rgba(255,255,255,0.4);transition:all 0.4s cubic-bezier(0.34,1.56,0.64,1);cursor:default}
+.skill-pill:hover{transform:translateY(-6px) scale(1.03);box-shadow:10px 10px 20px var(--shadow-dark),-10px -10px 20px var(--shadow-light)}
+.skill-pill .emoji{font-size:36px;display:block;margin-bottom:12px}
+.skill-pill .skill-name{font-weight:700;font-size:16px;margin-bottom:4px}
+.skill-pill .skill-sub{font-size:13px;color:var(--text-light)}
+.skill-pill:nth-child(1){border-left:4px solid var(--mint)}
+.skill-pill:nth-child(2){border-left:4px solid var(--peach)}
+.skill-pill:nth-child(3){border-left:4px solid var(--lavender)}
+.skill-pill:nth-child(4){border-left:4px solid var(--sky)}
+.skill-pill:nth-child(5){border-left:4px solid var(--mint)}
+.skill-pill:nth-child(6){border-left:4px solid var(--peach)}
+.skill-pill:nth-child(7){border-left:4px solid var(--lavender)}
+.skill-pill:nth-child(8){border-left:4px solid var(--sky)}
+
+/* Progress bars */
+.progress-section{margin-top:40px}
+.progress-item{margin-bottom:20px}
+.progress-label{display:flex;justify-content:space-between;font-weight:600;font-size:15px;margin-bottom:8px}
+.progress-track{height:16px;border-radius:50px;background:var(--bg);box-shadow:inset 3px 3px 6px var(--shadow-dark),inset -3px -3px 6px var(--shadow-light);overflow:hidden}
+.progress-fill{height:100%;border-radius:50px;transition:width 1.2s cubic-bezier(0.25,0.46,0.45,0.94)}
+.progress-fill.mint{background:linear-gradient(90deg,var(--mint),#8fd4b8)}
+.progress-fill.peach{background:linear-gradient(90deg,var(--peach),#f0b896)}
+.progress-fill.lavender{background:linear-gradient(90deg,var(--lavender),#a8afce)}
+.progress-fill.sky{background:linear-gradient(90deg,var(--sky),#7fc0cc)}
+
+/* Contact */
+.contact-card{padding:48px;text-align:center}
+.contact-card h3{font-size:36px;font-weight:800;margin-bottom:8px}
+.contact-card p{font-size:18px;color:var(--text-light);margin-bottom:32px}
+.contact-buttons{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.contact-btn{padding:14px 28px;border-radius:50px;font-family:'Nunito',sans-serif;font-weight:700;font-size:16px;border:none;cursor:pointer;box-shadow:6px 6px 12px var(--shadow-dark),-6px -6px 12px var(--shadow-light);transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);text-decoration:none;display:inline-block}
+.contact-btn:hover{transform:translateY(-3px) scale(1.02);box-shadow:8px 8px 16px var(--shadow-dark),-8px -8px 16px var(--shadow-light)}
+.contact-btn:active{transform:scale(0.97);box-shadow:2px 2px 4px var(--shadow-dark),-2px -2px 4px var(--shadow-light)}
+.contact-btn.primary{background:var(--mint);color:#2d7a5a}
+.contact-btn.secondary{background:var(--peach);color:#b8734a}
+.contact-btn.tertiary{background:var(--lavender);color:#6b6fa0}
+
+/* Footer */
+.footer{text-align:center;padding:40px 20px;color:var(--text-light);font-size:14px}
+
+/* Responsive */
+@media(max-width:768px){
+  .hero-name{font-size:36px}
+  .hero-title{font-size:18px}
+  .section-title{font-size:28px}
+  .nav{padding:16px 20px}
+  .content{padding:100px 16px 60px}
+  .skills-grid{grid-template-columns:repeat(2,1fr)}
+  .about-card{padding:28px}
+  .contact-card{padding:32px}
+  .contact-card h3{font-size:28px}
+}
+@media(max-width:375px){
+  .hero-name{font-size:28px}
+  .skills-grid{grid-template-columns:1fr}
+  .hero-pills{flex-direction:column;align-items:center}
+  .lang-btn{padding:6px 10px;font-size:12px}
+  .contact-buttons{flex-direction:column;align-items:center}
+}
+@media(min-width:1440px){
+  .content{max-width:1100px}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-blobs">
+  <div class="blob"></div>
+  <div class="blob"></div>
+  <div class="blob"></div>
+  <div class="blob"></div>
+</div>
+
+<nav class="nav">
+  <a href="../index.html" class="gallery-link" data-i18n="gallery_link">&#8592; Gallery</a>
+  <div class="lang-switcher">
+    <button class="lang-btn active" data-lang="en" onclick="setLanguage('en')">EN</button>
+    <button class="lang-btn" data-lang="ko" onclick="setLanguage('ko')">&#54620;&#44397;&#50612;</button>
+    <button class="lang-btn" data-lang="ja" onclick="setLanguage('ja')">&#26085;&#26412;&#35486;</button>
+    <button class="lang-btn" data-lang="zh" onclick="setLanguage('zh')">&#20013;&#25991;</button>
+  </div>
+</nav>
+
+<div class="content">
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-emoji">&#128075;</div>
+    <h1 class="hero-name" data-i18n="name">Your Name</h1>
+    <p class="hero-title" data-i18n="title">Creative Developer &amp; Designer</p>
+    <div class="hero-pills">
+      <span class="hero-pill">&#127912; Design</span>
+      <span class="hero-pill">&#128187; Development</span>
+      <span class="hero-pill">&#10024; Creativity</span>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section class="section" id="about">
+    <span class="section-label mint" data-i18n="about_label">About</span>
+    <div class="about-card clay-card">
+      <p><span class="emoji-accent">&#128640;</span> <span data-i18n="about_text">A creative developer crafting digital experiences at the intersection of design and technology. Building beautiful and functional products through clean code and thoughtful interfaces.</span></p>
+    </div>
+  </section>
+
+  <!-- Skills -->
+  <section class="section" id="skills">
+    <span class="section-label peach" data-i18n="skills_label">Expertise</span>
+    <h2 class="section-title">Skills &amp; Tools</h2>
+    <div class="skills-grid">
+      <div class="skill-pill"><span class="emoji">&#9881;&#65039;</span><div class="skill-name">React</div><div class="skill-sub">Frontend</div></div>
+      <div class="skill-pill"><span class="emoji">&#128310;</span><div class="skill-name">TypeScript</div><div class="skill-sub">Language</div></div>
+      <div class="skill-pill"><span class="emoji">&#127912;</span><div class="skill-name">Figma</div><div class="skill-sub">Design</div></div>
+      <div class="skill-pill"><span class="emoji">&#128311;</span><div class="skill-name">Node.js</div><div class="skill-sub">Backend</div></div>
+      <div class="skill-pill"><span class="emoji">&#128025;</span><div class="skill-name">Python</div><div class="skill-sub">Backend</div></div>
+      <div class="skill-pill"><span class="emoji">&#128230;</span><div class="skill-name">Docker</div><div class="skill-sub">DevOps</div></div>
+      <div class="skill-pill"><span class="emoji">&#128241;</span><div class="skill-name">React Native</div><div class="skill-sub">Mobile</div></div>
+      <div class="skill-pill"><span class="emoji">&#9729;&#65039;</span><div class="skill-name">AWS</div><div class="skill-sub">Cloud</div></div>
+    </div>
+
+    <div class="progress-section">
+      <div class="progress-item">
+        <div class="progress-label"><span>Frontend Development</span><span>92%</span></div>
+        <div class="progress-track"><div class="progress-fill mint" style="width:0%" data-width="92%"></div></div>
+      </div>
+      <div class="progress-item">
+        <div class="progress-label"><span>UI/UX Design</span><span>88%</span></div>
+        <div class="progress-track"><div class="progress-fill peach" style="width:0%" data-width="88%"></div></div>
+      </div>
+      <div class="progress-item">
+        <div class="progress-label"><span>Backend Development</span><span>80%</span></div>
+        <div class="progress-track"><div class="progress-fill lavender" style="width:0%" data-width="80%"></div></div>
+      </div>
+      <div class="progress-item">
+        <div class="progress-label"><span>Mobile Development</span><span>75%</span></div>
+        <div class="progress-track"><div class="progress-fill sky" style="width:0%" data-width="75%"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section class="section" id="contact">
+    <span class="section-label lavender" data-i18n="contact_label">Get in Touch</span>
+    <div class="contact-card clay-card">
+      <h3 data-i18n="contact_heading">Let's Work Together</h3>
+      <p data-i18n="contact_sub">Available for freelance projects</p>
+      <div class="contact-buttons">
+        <a href="mailto:hello@example.com" class="contact-btn primary">&#128231; Email</a>
+        <a href="#" class="contact-btn secondary">&#128736;&#65039; GitHub</a>
+        <a href="#" class="contact-btn tertiary">&#128279; LinkedIn</a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<footer class="footer">
+  <p>Made with &#128156; &amp; Clay</p>
+</footer>
+
+<script>
+var TRANSLATIONS={
+  ko:{name:'\uD64D\uAE38\uB3D9',title:'\uD06C\uB9AC\uC5D0\uC774\uD2F0\uBE0C \uAC1C\uBC1C\uC790 & \uB514\uC790\uC774\uB108',about_label:'\uC18C\uAC1C',about_text:'\uB514\uC790\uC778\uACFC \uAE30\uC220\uC758 \uAD50\uCC28\uC810\uC5D0\uC11C \uB514\uC9C0\uD138 \uACBD\uD5D8\uC744 \uB9CC\uB4DC\uB294 \uD06C\uB9AC\uC5D0\uC774\uD2F0\uBE0C \uAC1C\uBC1C\uC790\uC785\uB2C8\uB2E4. \uAE54\uB054\uD55C \uCF54\uB4DC\uC640 \uC138\uC2EC\uD55C \uC778\uD130\uD398\uC774\uC2A4\uB97C \uD1B5\uD574 \uC544\uB984\uB2F5\uACE0 \uAE30\uB2A5\uC801\uC778 \uC81C\uD488\uC744 \uB9CC\uB4ED\uB2C8\uB2E4.',skills_label:'\uC804\uBB38 \uBD84\uC57C',contact_label:'\uC5F0\uB77D\uD558\uAE30',contact_heading:'\uD568\uAED8 \uC77C\uD574\uC694',contact_sub:'\uD504\uB9AC\uB79C\uC11C \uD504\uB85C\uC81D\uD2B8 \uAC00\uB2A5',gallery_link:'\u2190 \uAC24\uB7EC\uB9AC'},
+  en:{name:'Your Name',title:'Creative Developer & Designer',about_label:'About',about_text:'A creative developer crafting digital experiences at the intersection of design and technology. Building beautiful and functional products through clean code and thoughtful interfaces.',skills_label:'Expertise',contact_label:'Get in Touch',contact_heading:"Let's Work Together",contact_sub:'Available for freelance projects',gallery_link:'\u2190 Gallery'},
+  ja:{name:'\u3042\u306A\u305F\u306E\u540D\u524D',title:'\u30AF\u30EA\u30A8\u30A4\u30C6\u30A3\u30D6\u30C7\u30D9\u30ED\u30C3\u30D1\u30FC & \u30C7\u30B6\u30A4\u30CA\u30FC',about_label:'\u7D39\u4ECB',about_text:'\u30C7\u30B6\u30A4\u30F3\u3068\u30C6\u30AF\u30CE\u30ED\u30B8\u30FC\u306E\u4EA4\u5DEE\u70B9\u3067\u30C7\u30B8\u30BF\u30EB\u4F53\u9A13\u3092\u751F\u307F\u51FA\u3059\u30AF\u30EA\u30A8\u30A4\u30C6\u30A3\u30D6\u30C7\u30D9\u30ED\u30C3\u30D1\u30FC\u3067\u3059\u3002\u30AF\u30EA\u30FC\u30F3\u306A\u30B3\u30FC\u30C9\u3068\u601D\u616E\u6DF1\u3044\u30A4\u30F3\u30BF\u30FC\u30D5\u30A7\u30FC\u30B9\u3067\u7F8E\u3057\u304F\u6A5F\u80FD\u7684\u306A\u88FD\u54C1\u3092\u69CB\u7BC9\u3057\u307E\u3059\u3002',skills_label:'\u5C02\u9580\u5206\u91CE',contact_label:'\u304A\u554F\u3044\u5408\u308F\u305B',contact_heading:'\u4E00\u7DD2\u306B\u50CD\u304D\u307E\u3057\u3087\u3046',contact_sub:'\u30D5\u30EA\u30FC\u30E9\u30F3\u30B9\u30D7\u30ED\u30B8\u30A7\u30AF\u30C8\u5BFE\u5FDC\u53EF\u80FD',gallery_link:'\u2190 \u30AE\u30E3\u30E9\u30EA\u30FC'},
+  zh:{name:'\u4F60\u7684\u540D\u5B57',title:'\u521B\u610F\u5F00\u53D1\u8005 & \u8BBE\u8BA1\u5E08',about_label:'\u5173\u4E8E',about_text:'\u5728\u8BBE\u8BA1\u4E0E\u6280\u672F\u7684\u4EA4\u6C47\u5904\u521B\u9020\u6570\u5B57\u4F53\u9A8C\u7684\u521B\u610F\u5F00\u53D1\u8005\u3002\u901A\u8FC7\u7B80\u6D01\u7684\u4EE3\u7801\u548C\u7CBE\u5FC3\u8BBE\u8BA1\u7684\u754C\u9762\uFF0C\u6784\u5EFA\u65E2\u7F8E\u89C2\u53C8\u5B9E\u7528\u7684\u4EA7\u54C1\u3002',skills_label:'\u4E13\u4E1A\u9886\u57DF',contact_label:'\u8054\u7CFB\u6211',contact_heading:'\u4E00\u8D77\u5408\u4F5C\u5427',contact_sub:'\u53EF\u63A5\u53D7\u81EA\u7531\u804C\u4E1A\u9879\u76EE',gallery_link:'\u2190 \u753B\u5ECA'}
+};
+
+function setLanguage(lang){
+  document.querySelectorAll('[data-i18n]').forEach(function(el){
+    var key=el.getAttribute('data-i18n');
+    if(TRANSLATIONS[lang]&&TRANSLATIONS[lang][key])el.textContent=TRANSLATIONS[lang][key];
+  });
+  document.querySelectorAll('.lang-btn').forEach(function(btn){
+    btn.classList.toggle('active',btn.getAttribute('data-lang')===lang);
+  });
+  try{localStorage.setItem('preferred-lang',lang)}catch(e){}
+  document.documentElement.lang=lang==='ko'?'ko':lang==='ja'?'ja':lang==='zh'?'zh':'en';
+}
+(function(){
+  var params=new URLSearchParams(window.location.search);
+  var lang=params.get('lang')||(function(){try{return localStorage.getItem('preferred-lang')}catch(e){return null}})() ||'en';
+  if(lang!=='en')setLanguage(lang);
+  else document.querySelectorAll('.lang-btn').forEach(function(btn){btn.classList.toggle('active',btn.getAttribute('data-lang')==='en')});
+})();
+
+/* Scroll reveal + progress bars */
+var sections=document.querySelectorAll('.section');
+var observer=new IntersectionObserver(function(entries){
+  entries.forEach(function(entry){
+    if(entry.isIntersecting){
+      entry.target.classList.add('visible');
+      var bars=entry.target.querySelectorAll('.progress-fill');
+      bars.forEach(function(bar){
+        setTimeout(function(){bar.style.width=bar.getAttribute('data-width')},300);
+      });
+      observer.unobserve(entry.target);
+    }
+  });
+},{threshold:0.15});
+sections.forEach(function(s){observer.observe(s)});
+</script>
+</body>
+</html>

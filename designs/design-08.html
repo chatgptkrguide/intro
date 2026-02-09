@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio - Magazine Editorial</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --offwhite: #FAFAF7;
+    --charcoal: #1A1A1A;
+    --gold: #C5A572;
+    --gold-light: #D4BB8A;
+    --gray-100: #F0F0EC;
+    --gray-200: #E0E0DB;
+    --gray-400: #999;
+    --gray-600: #666;
+    --serif: 'Playfair Display', Georgia, serif;
+    --sans: 'Inter', -apple-system, sans-serif;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    font-size: 16px;
+  }
+
+  body {
+    font-family: var(--sans);
+    background: var(--offwhite);
+    color: var(--charcoal);
+    overflow-x: hidden;
+    line-height: 1.7;
+  }
+
+  ::selection {
+    background: var(--gold);
+    color: #fff;
+  }
+
+  a {
+    color: var(--charcoal);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  a:hover { color: var(--gold); }
+
+  /* ===================== READING PROGRESS BAR ===================== */
+  .reading-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background: var(--gold);
+    z-index: 1000;
+    transition: width 0.1s linear;
+    will-change: width;
+  }
+
+  /* ===================== BACK BUTTON ===================== */
+  .back-to-gallery {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 300;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--gray-400);
+    text-decoration: none;
+    padding: 8px 0;
+    transition: color 0.3s;
+    will-change: transform;
+  }
+
+  .back-to-gallery::before {
+    content: '';
+    display: inline-block;
+    width: 24px;
+    height: 1px;
+    background: var(--gray-400);
+    transition: width 0.3s, background 0.3s;
+  }
+
+  .back-to-gallery:hover {
+    color: var(--gold);
+  }
+
+  .back-to-gallery:hover::before {
+    width: 36px;
+    background: var(--gold);
+  }
+
+  /* Page number */
+  .page-number {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    font-family: var(--serif);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--gray-400);
+    z-index: 100;
+    writing-mode: vertical-rl;
+    letter-spacing: 2px;
+  }
+
+  .page-number span {
+    display: block;
+    font-size: 11px;
+    font-family: var(--sans);
+    font-weight: 400;
+    color: var(--gray-400);
+    margin-top: 8px;
+  }
+
+  /* TOC Navigation */
+  .toc-nav {
+    position: fixed;
+    left: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .toc-nav a {
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--gray-400);
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    transition: color 0.3s;
+    position: relative;
+    padding-left: 12px;
+  }
+
+  .toc-nav a::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1px;
+    height: 100%;
+    background: var(--gray-200);
+    transition: background 0.3s;
+  }
+
+  .toc-nav a:hover {
+    color: var(--gold);
+  }
+
+  .toc-nav a:hover::before,
+  .toc-nav a.active::before {
+    background: var(--gold);
+  }
+
+  .toc-nav a.active {
+    color: var(--charcoal);
+  }
+
+  /* Header bar */
+  .top-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 200;
+    padding: 20px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(250, 250, 247, 0.9);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s;
+  }
+
+  .top-header.scrolled {
+    border-bottom-color: var(--gray-200);
+  }
+
+  .top-header .masthead {
+    font-family: var(--serif);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--charcoal);
+  }
+
+  .header-nav {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .header-nav a {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--gray-600);
+    position: relative;
+  }
+
+  .header-nav a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--gold);
+    transition: width 0.4s ease;
+  }
+
+  .header-nav a:hover::after { width: 100%; }
+  .header-nav a:hover { color: var(--charcoal); }
+
+  /* Main container */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 80px;
+  }
+
+  /* Hero Section */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding: 120px 0 80px;
+  }
+
+  .hero-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+    width: 100%;
+  }
+
+  .hero-text { position: relative; z-index: 2; }
+
+  .hero-issue {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    color: var(--gold);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .hero-issue::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--gold);
+    max-width: 80px;
+  }
+
+  .hero-title {
+    font-family: var(--serif);
+    font-size: clamp(48px, 8vw, 100px);
+    font-weight: 900;
+    line-height: 0.95;
+    margin-bottom: 24px;
+    color: var(--charcoal);
+  }
+
+  .hero-title .italic {
+    font-style: italic;
+    font-weight: 400;
+    display: block;
+    color: var(--gold);
+  }
+
+  .hero-subtitle {
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--gray-600);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 40px;
+  }
+
+  .hero-line {
+    width: 60px;
+    height: 2px;
+    background: var(--gold);
+  }
+
+  /* Photo placeholder with dramatic overlap */
+  .hero-image {
+    position: relative;
+    z-index: 1;
+  }
+
+  .photo-frame {
+    width: 100%;
+    aspect-ratio: 3/4;
+    background: var(--gray-200);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .photo-frame::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(135deg, var(--gray-200) 0%, var(--gray-100) 100%);
+  }
+
+  .photo-placeholder {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: var(--gray-400);
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  .photo-overlay {
+    position: absolute;
+    bottom: -30px;
+    left: -30px;
+    width: 200px;
+    height: 200px;
+    border: 2px solid var(--gold);
+    z-index: -1;
+  }
+
+  .photo-label {
+    position: absolute;
+    bottom: -20px;
+    right: -10px;
+    background: var(--offwhite);
+    padding: 12px 20px;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--gold);
+  }
+
+  /* Geometric accent */
+  .geo-accent {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    border: 1px solid var(--gray-200);
+    border-radius: 50%;
+    top: 10%;
+    right: -100px;
+    z-index: 0;
+    opacity: 0.5;
+  }
+
+  /* About Section */
+  .about-section {
+    padding: 100px 0;
+    position: relative;
+  }
+
+  .about-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1px;
+    height: 80px;
+    background: var(--gold);
+  }
+
+  .section-label {
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    color: var(--gold);
+    margin-bottom: 40px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .section-label::before {
+    content: '';
+    width: 40px;
+    height: 1px;
+    background: var(--gold);
+  }
+
+  .about-heading {
+    font-family: var(--serif);
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 50px;
+    max-width: 600px;
+  }
+
+  /* Letter-spacing animation for section headings */
+  .heading-animate {
+    transition: letter-spacing 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    letter-spacing: -0.5px;
+  }
+
+  .heading-animate.visible {
+    letter-spacing: 0px;
+  }
+
+  /* Column layout */
+  .columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+
+  .column p {
+    font-size: 15px;
+    line-height: 1.9;
+    color: var(--gray-600);
+    margin-bottom: 20px;
+  }
+
+  .column p:first-child::first-letter {
+    font-family: var(--serif);
+    font-size: 48px;
+    font-weight: 700;
+    float: left;
+    line-height: 1;
+    margin-right: 8px;
+    margin-top: 4px;
+    color: var(--charcoal);
+  }
+
+  /* Footnote references */
+  .footnote-ref {
+    font-family: var(--serif);
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--gold);
+    vertical-align: super;
+    line-height: 0;
+    margin-left: 2px;
+    cursor: default;
+  }
+
+  .footnotes {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--gray-200);
+  }
+
+  .footnotes p {
+    font-size: 12px;
+    color: var(--gray-400);
+    line-height: 1.7;
+    margin-bottom: 6px;
+  }
+
+  .footnotes .fn-num {
+    font-family: var(--serif);
+    font-weight: 700;
+    color: var(--gold);
+    margin-right: 6px;
+  }
+
+  /* Pull quote */
+  .pull-quote {
+    padding: 60px 0;
+    margin: 60px 0;
+    border-top: 1px solid var(--gray-200);
+    border-bottom: 1px solid var(--gray-200);
+    position: relative;
+    text-align: center;
+    transition: background-color 0.6s ease, padding 0.6s ease;
+  }
+
+  .pull-quote.dramatic {
+    background-color: var(--charcoal);
+    padding: 80px 40px;
+    margin-left: -80px;
+    margin-right: -80px;
+    border-color: transparent;
+  }
+
+  .pull-quote.dramatic blockquote {
+    color: var(--offwhite);
+  }
+
+  .pull-quote.dramatic cite {
+    color: var(--gold-light);
+  }
+
+  .pull-quote.dramatic::before {
+    color: var(--gold);
+    opacity: 0.15;
+  }
+
+  .pull-quote::before {
+    content: '\201C';
+    font-family: var(--serif);
+    font-size: 120px;
+    color: var(--gold);
+    opacity: 0.3;
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    line-height: 1;
+    transition: color 0.6s, opacity 0.6s;
+  }
+
+  .pull-quote blockquote {
+    font-family: var(--serif);
+    font-size: clamp(22px, 3vw, 32px);
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--charcoal);
+    max-width: 700px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+    transition: color 0.6s;
+  }
+
+  .pull-quote cite {
+    display: block;
+    font-family: var(--sans);
+    font-style: normal;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--gold);
+    margin-top: 20px;
+    transition: color 0.6s;
+  }
+
+  /* Skills Grid */
+  .skills-section {
+    padding: 100px 0;
+  }
+
+  .skills-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 60px;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .skills-header .section-heading {
+    font-family: var(--serif);
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 700;
+  }
+
+  .skills-header .section-desc {
+    font-size: 13px;
+    color: var(--gray-600);
+    max-width: 300px;
+    text-align: right;
+  }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+  }
+
+  .skill-card {
+    border: 1px solid var(--gray-200);
+    padding: 40px 30px;
+    position: relative;
+    transition: background 0.5s ease, box-shadow 0.5s ease, transform 0.5s ease;
+    overflow: hidden;
+    margin-top: -1px;
+    margin-left: -1px;
+    will-change: transform;
+  }
+
+  .skill-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--gold);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s ease;
+    will-change: transform;
+  }
+
+  .skill-card:hover::before { transform: scaleX(1); }
+
+  .skill-card:hover {
+    background: #fff;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+    z-index: 2;
+    transform: translateY(-2px);
+  }
+
+  .skill-number {
+    font-family: var(--serif);
+    font-size: 36px;
+    font-weight: 900;
+    color: var(--gray-200);
+    margin-bottom: 16px;
+    transition: color 0.5s;
+  }
+
+  .skill-card:hover .skill-number { color: var(--gold); }
+
+  .skill-name {
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .skill-desc {
+    font-size: 13px;
+    color: var(--gray-600);
+    line-height: 1.7;
+  }
+
+  .skill-bar-track {
+    width: 100%;
+    height: 2px;
+    background: var(--gray-200);
+    margin-top: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .skill-bar-progress {
+    height: 100%;
+    background: var(--gold);
+    width: 0;
+    transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: width;
+  }
+
+  .skill-bar-progress.animated {
+    width: var(--w);
+  }
+
+  /* Experience / Editorial */
+  .experience-section {
+    padding: 100px 0;
+    position: relative;
+  }
+
+  .exp-layout {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 60px;
+  }
+
+  .exp-sidebar {
+    position: relative;
+  }
+
+  .exp-sidebar .section-label {
+    position: sticky;
+    top: 100px;
+  }
+
+  .exp-list {
+    list-style: none;
+  }
+
+  .exp-item {
+    padding: 40px 0;
+    border-bottom: 1px solid var(--gray-200);
+    position: relative;
+  }
+
+  .exp-item:first-child { padding-top: 0; }
+
+  .exp-year {
+    font-family: var(--serif);
+    font-size: 13px;
+    font-style: italic;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+
+  .exp-title {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .exp-company {
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--gray-400);
+    margin-bottom: 14px;
+  }
+
+  .exp-desc {
+    font-size: 14px;
+    color: var(--gray-600);
+    line-height: 1.8;
+    max-width: 500px;
+  }
+
+  /* Contact Section */
+  .contact-section {
+    padding: 120px 0;
+    text-align: center;
+    position: relative;
+  }
+
+  .contact-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1px;
+    height: 80px;
+    background: var(--gold);
+  }
+
+  .contact-heading {
+    font-family: var(--serif);
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 20px;
+  }
+
+  .contact-heading .gold { color: var(--gold); }
+
+  .contact-sub {
+    font-size: 14px;
+    color: var(--gray-600);
+    margin-bottom: 40px;
+    letter-spacing: 1px;
+  }
+
+  .contact-link {
+    display: inline-block;
+    font-family: var(--serif);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--charcoal);
+    border-bottom: 2px solid var(--gold);
+    padding-bottom: 4px;
+    transition: color 0.3s, border-bottom-color 0.3s;
+  }
+
+  .contact-link:hover {
+    color: var(--gold);
+    border-bottom-color: var(--charcoal);
+  }
+
+  /* Footer */
+  .footer {
+    padding: 40px 0;
+    border-top: 1px solid var(--gray-200);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .footer p {
+    font-size: 11px;
+    color: var(--gray-400);
+    letter-spacing: 1px;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 24px;
+    list-style: none;
+  }
+
+  .footer-links a {
+    font-size: 11px;
+    color: var(--gray-400);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  .footer-links a:hover { color: var(--gold); }
+
+  /* ===================== LANGUAGE SWITCHER ===================== */
+  .lang-switcher { position: fixed; top: 1.5rem; right: 7rem; z-index: 1001; display: flex; gap: 4px; }
+  .lang-btn { font-family: var(--serif); font-size: 0.65rem; font-weight: 500; padding: 4px 10px; border: 1px solid rgba(0,0,0,0.15); background: rgba(0,0,0,0.03); color: rgba(0,0,0,0.4); border-radius: 4px; cursor: pointer; transition: all 0.2s; letter-spacing: 0.5px; }
+  .lang-btn:hover, .lang-btn.active { background: rgba(0,0,0,0.08); color: rgba(0,0,0,0.8); border-color: rgba(0,0,0,0.3); }
+
+  /* ===================== SCROLL REVEAL ANIMATIONS ===================== */
+  .fade-up {
+    opacity: 0;
+    transform: translate3d(0, 40px, 0);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+    will-change: opacity, transform;
+  }
+
+  .fade-up.visible {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  .fade-left {
+    opacity: 0;
+    transform: translate3d(-40px, 0, 0);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+    will-change: opacity, transform;
+  }
+
+  .fade-left.visible {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  .fade-right {
+    opacity: 0;
+    transform: translate3d(40px, 0, 0);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+    will-change: opacity, transform;
+  }
+
+  .fade-right.visible {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  /* Hero-specific entrance: image fades in with slight scale */
+  .fade-scale {
+    opacity: 0;
+    transform: scale(0.95);
+    transition: opacity 1s ease, transform 1s ease;
+    will-change: opacity, transform;
+  }
+
+  .fade-scale.visible {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .container { padding: 0 40px; }
+    .hero-content { grid-template-columns: 1fr; gap: 40px; }
+    .hero-image { max-width: 400px; }
+    .columns { grid-template-columns: 1fr; }
+    .skills-grid { grid-template-columns: repeat(2, 1fr); }
+    .exp-layout { grid-template-columns: 1fr; gap: 30px; }
+    .exp-sidebar .section-label { position: static; }
+    .toc-nav { display: none; }
+    .top-header { padding: 16px 30px; }
+    .page-number { bottom: 16px; right: 16px; }
+    .photo-overlay { display: none; }
+    .geo-accent { display: none; }
+    .pull-quote.dramatic { margin-left: -40px; margin-right: -40px; }
+    .back-to-gallery { top: auto; bottom: 20px; left: 20px; }
+    .lang-switcher { top: auto; bottom: 1rem; right: 1rem; }
+  }
+
+  @media (max-width: 600px) {
+    .container { padding: 0 20px; }
+    .skills-grid { grid-template-columns: 1fr; }
+    .header-nav { gap: 16px; }
+    .header-nav a { font-size: 9px; letter-spacing: 1px; }
+    .top-header .masthead { font-size: 11px; letter-spacing: 2px; }
+    .skill-card { padding: 28px 20px; }
+    .contact-heading { font-size: 32px; }
+    .footer { flex-direction: column; text-align: center; }
+    .pull-quote.dramatic { margin-left: -20px; margin-right: -20px; padding: 50px 20px; }
+    .back-to-gallery { font-size: 9px; }
+  }
+
+  @media (min-width: 1440px) {
+    .container { max-width: 1280px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LANGUAGE SWITCHER -->
+<div class="lang-switcher" role="navigation" aria-label="Language selector">
+  <button class="lang-btn active" data-lang="en" onclick="setLanguage('en')">EN</button>
+  <button class="lang-btn" data-lang="ko" onclick="setLanguage('ko')">한국어</button>
+  <button class="lang-btn" data-lang="ja" onclick="setLanguage('ja')">日本語</button>
+  <button class="lang-btn" data-lang="zh" onclick="setLanguage('zh')">中文</button>
+</div>
+
+<!-- Reading progress bar -->
+<div class="reading-progress" id="readingProgress" role="progressbar" aria-label="Reading progress" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+
+<!-- Back to Gallery -->
+<a href="../index.html" class="back-to-gallery" aria-label="Back to gallery" data-i18n="gallery_link">Gallery</a>
+
+<!-- Page Number -->
+<div class="page-number" aria-hidden="true">
+  07
+  <span>PORTFOLIO</span>
+</div>
+
+<!-- TOC Navigation -->
+<nav class="toc-nav" id="tocNav" aria-label="Table of contents">
+  <a href="#hero" class="active" data-section="hero">Home</a>
+  <a href="#about" data-section="about">About</a>
+  <a href="#skills" data-section="skills">Skills</a>
+  <a href="#experience" data-section="experience">Work</a>
+  <a href="#contact" data-section="contact">Contact</a>
+</nav>
+
+<!-- Top Header -->
+<header class="top-header" id="topHeader" role="banner">
+  <div class="masthead">Portfolio</div>
+  <nav aria-label="Main navigation">
+    <ul class="header-nav">
+      <li><a href="#about">About</a></li>
+      <li><a href="#skills">Expertise</a></li>
+      <li><a href="#experience">Work</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+</header>
+
+<div class="container">
+
+  <!-- Hero -->
+  <section class="hero" id="hero" aria-label="Introduction">
+    <div class="hero-content">
+      <div class="hero-text">
+        <p class="hero-issue fade-up" data-i18n="hero_issue">Issue No. 01 -- 2026</p>
+        <h1 class="hero-title fade-up" style="transition-delay: 0.1s;" data-i18n="name">Your Name</h1>
+        <p class="hero-subtitle fade-up" style="transition-delay: 0.2s;" data-i18n="title">Creative Developer & Designer</p>
+        <div class="hero-line fade-up" style="transition-delay: 0.3s;"></div>
+      </div>
+      <div class="hero-image fade-scale" style="transition-delay: 0.3s;">
+        <div class="photo-frame">
+          <div class="photo-placeholder">Photo</div>
+        </div>
+        <div class="photo-overlay"></div>
+        <div class="photo-label">Vol. I</div>
+      </div>
+    </div>
+    <div class="geo-accent" aria-hidden="true"></div>
+  </section>
+
+  <!-- About -->
+  <section class="about-section" id="about" aria-label="About">
+    <div class="section-label fade-up" data-i18n="about_label">About</div>
+    <h2 class="about-heading heading-animate fade-up" data-i18n="about_heading">Crafting digital experiences at the intersection of design and technology.</h2>
+
+    <div class="columns">
+      <div class="column fade-up">
+        <p data-i18n="about_text_1">Driven by a deep passion for the digital craft, I build web experiences that are not only visually compelling but technically sound. With years of experience spanning front-end development, UI/UX design, and full-stack architecture, I bring a holistic perspective to every project.</p>
+        <p data-i18n="about_text_2">My approach combines meticulous attention to detail with a keen understanding of user needs, ensuring that every interaction feels intuitive and every visual element serves a purpose.</p>
+      </div>
+      <div class="column fade-up" style="transition-delay: 0.15s;">
+        <p data-i18n="about_text_3">From startups to established brands, I have collaborated with diverse teams to deliver products that push creative boundaries while maintaining performance and accessibility standards. I believe the best digital work emerges from the careful balance of aesthetics and functionality.</p>
+        <p data-i18n="about_text_4">When not coding, you will find me exploring typography, experimenting with generative art, or seeking inspiration in architecture and editorial design.</p>
+      </div>
+    </div>
+
+    <!-- Footnotes -->
+    <div class="footnotes fade-up" aria-label="Footnotes">
+      <p><span class="fn-num">1</span> Combining modern frameworks with timeless design principles.</p>
+      <p><span class="fn-num">2</span> Guided by WCAG accessibility standards and progressive enhancement.</p>
+      <p><span class="fn-num">3</span> Including projects featured in Awwwards, CSS Design Awards, and FWA.</p>
+    </div>
+
+    <!-- Pull Quote -->
+    <div class="pull-quote fade-up" id="pullQuote">
+      <blockquote data-i18n="quote">Design is not just what it looks like and feels like. Design is how it works.</blockquote>
+      <cite data-i18n="quote_author">-- Steve Jobs</cite>
+    </div>
+  </section>
+
+  <!-- Skills -->
+  <section class="skills-section" id="skills" aria-label="Skills and expertise">
+    <div class="skills-header">
+      <div>
+        <div class="section-label fade-up" data-i18n="skills_label">Expertise</div>
+        <h2 class="section-heading heading-animate fade-up" data-i18n="skills_heading">Core Skills</h2>
+      </div>
+      <p class="section-desc fade-up" data-i18n="skills_desc">A curated selection of technical competencies honed through years of professional practice.</p>
+    </div>
+
+    <div class="skills-grid">
+      <div class="skill-card fade-up" role="listitem">
+        <div class="skill-number" aria-hidden="true">01</div>
+        <h3 class="skill-name">HTML & CSS</h3>
+        <p class="skill-desc" data-i18n="skill_desc_1">Semantic markup, modern CSS, responsive layouts, and pixel-perfect implementations.</p>
+        <div class="skill-bar-track" role="progressbar" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100" aria-label="HTML CSS proficiency">
+          <div class="skill-bar-progress" style="--w: 95%;"></div>
+        </div>
+      </div>
+
+      <div class="skill-card fade-up" style="transition-delay: 0.08s;" role="listitem">
+        <div class="skill-number" aria-hidden="true">02</div>
+        <h3 class="skill-name">JavaScript</h3>
+        <p class="skill-desc" data-i18n="skill_desc_2">ES6+, DOM manipulation, async patterns, and modern framework ecosystems.</p>
+        <div class="skill-bar-track" role="progressbar" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100" aria-label="JavaScript proficiency">
+          <div class="skill-bar-progress" style="--w: 90%;"></div>
+        </div>
+      </div>
+
+      <div class="skill-card fade-up" style="transition-delay: 0.16s;" role="listitem">
+        <div class="skill-number" aria-hidden="true">03</div>
+        <h3 class="skill-name">React</h3>
+        <p class="skill-desc" data-i18n="skill_desc_3">Component architecture, hooks, state management, and server-side rendering.</p>
+        <div class="skill-bar-track" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100" aria-label="React proficiency">
+          <div class="skill-bar-progress" style="--w: 85%;"></div>
+        </div>
+      </div>
+
+      <div class="skill-card fade-up" style="transition-delay: 0.05s;" role="listitem">
+        <div class="skill-number" aria-hidden="true">04</div>
+        <h3 class="skill-name">Node.js</h3>
+        <p class="skill-desc" data-i18n="skill_desc_4">RESTful APIs, Express, database integrations, and microservice architectures.</p>
+        <div class="skill-bar-track" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" aria-label="Node JS proficiency">
+          <div class="skill-bar-progress" style="--w: 80%;"></div>
+        </div>
+      </div>
+
+      <div class="skill-card fade-up" style="transition-delay: 0.13s;" role="listitem">
+        <div class="skill-number" aria-hidden="true">05</div>
+        <h3 class="skill-name">Python</h3>
+        <p class="skill-desc" data-i18n="skill_desc_5">Scripting, data processing, automation, and backend services.</p>
+        <div class="skill-bar-track" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" aria-label="Python proficiency">
+          <div class="skill-bar-progress" style="--w: 75%;"></div>
+        </div>
+      </div>
+
+      <div class="skill-card fade-up" style="transition-delay: 0.21s;" role="listitem">
+        <div class="skill-number" aria-hidden="true">06</div>
+        <h3 class="skill-name">UI/UX Design</h3>
+        <p class="skill-desc" data-i18n="skill_desc_6">User research, wireframing, prototyping, and design system creation.</p>
+        <div class="skill-bar-track" role="progressbar" aria-valuenow="88" aria-valuemin="0" aria-valuemax="100" aria-label="UI UX Design proficiency">
+          <div class="skill-bar-progress" style="--w: 88%;"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Experience -->
+  <section class="experience-section" id="experience" aria-label="Work experience">
+    <div class="exp-layout">
+      <div class="exp-sidebar">
+        <div class="section-label fade-left" data-i18n="exp_label">Selected Work</div>
+      </div>
+      <ul class="exp-list">
+        <li class="exp-item fade-up">
+          <p class="exp-year" data-i18n="exp1_year">2024 -- Present</p>
+          <h3 class="exp-title" data-i18n="exp1_title">Senior Creative Developer</h3>
+          <p class="exp-company" data-i18n="exp1_company">Digital Studio Co.</p>
+          <p class="exp-desc" data-i18n="exp1_desc">Leading front-end architecture and creative development for high-profile client projects. Building design systems and mentoring junior developers.</p>
+        </li>
+        <li class="exp-item fade-up" style="transition-delay: 0.1s;">
+          <p class="exp-year" data-i18n="exp2_year">2022 -- 2024</p>
+          <h3 class="exp-title" data-i18n="exp2_title">Full-Stack Developer</h3>
+          <p class="exp-company" data-i18n="exp2_company">Tech Innovations Inc.</p>
+          <p class="exp-desc" data-i18n="exp2_desc">Developed and maintained scalable web applications serving thousands of users. Implemented CI/CD pipelines and improved performance metrics.</p>
+        </li>
+        <li class="exp-item fade-up" style="transition-delay: 0.2s;">
+          <p class="exp-year" data-i18n="exp3_year">2020 -- 2022</p>
+          <h3 class="exp-title" data-i18n="exp3_title">UI/UX Designer & Developer</h3>
+          <p class="exp-company" data-i18n="exp3_company">Creative Agency</p>
+          <p class="exp-desc" data-i18n="exp3_desc">Bridged the gap between design and development, creating interactive prototypes and translating complex designs into responsive, accessible web experiences.</p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section class="contact-section" id="contact" aria-label="Contact">
+    <div class="section-label fade-up" style="justify-content: center;" data-i18n="contact_label">Get in Touch</div>
+    <h2 class="contact-heading heading-animate fade-up" data-i18n="contact_heading">Let's create something beautiful</h2>
+    <p class="contact-sub fade-up" data-i18n="contact_sub">Available for freelance projects and collaborations</p>
+    <a href="mailto:email@example.com" class="contact-link fade-up" aria-label="Send email to email@example.com">email@example.com</a>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer" role="contentinfo">
+    <p>&copy; 2026 Your Name. All rights reserved.</p>
+    <ul class="footer-links">
+      <li><a href="#" aria-label="GitHub profile">GitHub</a></li>
+      <li><a href="#" aria-label="LinkedIn profile">LinkedIn</a></li>
+      <li><a href="#" aria-label="Dribbble profile">Dribbble</a></li>
+    </ul>
+  </footer>
+
+</div>
+
+<script>
+  // ========== READING PROGRESS BAR ==========
+  (function() {
+    var bar = document.getElementById('readingProgress');
+
+    function updateProgress() {
+      var scrollTop = window.scrollY;
+      var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      var progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      bar.style.width = progress + '%';
+      bar.setAttribute('aria-valuenow', Math.round(progress));
+    }
+
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    updateProgress();
+  })();
+
+  // ========== SCROLL REVEAL ==========
+  (function() {
+    var animElements = document.querySelectorAll('.fade-up, .fade-left, .fade-right, .fade-scale, .heading-animate');
+
+    function checkScroll() {
+      var windowHeight = window.innerHeight;
+      animElements.forEach(function(el) {
+        var rect = el.getBoundingClientRect();
+        if (rect.top < windowHeight - 60) {
+          el.classList.add('visible');
+        }
+      });
+    }
+
+    window.addEventListener('scroll', checkScroll, { passive: true });
+    window.addEventListener('load', checkScroll);
+    checkScroll();
+  })();
+
+  // ========== SKILL BAR ANIMATION ==========
+  (function() {
+    var bars = document.querySelectorAll('.skill-bar-progress');
+    var animated = false;
+
+    function checkBars() {
+      if (animated) return;
+      var section = document.getElementById('skills');
+      if (!section) return;
+      var rect = section.getBoundingClientRect();
+      if (rect.top < window.innerHeight - 100) {
+        animated = true;
+        bars.forEach(function(bar) {
+          bar.classList.add('animated');
+        });
+      }
+    }
+
+    window.addEventListener('scroll', checkBars, { passive: true });
+    checkBars();
+  })();
+
+  // ========== HEADER SCROLL EFFECT ==========
+  (function() {
+    var header = document.getElementById('topHeader');
+
+    function onScroll() {
+      if (window.scrollY > 50) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+  })();
+
+  // ========== TOC ACTIVE STATE ==========
+  (function() {
+    var links = document.querySelectorAll('.toc-nav a');
+    var sections = [];
+    links.forEach(function(link) {
+      var id = link.getAttribute('data-section');
+      var section = document.getElementById(id);
+      if (section) sections.push({ el: section, link: link });
+    });
+
+    function updateActive() {
+      var scrollPos = window.scrollY + window.innerHeight / 3;
+      var current = null;
+      sections.forEach(function(s) {
+        if (s.el.offsetTop <= scrollPos) {
+          current = s;
+        }
+      });
+      links.forEach(function(l) { l.classList.remove('active'); });
+      if (current) current.link.classList.add('active');
+    }
+
+    window.addEventListener('scroll', updateActive, { passive: true });
+    updateActive();
+  })();
+
+  // ========== PAGE NUMBER UPDATE ==========
+  (function() {
+    var pageNum = document.querySelector('.page-number');
+    var sectionIds = ['hero', 'about', 'skills', 'experience', 'contact'];
+    var numbers = ['07', '08', '09', '10', '11'];
+
+    function updatePage() {
+      var scrollPos = window.scrollY + window.innerHeight / 2;
+      var idx = 0;
+      sectionIds.forEach(function(id, i) {
+        var sec = document.getElementById(id);
+        if (sec && sec.offsetTop <= scrollPos) idx = i;
+      });
+      pageNum.childNodes[0].textContent = numbers[idx] + '\n  ';
+    }
+
+    window.addEventListener('scroll', updatePage, { passive: true });
+  })();
+
+  // ========== PULL QUOTE DRAMATIC BG ON SCROLL ==========
+  (function() {
+    var quote = document.getElementById('pullQuote');
+    if (!quote) return;
+
+    function checkQuote() {
+      var rect = quote.getBoundingClientRect();
+      var windowH = window.innerHeight;
+      // Trigger when quote center is in the middle 60% of viewport
+      var center = rect.top + rect.height / 2;
+      if (center > windowH * 0.2 && center < windowH * 0.8) {
+        quote.classList.add('dramatic');
+      } else {
+        quote.classList.remove('dramatic');
+      }
+    }
+
+    window.addEventListener('scroll', checkQuote, { passive: true });
+    checkQuote();
+  })();
+
+  // ========== I18N TRANSLATION SYSTEM ==========
+  var TRANSLATIONS = {
+    ko: {
+      gallery_link: '갤러리',
+      hero_issue: '창간호 No. 01 -- 2026',
+      name: '홍길동',
+      title: '크리에이티브 개발자 & 디자이너',
+      about_label: '소개',
+      about_heading: '디자인과 기술의 교차점에서 디지털 경험을 만듭니다.',
+      about_text_1: '디지털 크래프트에 대한 깊은 열정으로 시각적으로 매력적이면서도 기술적으로 견고한 웹 경험을 구축합니다. 프론트엔드 개발, UI/UX 디자인, 풀스택 아키텍처에 걸친 경험으로 모든 프로젝트에 통합적인 관점을 제공합니다.',
+      about_text_2: '세심한 디테일에 대한 주의력과 사용자 니즈에 대한 깊은 이해를 결합하여 모든 인터랙션이 직관적이고 모든 시각 요소가 목적을 갖도록 합니다.',
+      about_text_3: '스타트업부터 유명 브랜드까지 다양한 팀과 협업하여 성능과 접근성 기준을 유지하면서 창의적 한계를 넓히는 제품을 제공해왔습니다. 최고의 디지털 작업은 미학과 기능성의 신중한 균형에서 나온다고 믿습니다.',
+      about_text_4: '코딩을 하지 않을 때는 타이포그래피를 탐구하거나 제너러티브 아트를 실험하거나 건축과 에디토리얼 디자인에서 영감을 찾습니다.',
+      quote: '디자인은 단순히 어떻게 보이고 느껴지는가가 아닙니다. 디자인은 어떻게 작동하는가입니다.',
+      quote_author: '-- 스티브 잡스',
+      skills_label: '전문 분야',
+      skills_heading: '핵심 역량',
+      skills_desc: '수년간의 실무를 통해 연마된 기술 역량 모음입니다.',
+      skill_desc_1: '시맨틱 마크업, 모던 CSS, 반응형 레이아웃, 픽셀 퍼펙트 구현.',
+      skill_desc_2: 'ES6+, DOM 조작, 비동기 패턴, 모던 프레임워크 생태계.',
+      skill_desc_3: '컴포넌트 아키텍처, 훅, 상태 관리, 서버사이드 렌더링.',
+      skill_desc_4: 'RESTful API, Express, 데이터베이스 통합, 마이크로서비스 아키텍처.',
+      skill_desc_5: '스크립팅, 데이터 처리, 자동화, 백엔드 서비스.',
+      skill_desc_6: '사용자 리서치, 와이어프레이밍, 프로토타이핑, 디자인 시스템 구축.',
+      exp_label: '주요 작업',
+      exp1_year: '2024 -- 현재', exp1_title: '시니어 크리에이티브 개발자', exp1_company: 'Digital Studio Co.', exp1_desc: '고급 클라이언트 프로젝트를 위한 프론트엔드 아키텍처 및 크리에이티브 개발을 이끌고 있습니다. 디자인 시스템 구축 및 주니어 개발자 멘토링.',
+      exp2_year: '2022 -- 2024', exp2_title: '풀스택 개발자', exp2_company: 'Tech Innovations Inc.', exp2_desc: '수천 명의 사용자에게 서비스하는 확장 가능한 웹 애플리케이션을 개발 및 유지관리. CI/CD 파이프라인 구현 및 성능 지표 개선.',
+      exp3_year: '2020 -- 2022', exp3_title: 'UI/UX 디자이너 & 개발자', exp3_company: 'Creative Agency', exp3_desc: '디자인과 개발 사이의 간극을 연결하며 인터랙티브 프로토타입을 만들고 복잡한 디자인을 반응형, 접근성 높은 웹 경험으로 변환.',
+      contact_label: '연락하기',
+      contact_heading: '함께 아름다운 것을 만들어요',
+      contact_sub: '프리랜스 프로젝트 및 협업 가능'
+    },
+    en: {
+      gallery_link: 'Gallery',
+      hero_issue: 'Issue No. 01 -- 2026',
+      name: 'Your Name',
+      title: 'Creative Developer & Designer',
+      about_label: 'About',
+      about_heading: 'Crafting digital experiences at the intersection of design and technology.',
+      about_text_1: 'Driven by a deep passion for the digital craft, I build web experiences that are not only visually compelling but technically sound. With years of experience spanning front-end development, UI/UX design, and full-stack architecture, I bring a holistic perspective to every project.',
+      about_text_2: 'My approach combines meticulous attention to detail with a keen understanding of user needs, ensuring that every interaction feels intuitive and every visual element serves a purpose.',
+      about_text_3: 'From startups to established brands, I have collaborated with diverse teams to deliver products that push creative boundaries while maintaining performance and accessibility standards. I believe the best digital work emerges from the careful balance of aesthetics and functionality.',
+      about_text_4: 'When not coding, you will find me exploring typography, experimenting with generative art, or seeking inspiration in architecture and editorial design.',
+      quote: 'Design is not just what it looks like and feels like. Design is how it works.',
+      quote_author: '-- Steve Jobs',
+      skills_label: 'Expertise',
+      skills_heading: 'Core Skills',
+      skills_desc: 'A curated selection of technical competencies honed through years of professional practice.',
+      skill_desc_1: 'Semantic markup, modern CSS, responsive layouts, and pixel-perfect implementations.',
+      skill_desc_2: 'ES6+, DOM manipulation, async patterns, and modern framework ecosystems.',
+      skill_desc_3: 'Component architecture, hooks, state management, and server-side rendering.',
+      skill_desc_4: 'RESTful APIs, Express, database integrations, and microservice architectures.',
+      skill_desc_5: 'Scripting, data processing, automation, and backend services.',
+      skill_desc_6: 'User research, wireframing, prototyping, and design system creation.',
+      exp_label: 'Selected Work',
+      exp1_year: '2024 -- Present', exp1_title: 'Senior Creative Developer', exp1_company: 'Digital Studio Co.', exp1_desc: 'Leading front-end architecture and creative development for high-profile client projects. Building design systems and mentoring junior developers.',
+      exp2_year: '2022 -- 2024', exp2_title: 'Full-Stack Developer', exp2_company: 'Tech Innovations Inc.', exp2_desc: 'Developed and maintained scalable web applications serving thousands of users. Implemented CI/CD pipelines and improved performance metrics.',
+      exp3_year: '2020 -- 2022', exp3_title: 'UI/UX Designer & Developer', exp3_company: 'Creative Agency', exp3_desc: 'Bridged the gap between design and development, creating interactive prototypes and translating complex designs into responsive, accessible web experiences.',
+      contact_label: 'Get in Touch',
+      contact_heading: 'Let\'s create something beautiful',
+      contact_sub: 'Available for freelance projects and collaborations'
+    },
+    ja: {
+      gallery_link: 'ギャラリー',
+      hero_issue: '創刊号 No. 01 -- 2026',
+      name: 'あなたの名前',
+      title: 'クリエイティブデベロッパー & デザイナー',
+      about_label: '紹介',
+      about_heading: 'デザインとテクノロジーの交差点でデジタル体験を創造する。',
+      about_text_1: 'デジタルクラフトへの深い情熱に突き動かされ、視覚的に魅力的でありながら技術的にも堅牢なウェブ体験を構築しています。フロントエンド開発、UI/UXデザイン、フルスタックアーキテクチャにわたる経験で、すべてのプロジェクトに統合的な視点を提供します。',
+      about_text_2: '細部への徹底的なこだわりとユーザーニーズへの深い理解を融合し、すべてのインタラクションが直感的で、すべてのビジュアル要素が目的を持つようにしています。',
+      about_text_3: 'スタートアップから有名ブランドまで、多様なチームと協力し、パフォーマンスとアクセシビリティ基準を維持しながらクリエイティブの限界を押し広げる製品を提供してきました。最高のデジタルワークは美学と機能性の慎重なバランスから生まれると信じています。',
+      about_text_4: 'コーディング以外の時間は、タイポグラフィの探求、ジェネラティブアートの実験、建築やエディトリアルデザインからのインスピレーション収集に費やしています。',
+      quote: 'デザインとは見た目や感触だけではない。デザインとはいかに機能するかだ。',
+      quote_author: '-- スティーブ・ジョブズ',
+      skills_label: '専門分野',
+      skills_heading: 'コアスキル',
+      skills_desc: '長年の実務を通じて磨き上げた技術的能力の厳選コレクション。',
+      skill_desc_1: 'セマンティックマークアップ、モダンCSS、レスポンシブレイアウト、ピクセルパーフェクト実装。',
+      skill_desc_2: 'ES6+、DOM操作、非同期パターン、モダンフレームワークエコシステム。',
+      skill_desc_3: 'コンポーネントアーキテクチャ、フック、状態管理、サーバーサイドレンダリング。',
+      skill_desc_4: 'RESTful API、Express、データベース統合、マイクロサービスアーキテクチャ。',
+      skill_desc_5: 'スクリプティング、データ処理、自動化、バックエンドサービス。',
+      skill_desc_6: 'ユーザーリサーチ、ワイヤーフレーミング、プロトタイピング、デザインシステム構築。',
+      exp_label: '主な実績',
+      exp1_year: '2024 -- 現在', exp1_title: 'シニアクリエイティブデベロッパー', exp1_company: 'Digital Studio Co.', exp1_desc: '注目度の高いクライアントプロジェクトのフロントエンドアーキテクチャとクリエイティブ開発をリード。デザインシステムの構築とジュニア開発者のメンタリング。',
+      exp2_year: '2022 -- 2024', exp2_title: 'フルスタックデベロッパー', exp2_company: 'Tech Innovations Inc.', exp2_desc: '数千人のユーザーにサービスを提供するスケーラブルなWebアプリケーションの開発・保守。CI/CDパイプラインの実装とパフォーマンス指標の改善。',
+      exp3_year: '2020 -- 2022', exp3_title: 'UI/UXデザイナー & デベロッパー', exp3_company: 'Creative Agency', exp3_desc: 'デザインと開発の間の橋渡しをし、インタラクティブなプロトタイプを作成し、複雑なデザインをレスポンシブでアクセシブルなウェブ体験に変換。',
+      contact_label: 'お問い合わせ',
+      contact_heading: '美しいものを一緒に創りましょう',
+      contact_sub: 'フリーランスプロジェクトおよびコラボレーション可能'
+    },
+    zh: {
+      gallery_link: '画廊',
+      hero_issue: '创刊号 No. 01 -- 2026',
+      name: '你的名字',
+      title: '创意开发者 & 设计师',
+      about_label: '关于',
+      about_heading: '在设计与技术的交汇处打造数字体验。',
+      about_text_1: '怀着对数字工艺的深厚热情，我构建的网络体验不仅视觉引人注目，而且技术过硬。凭借涵盖前端开发、UI/UX设计和全栈架构的多年经验，我为每个项目带来全面的视角。',
+      about_text_2: '我的方法将对细节的细致关注与对用户需求的深刻理解相结合，确保每次交互都感觉直观，每个视觉元素都有其存在的意义。',
+      about_text_3: '从初创公司到知名品牌，我与不同团队合作，在保持性能和无障碍标准的同时推动创意边界的产品。我相信最好的数字作品来自美学与功能的精心平衡。',
+      about_text_4: '不编码的时候，你会发现我在探索字体排印、尝试生成艺术，或从建筑和编辑设计中寻找灵感。',
+      quote: '设计不仅仅是外观和感觉。设计是它如何运作的。',
+      quote_author: '-- 史蒂夫·乔布斯',
+      skills_label: '专业领域',
+      skills_heading: '核心技能',
+      skills_desc: '通过多年专业实践精心打磨的技术能力精选集。',
+      skill_desc_1: '语义化标记、现代CSS、响应式布局、像素级完美实现。',
+      skill_desc_2: 'ES6+、DOM操作、异步模式、现代框架生态系统。',
+      skill_desc_3: '组件架构、Hooks、状态管理、服务端渲染。',
+      skill_desc_4: 'RESTful API、Express、数据库集成、微服务架构。',
+      skill_desc_5: '脚本编写、数据处理、自动化、后端服务。',
+      skill_desc_6: '用户研究、线框图、原型设计、设计系统创建。',
+      exp_label: '精选作品',
+      exp1_year: '2024 -- 至今', exp1_title: '高级创意开发者', exp1_company: 'Digital Studio Co.', exp1_desc: '领导高知名度客户项目的前端架构和创意开发。构建设计系统并指导初级开发者。',
+      exp2_year: '2022 -- 2024', exp2_title: '全栈开发者', exp2_company: 'Tech Innovations Inc.', exp2_desc: '开发和维护服务数千用户的可扩展Web应用程序。实施CI/CD管道并改善性能指标。',
+      exp3_year: '2020 -- 2022', exp3_title: 'UI/UX设计师 & 开发者', exp3_company: 'Creative Agency', exp3_desc: '弥合设计与开发之间的差距，创建交互式原型并将复杂设计转化为响应式、无障碍的Web体验。',
+      contact_label: '联系我',
+      contact_heading: '让我们一起创造美好',
+      contact_sub: '可接受自由职业项目和合作'
+    }
+  };
+
+  function setLanguage(lang) {
+    document.querySelectorAll('[data-i18n]').forEach(function(el) {
+      var key = el.getAttribute('data-i18n');
+      if (TRANSLATIONS[lang] && TRANSLATIONS[lang][key]) {
+        el.textContent = TRANSLATIONS[lang][key];
+      }
+    });
+    document.querySelectorAll('.lang-btn').forEach(function(btn) {
+      btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+    });
+    try { localStorage.setItem('preferred-lang', lang); } catch(e) {}
+    document.documentElement.lang = lang === 'ko' ? 'ko' : lang === 'ja' ? 'ja' : lang === 'zh' ? 'zh' : 'en';
+  }
+
+  (function() {
+    var params = new URLSearchParams(window.location.search);
+    var urlLang = params.get('lang');
+    var savedLang; try { savedLang = localStorage.getItem('preferred-lang'); } catch(e) {}
+    var lang = urlLang || savedLang || 'en';
+    if (lang !== 'en') setLanguage(lang);
+    else document.querySelectorAll('.lang-btn').forEach(function(btn) { btn.classList.toggle('active', btn.getAttribute('data-lang') === 'en'); });
+  })();
+</script>
+
+</body>
+</html>

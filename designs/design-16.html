@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio - Vaporwave</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--pink:#FF6AD5;--purple:#C774E8;--lilac:#AD8CFF;--blue:#8795E8;--cyan:#94D0FF;--hot-pink:#FF1493;--teal:#00CED1;--dark:#1a0a2e;--darker:#0d0521}
+body{font-family:'Inter',sans-serif;background:var(--darker);color:#fff;overflow-x:hidden;min-height:100vh}
+
+/* Scanline overlay */
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.08) 2px,rgba(0,0,0,0.08) 4px)}
+
+/* CRT curve */
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9998;box-shadow:inset 0 0 120px rgba(0,0,0,0.5);border-radius:8px}
+
+/* Background gradient */
+.bg-gradient{position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(180deg,#0d0521 0%,#1a0a2e 20%,#2d1b69 40%,#C774E8 60%,#FF6AD5 75%,#ff9a56 90%,#ffe066 100%);z-index:-3}
+
+/* Grid floor */
+.grid-floor{position:fixed;bottom:0;left:0;width:100%;height:60%;z-index:-2;perspective:500px;overflow:hidden}
+.grid-floor::after{content:'';position:absolute;bottom:0;left:-50%;width:200%;height:100%;transform:rotateX(60deg);transform-origin:bottom center;background:repeating-linear-gradient(90deg,transparent,transparent 49px,rgba(148,208,255,0.3) 49px,rgba(148,208,255,0.3) 50px),repeating-linear-gradient(0deg,transparent,transparent 49px,rgba(148,208,255,0.3) 49px,rgba(148,208,255,0.3) 50px);animation:gridScroll 3s linear infinite}
+@keyframes gridScroll{0%{transform:rotateX(60deg) translateY(0)}100%{transform:rotateX(60deg) translateY(50px)}}
+
+/* Sunset bands */
+.sunset-bands{position:fixed;top:40%;left:0;width:100%;height:30%;z-index:-1;opacity:0.3}
+.sunset-band{width:100%;height:4px;margin-bottom:8px;border-radius:2px}
+.sunset-band:nth-child(1){background:var(--hot-pink);animation:bandPulse 3s ease-in-out infinite}
+.sunset-band:nth-child(2){background:var(--pink);animation:bandPulse 3s ease-in-out 0.3s infinite}
+.sunset-band:nth-child(3){background:var(--purple);animation:bandPulse 3s ease-in-out 0.6s infinite}
+.sunset-band:nth-child(4){background:var(--lilac);animation:bandPulse 3s ease-in-out 0.9s infinite}
+.sunset-band:nth-child(5){background:var(--cyan);animation:bandPulse 3s ease-in-out 1.2s infinite}
+@keyframes bandPulse{0%,100%{opacity:0.5;transform:scaleX(0.9)}50%{opacity:1;transform:scaleX(1)}}
+
+/* Floating shapes */
+.floating-shapes{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;pointer-events:none}
+.shape{position:absolute;opacity:0.4;animation:floatShape 8s ease-in-out infinite}
+.shape.triangle{width:0;height:0;border-left:30px solid transparent;border-right:30px solid transparent;border-bottom:52px solid var(--pink)}
+.shape.circle{width:40px;height:40px;border-radius:50%;border:3px solid var(--cyan)}
+.shape.diamond{width:30px;height:30px;background:var(--lilac);transform:rotate(45deg)}
+.shape.column{width:20px;height:60px;border:2px solid var(--purple);border-radius:3px 3px 0 0;position:relative}
+.shape.column::before{content:'';position:absolute;top:-8px;left:-6px;width:32px;height:8px;background:var(--purple);border-radius:2px}
+.shape:nth-child(1){top:10%;left:5%;animation-delay:0s;animation-duration:7s}
+.shape:nth-child(2){top:20%;right:10%;animation-delay:1s;animation-duration:9s}
+.shape:nth-child(3){top:60%;left:8%;animation-delay:2s;animation-duration:6s}
+.shape:nth-child(4){top:15%;left:50%;animation-delay:0.5s;animation-duration:8s}
+.shape:nth-child(5){top:70%;right:15%;animation-delay:1.5s;animation-duration:10s}
+.shape:nth-child(6){top:40%;left:80%;animation-delay:3s;animation-duration:7s}
+@keyframes floatShape{0%,100%{transform:translateY(0) rotate(0deg)}25%{transform:translateY(-20px) rotate(5deg)}50%{transform:translateY(-10px) rotate(-3deg)}75%{transform:translateY(-25px) rotate(2deg)}}
+.shape.diamond{animation-name:floatDiamond}
+@keyframes floatDiamond{0%,100%{transform:translateY(0) rotate(45deg)}50%{transform:translateY(-20px) rotate(225deg)}}
+
+/* Palm trees */
+.palm{position:fixed;bottom:0;z-index:-1;opacity:0.15}
+.palm-left{left:5%}.palm-right{right:5%}
+.palm .trunk{width:8px;height:120px;background:linear-gradient(90deg,#2d1b69,#1a0a2e);margin:0 auto;border-radius:4px}
+.palm .leaves{position:relative;width:100px;height:60px}
+.palm .leaf{position:absolute;width:50px;height:20px;background:var(--teal);border-radius:50% 50% 0 0;top:0;left:25px;transform-origin:bottom center}
+.palm .leaf:nth-child(1){transform:rotate(-40deg) scaleY(1.5)}
+.palm .leaf:nth-child(2){transform:rotate(-10deg) scaleY(1.3)}
+.palm .leaf:nth-child(3){transform:rotate(20deg) scaleY(1.5)}
+.palm .leaf:nth-child(4){transform:rotate(50deg) scaleY(1.2)}
+
+/* Navigation */
+.nav{position:fixed;top:0;left:0;width:100%;padding:20px 40px;display:flex;justify-content:space-between;align-items:center;z-index:100;background:linear-gradient(180deg,rgba(13,5,33,0.9),transparent)}
+.nav-logo{font-family:'VT323',monospace;font-size:28px;color:var(--cyan);text-shadow:0 0 10px var(--cyan),0 0 30px var(--cyan)}
+.lang-switcher{display:flex;gap:6px}
+.lang-btn{background:rgba(255,255,255,0.05);border:1px solid rgba(148,208,255,0.3);color:var(--cyan);padding:6px 12px;cursor:pointer;font-family:'VT323',monospace;font-size:16px;transition:all 0.3s;border-radius:2px}
+.lang-btn:hover,.lang-btn.active{background:var(--cyan);color:var(--darker);box-shadow:0 0 10px var(--cyan)}
+.gallery-link{font-family:'VT323',monospace;color:var(--pink);text-decoration:none;font-size:18px;text-shadow:0 0 10px var(--pink);transition:all 0.3s}
+.gallery-link:hover{color:var(--cyan);text-shadow:0 0 15px var(--cyan)}
+
+/* Main content */
+.content{position:relative;z-index:10;max-width:1100px;margin:0 auto;padding:120px 24px 80px}
+
+/* Hero */
+.hero{text-align:center;padding:80px 0 120px;position:relative}
+.hero-title{font-family:'VT323',monospace;font-size:72px;letter-spacing:0.4em;text-transform:uppercase;background:linear-gradient(90deg,var(--pink),var(--purple),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:20px;animation:glitch 4s infinite;position:relative}
+.hero-title::before,.hero-title::after{content:attr(data-text);position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(90deg,var(--pink),var(--purple),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-title::before{animation:glitchBefore 4s infinite;clip-path:polygon(0 0,100% 0,100% 35%,0 35%)}
+.hero-title::after{animation:glitchAfter 4s infinite;clip-path:polygon(0 65%,100% 65%,100% 100%,0 100%)}
+@keyframes glitchBefore{0%,100%{transform:translate(0)}2%{transform:translate(3px,-1px)}4%{transform:translate(-3px,1px)}6%{transform:translate(0)}}
+@keyframes glitchAfter{0%,100%{transform:translate(0)}3%{transform:translate(-3px,2px)}5%{transform:translate(3px,-1px)}7%{transform:translate(0)}}
+.hero-subtitle{font-family:'VT323',monospace;font-size:28px;color:var(--cyan);text-shadow:0 0 10px var(--cyan);letter-spacing:0.1em}
+.hero-deco{font-family:'VT323',monospace;font-size:18px;color:var(--lilac);margin-top:20px;opacity:0.6;letter-spacing:0.3em}
+.hero-japanese{font-size:14px;color:var(--pink);opacity:0.5;margin-top:12px;letter-spacing:0.5em}
+
+/* Section styling */
+.section{margin-bottom:100px;opacity:0;transform:translateY(40px);transition:all 0.8s cubic-bezier(0.25,0.46,0.45,0.94)}
+.section.visible{opacity:1;transform:translateY(0)}
+.section-title{font-family:'VT323',monospace;font-size:42px;letter-spacing:0.3em;text-transform:uppercase;color:var(--pink);text-shadow:0 0 15px var(--pink);margin-bottom:40px;text-align:center;position:relative}
+.section-title::before,.section-title::after{content:'//';color:var(--cyan);opacity:0.5}
+.section-title::before{margin-right:16px}
+.section-title::after{margin-left:16px}
+
+/* About */
+.about-content{background:linear-gradient(135deg,rgba(26,10,46,0.8),rgba(45,27,105,0.6));border:1px solid rgba(199,116,232,0.3);padding:40px;border-radius:4px;position:relative;overflow:hidden}
+.about-content::before{content:'';position:absolute;top:0;left:0;width:100%;height:2px;background:linear-gradient(90deg,var(--pink),var(--purple),var(--cyan));animation:scanLine 3s linear infinite}
+@keyframes scanLine{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.about-text{font-size:18px;line-height:1.8;color:rgba(255,255,255,0.85)}
+
+/* Skills - Win95 style */
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
+.win95-window{background:#c0c0c0;border:2px solid;border-color:#fff #808080 #808080 #fff;padding:0;font-family:'VT323',monospace;transition:transform 0.3s}
+.win95-window:hover{transform:translateY(-4px)}
+.win95-titlebar{background:linear-gradient(90deg,#000080,#1084d0);padding:4px 6px;display:flex;justify-content:space-between;align-items:center}
+.win95-titlebar span{color:#fff;font-size:16px}
+.win95-buttons{display:flex;gap:2px}
+.win95-btn{width:18px;height:18px;background:#c0c0c0;border:2px solid;border-color:#fff #808080 #808080 #fff;display:flex;align-items:center;justify-content:center;font-size:10px;color:#000;cursor:pointer}
+.win95-body{padding:16px;color:#000}
+.win95-body .skill-name{font-size:20px;margin-bottom:8px;color:#000080}
+.win95-body .skill-bar-container{background:#fff;border:2px solid;border-color:#808080 #fff #fff #808080;height:20px;position:relative}
+.win95-body .skill-bar{height:100%;background:linear-gradient(90deg,#000080,#1084d0);transition:width 1s ease}
+.win95-body .skill-level{font-size:14px;margin-top:4px;color:#808080}
+
+/* Contact */
+.contact-box{text-align:center;padding:60px 40px;background:linear-gradient(135deg,rgba(26,10,46,0.8),rgba(45,27,105,0.6));border:1px solid rgba(255,106,213,0.3);position:relative}
+.contact-box::before{content:'';position:absolute;inset:4px;border:1px dashed rgba(148,208,255,0.2);pointer-events:none}
+.contact-heading{font-family:'VT323',monospace;font-size:48px;color:var(--pink);text-shadow:0 0 20px var(--pink);margin-bottom:12px}
+.contact-sub{font-family:'VT323',monospace;font-size:22px;color:var(--cyan);text-shadow:0 0 10px var(--cyan)}
+.contact-links{display:flex;gap:20px;justify-content:center;margin-top:32px;flex-wrap:wrap}
+.contact-link{font-family:'VT323',monospace;font-size:20px;color:var(--lilac);text-decoration:none;padding:10px 24px;border:1px solid var(--lilac);transition:all 0.3s;position:relative;overflow:hidden}
+.contact-link::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(173,140,255,0.2),transparent);transition:left 0.5s}
+.contact-link:hover::before{left:100%}
+.contact-link:hover{background:rgba(173,140,255,0.15);box-shadow:0 0 15px rgba(173,140,255,0.3)}
+
+/* Footer */
+.footer{text-align:center;padding:40px 20px;font-family:'VT323',monospace;color:var(--lilac);opacity:0.5;font-size:18px}
+
+/* Responsive */
+@media(max-width:768px){
+  .hero-title{font-size:42px;letter-spacing:0.2em}
+  .hero-subtitle{font-size:22px}
+  .section-title{font-size:32px;letter-spacing:0.15em}
+  .nav{padding:16px 20px}
+  .content{padding:100px 16px 60px}
+  .skills-grid{grid-template-columns:1fr}
+  .about-content{padding:24px}
+  .contact-heading{font-size:36px}
+  .palm{display:none}
+}
+@media(max-width:375px){
+  .hero-title{font-size:28px;letter-spacing:0.1em}
+  .hero-subtitle{font-size:18px}
+  .section-title{font-size:24px;letter-spacing:0.1em}
+  .lang-btn{padding:4px 8px;font-size:14px}
+  .contact-links{flex-direction:column;align-items:center}
+}
+@media(min-width:1440px){
+  .content{max-width:1200px}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-gradient"></div>
+<div class="grid-floor"></div>
+
+<div class="sunset-bands">
+  <div class="sunset-band"></div>
+  <div class="sunset-band"></div>
+  <div class="sunset-band"></div>
+  <div class="sunset-band"></div>
+  <div class="sunset-band"></div>
+</div>
+
+<div class="floating-shapes">
+  <div class="shape triangle" style="top:10%;left:5%"></div>
+  <div class="shape circle" style="top:20%;right:10%"></div>
+  <div class="shape diamond" style="top:55%;left:8%"></div>
+  <div class="shape column" style="top:15%;left:50%"></div>
+  <div class="shape triangle" style="top:65%;right:15%"></div>
+  <div class="shape circle" style="top:40%;left:80%"></div>
+</div>
+
+<div class="palm palm-left">
+  <div class="leaves">
+    <div class="leaf"></div><div class="leaf"></div><div class="leaf"></div><div class="leaf"></div>
+  </div>
+  <div class="trunk"></div>
+</div>
+<div class="palm palm-right">
+  <div class="leaves">
+    <div class="leaf"></div><div class="leaf"></div><div class="leaf"></div><div class="leaf"></div>
+  </div>
+  <div class="trunk"></div>
+</div>
+
+<nav class="nav">
+  <a href="../index.html" class="gallery-link" data-i18n="gallery_link">&#8592; Gallery</a>
+  <div class="lang-switcher">
+    <button class="lang-btn active" data-lang="en" onclick="setLanguage('en')">EN</button>
+    <button class="lang-btn" data-lang="ko" onclick="setLanguage('ko')">&#54620;&#44397;&#50612;</button>
+    <button class="lang-btn" data-lang="ja" onclick="setLanguage('ja')">&#26085;&#26412;&#35486;</button>
+    <button class="lang-btn" data-lang="zh" onclick="setLanguage('zh')">&#20013;&#25991;</button>
+  </div>
+</nav>
+
+<div class="content">
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-japanese">&#12487;&#12472;&#12479;&#12523; &#12489;&#12522;&#12540;&#12512;</div>
+    <h1 class="hero-title" data-text="Your Name" data-i18n="name">Your Name</h1>
+    <p class="hero-subtitle" data-i18n="title">Creative Developer &amp; Designer</p>
+    <div class="hero-deco">&#9650; &#9679; &#9632; &#9670; &#9651; &#9675;</div>
+    <div class="hero-japanese">&#26410;&#26469;&#12398;&#32654;&#23398; &bull; &#12487;&#12472;&#12479;&#12523;&#12450;&#12540;&#12488;</div>
+  </section>
+
+  <!-- About -->
+  <section class="section" id="about">
+    <h2 class="section-title" data-i18n="about_label">About</h2>
+    <div class="about-content">
+      <p class="about-text" data-i18n="about_text">A creative developer crafting digital experiences at the intersection of design and technology. Building beautiful and functional products through clean code and thoughtful interfaces.</p>
+    </div>
+  </section>
+
+  <!-- Skills -->
+  <section class="section" id="skills">
+    <h2 class="section-title" data-i18n="skills_label">Expertise</h2>
+    <div class="skills-grid">
+      <div class="win95-window">
+        <div class="win95-titlebar">
+          <span>frontend.exe</span>
+          <div class="win95-buttons"><div class="win95-btn">_</div><div class="win95-btn">&#9633;</div><div class="win95-btn">X</div></div>
+        </div>
+        <div class="win95-body">
+          <div class="skill-name">Frontend Dev</div>
+          <div class="skill-bar-container"><div class="skill-bar" style="width:92%"></div></div>
+          <div class="skill-level">React / Vue / TypeScript</div>
+        </div>
+      </div>
+      <div class="win95-window">
+        <div class="win95-titlebar">
+          <span>design.exe</span>
+          <div class="win95-buttons"><div class="win95-btn">_</div><div class="win95-btn">&#9633;</div><div class="win95-btn">X</div></div>
+        </div>
+        <div class="win95-body">
+          <div class="skill-name">UI/UX Design</div>
+          <div class="skill-bar-container"><div class="skill-bar" style="width:88%"></div></div>
+          <div class="skill-level">Figma / Prototyping</div>
+        </div>
+      </div>
+      <div class="win95-window">
+        <div class="win95-titlebar">
+          <span>backend.exe</span>
+          <div class="win95-buttons"><div class="win95-btn">_</div><div class="win95-btn">&#9633;</div><div class="win95-btn">X</div></div>
+        </div>
+        <div class="win95-body">
+          <div class="skill-name">Backend Dev</div>
+          <div class="skill-bar-container"><div class="skill-bar" style="width:80%"></div></div>
+          <div class="skill-level">Node.js / Python / APIs</div>
+        </div>
+      </div>
+      <div class="win95-window">
+        <div class="win95-titlebar">
+          <span>creative.exe</span>
+          <div class="win95-buttons"><div class="win95-btn">_</div><div class="win95-btn">&#9633;</div><div class="win95-btn">X</div></div>
+        </div>
+        <div class="win95-body">
+          <div class="skill-name">Creative Coding</div>
+          <div class="skill-bar-container"><div class="skill-bar" style="width:85%"></div></div>
+          <div class="skill-level">Canvas / WebGL / GSAP</div>
+        </div>
+      </div>
+      <div class="win95-window">
+        <div class="win95-titlebar">
+          <span>mobile.exe</span>
+          <div class="win95-buttons"><div class="win95-btn">_</div><div class="win95-btn">&#9633;</div><div class="win95-btn">X</div></div>
+        </div>
+        <div class="win95-body">
+          <div class="skill-name">Mobile Dev</div>
+          <div class="skill-bar-container"><div class="skill-bar" style="width:78%"></div></div>
+          <div class="skill-level">React Native / Flutter</div>
+        </div>
+      </div>
+      <div class="win95-window">
+        <div class="win95-titlebar">
+          <span>devops.exe</span>
+          <div class="win95-buttons"><div class="win95-btn">_</div><div class="win95-btn">&#9633;</div><div class="win95-btn">X</div></div>
+        </div>
+        <div class="win95-body">
+          <div class="skill-name">DevOps</div>
+          <div class="skill-bar-container"><div class="skill-bar" style="width:75%"></div></div>
+          <div class="skill-level">Docker / CI/CD / AWS</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section class="section" id="contact">
+    <h2 class="section-title" data-i18n="contact_label">Get in Touch</h2>
+    <div class="contact-box">
+      <h3 class="contact-heading" data-i18n="contact_heading">Let's Work Together</h3>
+      <p class="contact-sub" data-i18n="contact_sub">Available for freelance projects</p>
+      <div class="contact-links">
+        <a href="mailto:hello@example.com" class="contact-link">EMAIL.exe</a>
+        <a href="#" class="contact-link">GITHUB.exe</a>
+        <a href="#" class="contact-link">LINKEDIN.exe</a>
+        <a href="#" class="contact-link">TWITTER.exe</a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<footer class="footer">
+  <p>&copy; 2025 // PORTFOLIO v1.0 // ALL RIGHTS RESERVED</p>
+  <p style="margin-top:8px;letter-spacing:0.3em;color:var(--pink);opacity:0.4">&#26410;&#26469; &#12539; &#32654;&#23398; &#12539; &#22818;</p>
+</footer>
+
+<script>
+var TRANSLATIONS={
+  ko:{name:'\uD64D\uAE38\uB3D9',title:'\uD06C\uB9AC\uC5D0\uC774\uD2F0\uBE0C \uAC1C\uBC1C\uC790 & \uB514\uC790\uC774\uB108',about_label:'\uC18C\uAC1C',about_text:'\uB514\uC790\uC778\uACFC \uAE30\uC220\uC758 \uAD50\uCC28\uC810\uC5D0\uC11C \uB514\uC9C0\uD138 \uACBD\uD5D8\uC744 \uB9CC\uB4DC\uB294 \uD06C\uB9AC\uC5D0\uC774\uD2F0\uBE0C \uAC1C\uBC1C\uC790\uC785\uB2C8\uB2E4. \uAE54\uB054\uD55C \uCF54\uB4DC\uC640 \uC138\uC2EC\uD55C \uC778\uD130\uD398\uC774\uC2A4\uB97C \uD1B5\uD574 \uC544\uB984\uB2F5\uACE0 \uAE30\uB2A5\uC801\uC778 \uC81C\uD488\uC744 \uB9CC\uB4ED\uB2C8\uB2E4.',skills_label:'\uC804\uBB38 \uBD84\uC57C',contact_label:'\uC5F0\uB77D\uD558\uAE30',contact_heading:'\uD568\uAED8 \uC77C\uD574\uC694',contact_sub:'\uD504\uB9AC\uB79C\uC11C \uD504\uB85C\uC81D\uD2B8 \uAC00\uB2A5',gallery_link:'\u2190 \uAC24\uB7EC\uB9AC'},
+  en:{name:'Your Name',title:'Creative Developer & Designer',about_label:'About',about_text:'A creative developer crafting digital experiences at the intersection of design and technology. Building beautiful and functional products through clean code and thoughtful interfaces.',skills_label:'Expertise',contact_label:'Get in Touch',contact_heading:"Let's Work Together",contact_sub:'Available for freelance projects',gallery_link:'\u2190 Gallery'},
+  ja:{name:'\u3042\u306A\u305F\u306E\u540D\u524D',title:'\u30AF\u30EA\u30A8\u30A4\u30C6\u30A3\u30D6\u30C7\u30D9\u30ED\u30C3\u30D1\u30FC & \u30C7\u30B6\u30A4\u30CA\u30FC',about_label:'\u7D39\u4ECB',about_text:'\u30C7\u30B6\u30A4\u30F3\u3068\u30C6\u30AF\u30CE\u30ED\u30B8\u30FC\u306E\u4EA4\u5DEE\u70B9\u3067\u30C7\u30B8\u30BF\u30EB\u4F53\u9A13\u3092\u751F\u307F\u51FA\u3059\u30AF\u30EA\u30A8\u30A4\u30C6\u30A3\u30D6\u30C7\u30D9\u30ED\u30C3\u30D1\u30FC\u3067\u3059\u3002\u30AF\u30EA\u30FC\u30F3\u306A\u30B3\u30FC\u30C9\u3068\u601D\u616E\u6DF1\u3044\u30A4\u30F3\u30BF\u30FC\u30D5\u30A7\u30FC\u30B9\u3067\u7F8E\u3057\u304F\u6A5F\u80FD\u7684\u306A\u88FD\u54C1\u3092\u69CB\u7BC9\u3057\u307E\u3059\u3002',skills_label:'\u5C02\u9580\u5206\u91CE',contact_label:'\u304A\u554F\u3044\u5408\u308F\u305B',contact_heading:'\u4E00\u7DD2\u306B\u50CD\u304D\u307E\u3057\u3087\u3046',contact_sub:'\u30D5\u30EA\u30FC\u30E9\u30F3\u30B9\u30D7\u30ED\u30B8\u30A7\u30AF\u30C8\u5BFE\u5FDC\u53EF\u80FD',gallery_link:'\u2190 \u30AE\u30E3\u30E9\u30EA\u30FC'},
+  zh:{name:'\u4F60\u7684\u540D\u5B57',title:'\u521B\u610F\u5F00\u53D1\u8005 & \u8BBE\u8BA1\u5E08',about_label:'\u5173\u4E8E',about_text:'\u5728\u8BBE\u8BA1\u4E0E\u6280\u672F\u7684\u4EA4\u6C47\u5904\u521B\u9020\u6570\u5B57\u4F53\u9A8C\u7684\u521B\u610F\u5F00\u53D1\u8005\u3002\u901A\u8FC7\u7B80\u6D01\u7684\u4EE3\u7801\u548C\u7CBE\u5FC3\u8BBE\u8BA1\u7684\u754C\u9762\uFF0C\u6784\u5EFA\u65E2\u7F8E\u89C2\u53C8\u5B9E\u7528\u7684\u4EA7\u54C1\u3002',skills_label:'\u4E13\u4E1A\u9886\u57DF',contact_label:'\u8054\u7CFB\u6211',contact_heading:'\u4E00\u8D77\u5408\u4F5C\u5427',contact_sub:'\u53EF\u63A5\u53D7\u81EA\u7531\u804C\u4E1A\u9879\u76EE',gallery_link:'\u2190 \u753B\u5ECA'}
+};
+
+function setLanguage(lang){
+  document.querySelectorAll('[data-i18n]').forEach(function(el){
+    var key=el.getAttribute('data-i18n');
+    if(TRANSLATIONS[lang]&&TRANSLATIONS[lang][key]){
+      el.textContent=TRANSLATIONS[lang][key];
+      if(el.hasAttribute('data-text'))el.setAttribute('data-text',TRANSLATIONS[lang][key]);
+    }
+  });
+  document.querySelectorAll('.lang-btn').forEach(function(btn){
+    btn.classList.toggle('active',btn.getAttribute('data-lang')===lang);
+  });
+  try{localStorage.setItem('preferred-lang',lang)}catch(e){}
+  document.documentElement.lang=lang==='ko'?'ko':lang==='ja'?'ja':lang==='zh'?'zh':'en';
+}
+(function(){
+  var params=new URLSearchParams(window.location.search);
+  var lang=params.get('lang')||(function(){try{return localStorage.getItem('preferred-lang')}catch(e){return null}})() ||'en';
+  if(lang!=='en')setLanguage(lang);
+  else document.querySelectorAll('.lang-btn').forEach(function(btn){btn.classList.toggle('active',btn.getAttribute('data-lang')==='en')});
+})();
+
+/* Scroll reveal */
+var sections=document.querySelectorAll('.section');
+var observer=new IntersectionObserver(function(entries){
+  entries.forEach(function(entry){
+    if(entry.isIntersecting){entry.target.classList.add('visible');observer.unobserve(entry.target)}
+  });
+},{threshold:0.15});
+sections.forEach(function(s){observer.observe(s)});
+</script>
+</body>
+</html>

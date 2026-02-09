@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Intro - Choose Your Style</title>
+    <meta name="description" content="20 unique personal introduction page designs. Choose from Minimal Noir, Gradient Aurora, Terminal Hacker, 3D Parallax, Neobrutalism, Japanese Zen, Retro Arcade, Magazine Editorial, Cosmic Space, Bento Grid, Glassmorphism Dark, Cyberpunk Neon, Watercolor Artistic, Swiss Bauhaus, Newspaper Print, Vaporwave, Clay Morphism, Isometric, Line Art Wireframe, and Organic Nature styles.">
+    <meta property="og:title" content="My Intro - Choose Your Style">
+    <meta property="og:description" content="20 unique personal introduction page designs with diverse creative styles.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://via.placeholder.com/1200x630/0a0a0a/6366f1?text=20+Unique+Designs">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="My Intro - Choose Your Style">
+    <meta name="twitter:description" content="20 unique personal introduction page designs with diverse creative styles.">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* ── CUSTOM CURSOR ── */
+        .cursor-glow {
+            position: fixed;
+            width: 300px; height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(99,102,241,0.12) 0%, rgba(99,102,241,0.04) 40%, transparent 70%);
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            will-change: transform;
+            transition: opacity .3s;
+        }
+        .cursor-dot {
+            position: fixed;
+            width: 8px; height: 8px;
+            background: #818cf8;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            transform: translate(-50%, -50%);
+            will-change: transform;
+            transition: transform .15s, background .15s;
+        }
+        .cursor-dot.hovering {
+            transform: translate(-50%, -50%) scale(2.5);
+            background: #a5b4fc;
+        }
+        @media (pointer: coarse) {
+            .cursor-glow, .cursor-dot { display: none; }
+            body { cursor: auto; }
+        }
+
+        /* ── LANGUAGE SWITCHER ── */
+        .lang-switcher {
+            position: fixed;
+            top: 1.2rem;
+            right: 1.5rem;
+            z-index: 1001;
+            display: flex;
+            gap: 4px;
+            opacity: 0;
+            animation: heroFadeIn .8s ease-out .3s forwards;
+        }
+        .lang-btn {
+            font-family: inherit;
+            font-size: 0.65rem;
+            font-weight: 500;
+            padding: 5px 10px;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.04);
+            color: rgba(255,255,255,0.4);
+            border-radius: 6px;
+            cursor: none;
+            transition: all 0.25s;
+        }
+        .lang-btn:hover, .lang-btn.active {
+            background: rgba(99,102,241,0.2);
+            color: #a5b4fc;
+            border-color: rgba(99,102,241,0.5);
+        }
+        @media (pointer: coarse) { .lang-btn { cursor: pointer; } }
+
+        /* ── HERO ── */
+        .hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 44vh;
+            padding: 80px 20px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(ellipse at 50% 0%, rgba(99,102,241,0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        /* ── ANIMATED FLOATING PARTICLES ── */
+        .particles {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .particle {
+            position: absolute;
+            width: 3px; height: 3px;
+            background: rgba(129, 140, 248, 0.5);
+            border-radius: 50%;
+            will-change: transform, opacity;
+        }
+        @keyframes floatUp1 {
+            0%   { transform: translate(0, 0) scale(1); opacity: 0; }
+            10%  { opacity: 1; }
+            90%  { opacity: 0.6; }
+            100% { transform: translate(60px, -200px) scale(0.3); opacity: 0; }
+        }
+        @keyframes floatUp2 {
+            0%   { transform: translate(0, 0) scale(1); opacity: 0; }
+            10%  { opacity: 0.8; }
+            90%  { opacity: 0.4; }
+            100% { transform: translate(-40px, -220px) scale(0.5); opacity: 0; }
+        }
+        @keyframes floatUp3 {
+            0%   { transform: translate(0, 0) scale(0.8); opacity: 0; }
+            10%  { opacity: 0.7; }
+            90%  { opacity: 0.3; }
+            100% { transform: translate(30px, -180px) scale(0.2); opacity: 0; }
+        }
+        .particle:nth-child(1)  { left: 10%; bottom: 10%; animation: floatUp1 8s ease-in-out infinite; animation-delay: 0s; }
+        .particle:nth-child(2)  { left: 20%; bottom: 20%; animation: floatUp2 10s ease-in-out infinite; animation-delay: 1s; width: 4px; height: 4px; }
+        .particle:nth-child(3)  { left: 35%; bottom: 5%;  animation: floatUp3 7s ease-in-out infinite; animation-delay: 2s; }
+        .particle:nth-child(4)  { left: 50%; bottom: 15%; animation: floatUp1 9s ease-in-out infinite; animation-delay: 0.5s; width: 2px; height: 2px; }
+        .particle:nth-child(5)  { left: 65%; bottom: 8%;  animation: floatUp2 11s ease-in-out infinite; animation-delay: 3s; }
+        .particle:nth-child(6)  { left: 75%; bottom: 25%; animation: floatUp3 8s ease-in-out infinite; animation-delay: 1.5s; width: 5px; height: 5px; background: rgba(165,180,252,0.3); }
+        .particle:nth-child(7)  { left: 85%; bottom: 12%; animation: floatUp1 10s ease-in-out infinite; animation-delay: 4s; }
+        .particle:nth-child(8)  { left: 45%; bottom: 30%; animation: floatUp2 7s ease-in-out infinite; animation-delay: 2.5s; width: 2px; height: 2px; }
+        .particle:nth-child(9)  { left: 5%;  bottom: 35%; animation: floatUp3 12s ease-in-out infinite; animation-delay: 5s; width: 4px; height: 4px; background: rgba(165,180,252,0.4); }
+        .particle:nth-child(10) { left: 90%; bottom: 5%;  animation: floatUp1 9s ease-in-out infinite; animation-delay: 3.5s; }
+
+        .hero-orb {
+            position: absolute;
+            width: 400px; height: 400px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(99,102,241,0.1) 0%, transparent 70%);
+            animation: orbPulse 6s ease-in-out infinite;
+            pointer-events: none;
+            will-change: transform, opacity;
+        }
+        @keyframes orbPulse {
+            0%, 100% { transform: scale(1); opacity: 0.6; }
+            50% { transform: scale(1.3); opacity: 1; }
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, #fff 0%, #a5b4fc 50%, #818cf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: heroFadeIn .8s ease-out .2s forwards;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: #94a3b8;
+            max-width: 560px;
+            line-height: 1.6;
+            position: relative;
+            z-index: 1;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: heroFadeIn .8s ease-out .45s forwards;
+        }
+
+        @keyframes heroFadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── TOOLBAR (Device Preview + Filter) ── */
+        .toolbar {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+            opacity: 0;
+            transform: translateY(16px);
+            animation: heroFadeIn .8s ease-out .55s forwards;
+        }
+
+        /* ── DEVICE PREVIEW TOGGLE ── */
+        .device-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .device-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-right: 4px;
+        }
+        .device-btn {
+            font-family: inherit;
+            font-size: 0;
+            padding: 7px 12px;
+            border-radius: 8px;
+            border: 1px solid #1e1e1e;
+            background: transparent;
+            color: #64748b;
+            cursor: none;
+            transition: all .25s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .device-btn svg { width: 16px; height: 16px; fill: currentColor; }
+        .device-btn span { font-size: 0.7rem; font-weight: 500; }
+        .device-btn:hover {
+            border-color: #6366f1;
+            color: #a5b4fc;
+        }
+        .device-btn.active {
+            background: rgba(99,102,241,0.15);
+            border-color: #6366f1;
+            color: #a5b4fc;
+        }
+        @media (pointer: coarse) { .device-btn { cursor: pointer; } }
+
+        /* ── FILTER BAR ── */
+        .filter-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+        .filter-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-right: 4px;
+        }
+        .filter-btn {
+            font-family: inherit;
+            font-size: 0.7rem;
+            font-weight: 500;
+            padding: 5px 12px;
+            border-radius: 100px;
+            border: 1px solid #1e1e1e;
+            background: transparent;
+            color: #64748b;
+            cursor: none;
+            transition: all .25s;
+            white-space: nowrap;
+        }
+        .filter-btn:hover {
+            border-color: #6366f1;
+            color: #a5b4fc;
+        }
+        .filter-btn.active {
+            background: rgba(99,102,241,0.15);
+            border-color: #6366f1;
+            color: #a5b4fc;
+        }
+        @media (pointer: coarse) {
+            .filter-btn { cursor: pointer; }
+        }
+
+        /* ── GRID ── */
+        .grid-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 16px 40px 40px;
+        }
+
+        .grid-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #6366f1;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-bottom: 24px;
+            opacity: 0;
+            transform: translateY(16px);
+            animation: heroFadeIn .8s ease-out .7s forwards;
+        }
+
+        .design-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+        }
+
+        /* ── CARD ── */
+        .design-card {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            background: #111;
+            border: 1px solid #1e1e1e;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                        border-color 0.4s,
+                        box-shadow 0.4s,
+                        opacity 0.4s;
+            cursor: none;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            opacity: 0;
+            transform: translateY(30px);
+            will-change: transform, opacity;
+        }
+        @media (pointer: coarse) {
+            .design-card { cursor: pointer; }
+        }
+
+        .design-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .design-card.filtered-out {
+            display: none;
+        }
+
+        .design-card:hover {
+            transform: translateY(-8px);
+            border-color: #6366f1;
+            box-shadow: 0 20px 60px rgba(99,102,241,0.15), 0 0 0 1px rgba(99,102,241,0.3);
+        }
+
+        .card-preview {
+            height: 220px;
+            position: relative;
+            overflow: hidden;
+            transition: height 0.4s ease;
+        }
+
+        .card-preview-placeholder {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #151520 0%, #1a1a2e 50%, #151520 100%);
+            background-size: 200% 200%;
+            animation: shimmer 2s ease-in-out infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 0;
+        }
+        @keyframes shimmer {
+            0%   { background-position: 100% 100%; }
+            50%  { background-position: 0% 0%; }
+            100% { background-position: 100% 100%; }
+        }
+        .card-preview-placeholder .spinner {
+            width: 24px; height: 24px;
+            border: 2px solid #1e1e1e;
+            border-top-color: #6366f1;
+            border-radius: 50%;
+            animation: spin .8s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Device preview modes */
+        .card-preview iframe {
+            width: 200%;
+            height: 200%;
+            transform: scale(0.5);
+            transform-origin: top left;
+            border: none;
+            pointer-events: none;
+            position: relative;
+            z-index: 1;
+            opacity: 0;
+            transition: opacity .5s ease-out, width 0.4s, height 0.4s, transform 0.4s;
+        }
+        .card-preview iframe.loaded {
+            opacity: 1;
+        }
+
+        /* Tablet preview */
+        body.preview-tablet .card-preview iframe {
+            width: 768px;
+            height: 1024px;
+            transform: scale(0.43);
+        }
+        body.preview-tablet .card-preview { height: 240px; }
+
+        /* Mobile preview */
+        body.preview-mobile .card-preview iframe {
+            width: 375px;
+            height: 667px;
+            transform: scale(0.57);
+        }
+        body.preview-mobile .card-preview { height: 210px; }
+
+        .card-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.8) 100%);
+            z-index: 2;
+        }
+
+        .card-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            z-index: 3;
+            width: 36px; height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(10, 10, 10, 0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #a5b4fc;
+            letter-spacing: 0.02em;
+        }
+
+        .card-info {
+            padding: 20px;
+            position: relative;
+        }
+
+        .card-number {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #6366f1;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .card-desc {
+            font-size: 0.85rem;
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        .card-tags {
+            display: flex;
+            gap: 8px;
+            padding: 0 20px 20px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            font-size: 0.7rem;
+            padding: 4px 10px;
+            border-radius: 100px;
+            background: rgba(99,102,241,0.1);
+            color: #818cf8;
+            font-weight: 500;
+        }
+
+        /* ── FOOTER ── */
+        .site-footer {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 40px 48px;
+            text-align: center;
+            border-top: 1px solid #1a1a1a;
+        }
+        .site-footer p {
+            font-size: 0.8rem;
+            color: #334155;
+            letter-spacing: 0.05em;
+        }
+        .site-footer span {
+            color: #6366f1;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 768px) {
+            .grid-container { padding: 16px 16px 32px; }
+            .toolbar { padding: 0 16px; }
+            .filter-bar { gap: 6px; }
+            .design-grid { grid-template-columns: 1fr; gap: 20px; }
+            .hero { min-height: 36vh; padding: 60px 16px 32px; }
+            .hero p { font-size: 1rem; }
+            .site-footer { padding: 32px 16px 40px; }
+            .hero-orb { width: 250px; height: 250px; }
+            .lang-switcher { top: auto; bottom: 1rem; right: 1rem; }
+        }
+        @media (max-width: 480px) {
+            .hero h1 { font-size: 2rem; }
+            .hero p { font-size: 0.9rem; }
+            .card-preview { height: 190px; }
+            .filter-btn { font-size: 0.65rem; padding: 4px 9px; }
+            .device-btn { padding: 5px 8px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- CUSTOM CURSOR -->
+    <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
+    <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+
+    <!-- LANGUAGE SWITCHER -->
+    <div class="lang-switcher" role="navigation" aria-label="Language selector">
+        <button class="lang-btn" data-lang="en" onclick="setGalleryLang('en')">EN</button>
+        <button class="lang-btn active" data-lang="ko" onclick="setGalleryLang('ko')">한국어</button>
+        <button class="lang-btn" data-lang="ja" onclick="setGalleryLang('ja')">日本語</button>
+        <button class="lang-btn" data-lang="zh" onclick="setGalleryLang('zh')">中文</button>
+    </div>
+
+    <header class="hero" role="banner">
+        <div class="particles" aria-hidden="true">
+            <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+            <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+            <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+            <div class="particle"></div>
+        </div>
+        <div class="hero-orb" aria-hidden="true"></div>
+        <h1 data-i18n="hero_title">Choose Your Style</h1>
+        <p data-i18n="hero_desc">20가지 독창적인 자기소개 페이지 디자인 중 마음에 드는 스타일을 선택하세요</p>
+    </header>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+        <!-- DEVICE PREVIEW TOGGLE -->
+        <div class="device-toggle" role="toolbar" aria-label="Device preview mode">
+            <span class="device-label" data-i18n="preview_label">Preview:</span>
+            <button class="device-btn active" data-device="desktop" aria-label="Desktop preview">
+                <svg viewBox="0 0 24 24"><path d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7v2H8v2h8v-2h-2v-2h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H3V4h18v12z"/></svg>
+                <span>Desktop</span>
+            </button>
+            <button class="device-btn" data-device="tablet" aria-label="Tablet preview">
+                <svg viewBox="0 0 24 24"><path d="M18.5 0h-14C3.12 0 2 1.12 2 2.5v19C2 22.88 3.12 24 4.5 24h14c1.38 0 2.5-1.12 2.5-2.5v-19C21 1.12 19.88 0 18.5 0zm-7 23c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm8-4H4V3h15.5v16z"/></svg>
+                <span>Tablet</span>
+            </button>
+            <button class="device-btn" data-device="mobile" aria-label="Mobile preview">
+                <svg viewBox="0 0 24 24"><path d="M15.5 1h-8C6.12 1 5 2.12 5 3.5v17C5 21.88 6.12 23 7.5 23h8c1.38 0 2.5-1.12 2.5-2.5v-17C18 2.12 16.88 1 15.5 1zm-4 21c-.83 0-1.5-.67-1.5-1.5S10.67 19 11.5 19s1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm5-4h-10V4h10v14z"/></svg>
+                <span>Mobile</span>
+            </button>
+        </div>
+
+        <!-- FILTER BAR -->
+        <div class="filter-bar" role="toolbar" aria-label="Filter designs by category">
+            <span class="filter-label" data-i18n="filter_label">Filter:</span>
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="minimal">Minimal</button>
+            <button class="filter-btn" data-filter="dark">Dark</button>
+            <button class="filter-btn" data-filter="colorful">Colorful</button>
+            <button class="filter-btn" data-filter="interactive">Interactive</button>
+            <button class="filter-btn" data-filter="retro">Retro</button>
+            <button class="filter-btn" data-filter="trendy">Trendy</button>
+            <button class="filter-btn" data-filter="elegant">Elegant</button>
+            <button class="filter-btn" data-filter="animation">Animation</button>
+            <button class="filter-btn" data-filter="glass">Glass</button>
+            <button class="filter-btn" data-filter="neon">Neon</button>
+            <button class="filter-btn" data-filter="artistic">Artistic</button>
+            <button class="filter-btn" data-filter="3d">3D</button>
+            <button class="filter-btn" data-filter="modern">Modern</button>
+            <button class="filter-btn" data-filter="organic">Organic</button>
+            <button class="filter-btn" data-filter="grid">Grid</button>
+            <button class="filter-btn" data-filter="editorial">Editorial</button>
+            <button class="filter-btn" data-filter="wireframe">Wireframe</button>
+            <button class="filter-btn" data-filter="vaporwave">Vaporwave</button>
+        </div>
+    </div>
+
+    <main class="grid-container" role="main">
+        <div class="grid-label" data-i18n="grid_label">20 Unique Designs</div>
+        <div class="design-grid" id="designGrid">
+
+            <!-- DESIGN 01 -->
+            <a class="design-card" href="designs/design-01.html" data-tags="minimal,dark,typography">
+                <div class="card-preview">
+                    <div class="card-badge">01</div>
+                    <div class="card-preview-placeholder"><div class="spinner"></div></div>
+                    <iframe src="designs/design-01.html" loading="lazy" title="Design 01 preview"></iframe>
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-info">
+                    <div class="card-number">Design 01</div>
+                    <div class="card-title">Minimal Noir</div>
+                    <div class="card-desc" data-i18n="desc_01">흑백 미니멀리즘 기반의 타이포그래피 중심 디자인</div>
+                </div>
+                <div class="card-tags"><span class="tag">Minimal</span><span class="tag">Dark</span><span class="tag">Typography</span></div>
+            </a>
+
+            <!-- DESIGN 02 -->
+            <a class="design-card" href="designs/design-02.html" data-tags="colorful,glass,gradient">
+                <div class="card-preview">
+                    <div class="card-badge">02</div>
+                    <div class="card-preview-placeholder"><div class="spinner"></div></div>
+                    <iframe src="designs/design-02.html" loading="lazy" title="Design 02 preview"></iframe>
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-info">
+                    <div class="card-number">Design 02</div>
+                    <div class="card-title">Gradient Aurora</div>
+                    <div class="card-desc" data-i18n="desc_02">오로라 그라디언트와 글래스모피즘 효과</div>
+                </div>
+                <div class="card-tags"><span class="tag">Gradient</span><span class="tag">Glass</span><span class="tag">Colorful</span></div>
+            </a>
+
+            <!-- DESIGN 03 -->
+            <a class="design-card" href="designs/design-03.html" data-tags="retro,dark,interactive">
+                <div class="card-preview">
+                    <div class="card-badge">03</div>
+                    <div class="card-preview-placeholder"><div class="spinner"></div></div>
+                    <iframe src="designs/design-03.html" loading="lazy" title="Design 03 preview"></iframe>
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-info">
+                    <div class="card-number">Design 03</div>
+                    <div class="card-title">Terminal Hacker</div>
+                    <div class="card-desc" data-i18n="desc_03">터미널/CLI 스타일의 해커 감성 인터페이스</div>
+                </div>
+                <div class="card-tags"><span class="tag">Terminal</span><span class="tag">Retro</span><span class="tag">Code</span></div>
+            </a>
+
+            <!-- DESIGN 04 -->
+            <a class="design-card" href="designs/design-04.html" data-tags="interactive,3d,animation">
+                <div class="card-preview">
+                    <div class="card-badge">04</div>
+                    <div class="card-preview-placeholder"><div class="spinner"></div></div>
+                    <iframe src="designs/design-04.html" loading="lazy" title="Design 04 preview"></iframe>
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-info">
+                    <div class="card-number">Design 04</div>
+                    <div class="card-title">3D Parallax</div>
+                    <div class="card-desc" data-i18n="desc_04">마우스 인터랙션 기반 3D 패럴랙스 카드 디자인</div>
+                </div>
+                <div class="card-tags"><span class="tag">3D</span><span class="tag">Interactive</span><span class="tag">Parallax</span></div>
+            </a>
+
+            <!-- DESIGN 05 -->
+            <a class="design-card" href="designs/design-05.html" data-tags="trendy,colorful,bold">
+                <div class="card-preview">
+                    <div class="card-badge">05</div>
+                    <div class="card-preview-placeholder"><div class="spinner"></div></div>
+                    <iframe src="designs/design-05.html" loading="lazy" title="Design 05 preview"></iframe>
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-info">
+                    <div class="card-number">Design 05</div>
+                    <div class="card-title">Neobrutalism</div>
+                    <div class="card-desc" data-i18n="desc_05">굵은 테두리와 원색 컬러의 네오브루탈리즘</div>
+                </div>
+                <div class="card-tags"><span class="tag">Bold</span><span class="tag">Brutalism</span><span class="tag">Trendy</span></div>
+            </a>
+
+            <!-- DESIGN 06 -->
+            <a class="design-card" href="designs/design-06.html" data-tags="minimal,elegant,zen">
+                <div class="card-preview">
+                    <div class="card-badge">06</div>
+                    <div class="card-preview-placeholder"><div class="spinner"></div></div>
+                    <iframe src="designs/design-06.html" loading="lazy" title="Design 06 preview"></iframe>
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-info">
+                    <div class="card-number">Design 06</div>
+                    <div class="card-title">Japanese Zen</div>
+                    <div class="card-desc" data-i18n="desc_06">일본 젠 스타일의 미니멀하고 조용한 디자인</div>
+                </div>
+                <div class="card-tags"><span class="tag">Zen</span><span class="tag">Minimal</span><span class="tag">Elegant</span></div>
+            </a>
+
+            <!-- DESIGN 07 -->
+            <a class="design-card" href="designs/design-07.html" data-tags="retro,animation,colorful,neon">
+                <div class="card-preview">
+                    <div class="card-badge">07</div>
+                    <div class="card-preview-placeholder"><div class="spinner"></div></div>
+                    <iframe src="designs/design-07.html" loading="lazy" title="Design 07 preview"></iframe>
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-info">
+                    <div class="card-number">Design 07</div>
+                    <div class="card-title">Retro Arcade</div>
+                    <div class="card-desc" data-i18n="desc_07">8비트 픽셀아트와 네온 컬러의 레트로 게임 감성</div>
+                </div>
+                <div class="card-tags"><span class="tag">Pixel</span><span class="tag">Neon</span><span class="tag">Retro</span></div>
+            </a>
+
+            <!-- DESIGN 08 -->
+            <a class="design-card" href="designs/design-08.html" data-tags="elegant,trendy,editorial">
+                <div class="card-preview">
+                    <div class="card-badge">08</div>
+                    <div class="card-preview-placeholder"><div class="spinner"></div></div>
+                    <iframe src="designs/design-08.html" loading="lazy" title="Design 08 preview"></iframe>
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-info">
+                    <div class="card-number">Design 08</div>
+                    <div class="card-title">Magazine Editorial</div>
+                    <div class="card-desc" data-i18n="desc_08">고급 매거진 레이아웃의 에디토리얼 디자인</div>
+                </div>
+                <div class="card-tags"><span class="tag">Editorial</span><span class="tag">Layout</span><span class="tag">Premium</span></div>
+            </a>
+
+            <!-- DESIGN 09 -->
+            <a class="design-card" href="designs/design-09.html" data-tags="dark,animation,interactive">
+                <div class="card-preview">
+                    <div class="card-badge">09</div>
+                    <div class="card-preview-placeholder"><div class="spinner"></div></div>
+                    <iframe src="designs/design-09.html" loading="lazy" title="Design 09 preview"></iframe>
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-info">
+                    <div class="card-number">Design 09</div>
+                    <div class="card-title">Cosmic Space</div>
+                    <div class="card-desc" data-i18n="desc_09">우주 테마의 파티클 애니메이션과 별빛 디자인</div>
+                </div>
+                <div class="card-tags"><span class="tag">Space</span><span class="tag">Animation</span><span class="tag">Particles</span></div>
+            </a>
+
+            <!-- DESIGN 10 -->
+            <a class="design-card" href="designs/design-10.html" data-tags="trendy,interactive,modern">
+                <div class="card-preview">
+                    <div class="card-badge">10</div>
+                    <div class="card-preview-placeholder"><div class="spinner"></div></div>
+                    <iframe src="designs/design-10.html" loading="lazy" title="Design 10 preview"></iframe>
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-info">
+                    <div class="card-number">Design 10</div>
+                    <div class="card-title">Bento Grid</div>
+                    <div class="card-desc" data-i18n="desc_10">벤토 박스 그리드 레이아웃의 모던 대시보드 스타일</div>
+                </div>
+                <div class="card-tags"><span class="tag">Bento</span><span class="tag">Grid</span><span class="tag">Modern</span></div>
+            </a>
+
+            <!-- DESIGN 11 -->
+            <a class="design-card" href="designs/design-11.html" data-tags="glass,dark,modern">
+                <div class="card-preview">
+                    <div class="card-badge">11</div>
+                    <div class="card-preview-placeholder"><div class="spinner"></div></div>
+                    <iframe src="designs/design-11.html" loading="lazy" title="Design 11 preview"></iframe>
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-info">
+                    <div class="card-number">Design 11</div>
+                    <div class="card-title">Glassmorphism Dark</div>
+                    <div class="card-desc" data-i18n="desc_11">다크 글래스모피즘 프로스트 카드 디자인</div>
+                </div>
+                <div class="card-tags"><span class="tag">Glass</span><span class="tag">Dark</span><span class="tag">Modern</span></div>
+            </a>
+
+            <!-- DESIGN 12 -->
+            <a class="design-card" href="designs/design-12.html" data-tags="neon,dark,interactive">
+                <div class="card-preview">
+                    <div class="card-badge">12</div>
+                    <div class="card-preview-placeholder"><div class="spinner"></div></div>
+                    <iframe src="designs/design-12.html" loading="lazy" title="Design 12 preview"></iframe>
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-info">
+                    <div class="card-number">Design 12</div>
+                    <div class="card-title">Cyberpunk Neon</div>
+                    <div class="card-desc" data-i18n="desc_12">사이버펑크 네온 글리치 홀로그래픽</div>
+                </div>
+                <div class="card-tags"><span class="tag">Neon</span><span class="tag">Cyberpunk</span><span class="tag">Futuristic</span></div>
+            </a>
+
+            <!-- DESIGN 13 -->
+            <a class="design-card" href="designs/design-13.html" data-tags="artistic,colorful,elegant">
+                <div class="card-preview">
+                    <div class="card-badge">13</div>
+                    <div class="card-preview-placeholder"><div class="spinner"></div></div>
+                    <iframe src="designs/design-13.html" loading="lazy" title="Design 13 preview"></iframe>
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-info">
+                    <div class="card-number">Design 13</div>
+                    <div class="card-title">Watercolor Artistic</div>
+                    <div class="card-desc" data-i18n="desc_13">수채화 텍스처 유기적 형태 디자인</div>
+                </div>
+                <div class="card-tags"><span class="tag">Artistic</span><span class="tag">Colorful</span><span class="tag">Elegant</span></div>
+            </a>
+
+            <!-- DESIGN 14 -->
+            <a class="design-card" href="designs/design-14.html" data-tags="minimal,grid,typography">
+                <div class="card-preview">
+                    <div class="card-badge">14</div>
+                    <div class="card-preview-placeholder"><div class="spinner"></div></div>
+                    <iframe src="designs/design-14.html" loading="lazy" title="Design 14 preview"></iframe>
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-info">
+                    <div class="card-number">Design 14</div>
+                    <div class="card-title">Swiss Bauhaus</div>
+                    <div class="card-desc" data-i18n="desc_14">그리드 기반 스위스 디자인 타이포그래피</div>
+                </div>
+                <div class="card-tags"><span class="tag">Minimal</span><span class="tag">Grid</span><span class="tag">Typography</span></div>
+            </a>
+
+            <!-- DESIGN 15 -->
+            <a class="design-card" href="designs/design-15.html" data-tags="retro,editorial,elegant">
+                <div class="card-preview">
+                    <div class="card-badge">15</div>
+                    <div class="card-preview-placeholder"><div class="spinner"></div></div>
+                    <iframe src="designs/design-15.html" loading="lazy" title="Design 15 preview"></iframe>
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-info">
+                    <div class="card-number">Design 15</div>
+                    <div class="card-title">Newspaper Print</div>
+                    <div class="card-desc" data-i18n="desc_15">신문 인쇄 레이아웃 컬럼 구조</div>
+                </div>
+                <div class="card-tags"><span class="tag">Retro</span><span class="tag">Editorial</span><span class="tag">Print</span></div>
+            </a>
+
+            <!-- DESIGN 16 -->
+            <a class="design-card" href="designs/design-16.html" data-tags="retro,colorful,vaporwave">
+                <div class="card-preview">
+                    <div class="card-badge">16</div>
+                    <div class="card-preview-placeholder"><div class="spinner"></div></div>
+                    <iframe src="designs/design-16.html" loading="lazy" title="Design 16 preview"></iframe>
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-info">
+                    <div class="card-number">Design 16</div>
+                    <div class="card-title">Vaporwave</div>
+                    <div class="card-desc" data-i18n="desc_16">80/90년대 베이퍼웨이브 레트로 감성</div>
+                </div>
+                <div class="card-tags"><span class="tag">Retro</span><span class="tag">Colorful</span><span class="tag">Vaporwave</span></div>
+            </a>
+
+            <!-- DESIGN 17 -->
+            <a class="design-card" href="designs/design-17.html" data-tags="3d,modern,soft,trendy">
+                <div class="card-preview">
+                    <div class="card-badge">17</div>
+                    <div class="card-preview-placeholder"><div class="spinner"></div></div>
+                    <iframe src="designs/design-17.html" loading="lazy" title="Design 17 preview"></iframe>
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-info">
+                    <div class="card-number">Design 17</div>
+                    <div class="card-title">Clay Morphism</div>
+                    <div class="card-desc" data-i18n="desc_17">3D 클레이 UI 소프트 쉐도우</div>
+                </div>
+                <div class="card-tags"><span class="tag">3D</span><span class="tag">Modern</span><span class="tag">Soft</span></div>
+            </a>
+
+            <!-- DESIGN 18 -->
+            <a class="design-card" href="designs/design-18.html" data-tags="3d,interactive,minimal">
+                <div class="card-preview">
+                    <div class="card-badge">18</div>
+                    <div class="card-preview-placeholder"><div class="spinner"></div></div>
+                    <iframe src="designs/design-18.html" loading="lazy" title="Design 18 preview"></iframe>
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-info">
+                    <div class="card-number">Design 18</div>
+                    <div class="card-title">Isometric</div>
+                    <div class="card-desc" data-i18n="desc_18">아이소메트릭 3D 기하학적 깊이감</div>
+                </div>
+                <div class="card-tags"><span class="tag">3D</span><span class="tag">Interactive</span><span class="tag">Geometric</span></div>
+            </a>
+
+            <!-- DESIGN 19 -->
+            <a class="design-card" href="designs/design-19.html" data-tags="minimal,dark,wireframe">
+                <div class="card-preview">
+                    <div class="card-badge">19</div>
+                    <div class="card-preview-placeholder"><div class="spinner"></div></div>
+                    <iframe src="designs/design-19.html" loading="lazy" title="Design 19 preview"></iframe>
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-info">
+                    <div class="card-number">Design 19</div>
+                    <div class="card-title">Line Art Wireframe</div>
+                    <div class="card-desc" data-i18n="desc_19">와이어프레임 블루프린트 스타일</div>
+                </div>
+                <div class="card-tags"><span class="tag">Minimal</span><span class="tag">Technical</span><span class="tag">Wireframe</span></div>
+            </a>
+
+            <!-- DESIGN 20 -->
+            <a class="design-card" href="designs/design-20.html" data-tags="organic,colorful,elegant">
+                <div class="card-preview">
+                    <div class="card-badge">20</div>
+                    <div class="card-preview-placeholder"><div class="spinner"></div></div>
+                    <iframe src="designs/design-20.html" loading="lazy" title="Design 20 preview"></iframe>
+                    <div class="card-overlay"></div>
+                </div>
+                <div class="card-info">
+                    <div class="card-number">Design 20</div>
+                    <div class="card-title">Organic Nature</div>
+                    <div class="card-desc" data-i18n="desc_20">자연 숲 테마 유기적 곡선 디자인</div>
+                </div>
+                <div class="card-tags"><span class="tag">Organic</span><span class="tag">Green</span><span class="tag">Natural</span></div>
+            </a>
+
+        </div>
+    </main>
+
+    <footer class="site-footer" role="contentinfo">
+        <p data-i18n="footer">Built with <span>20 unique designs</span> &mdash; &copy; 2025</p>
+    </footer>
+
+    <script>
+    // ── GALLERY I18N TRANSLATIONS ──
+    var GALLERY_I18N = {
+        ko: {
+            hero_title: '스타일을 선택하세요',
+            hero_desc: '20가지 독창적인 자기소개 페이지 디자인 중 마음에 드는 스타일을 선택하세요',
+            grid_label: '20가지 독창적인 디자인',
+            filter_label: '필터:',
+            preview_label: '미리보기:',
+            footer: '20가지 독창적인 디자인으로 제작 — \u00a9 2025',
+            desc_01: '흑백 미니멀리즘 기반의 타이포그래피 중심 디자인',
+            desc_02: '오로라 그라디언트와 글래스모피즘 효과',
+            desc_03: '터미널/CLI 스타일의 해커 감성 인터페이스',
+            desc_04: '마우스 인터랙션 기반 3D 패럴랙스 카드 디자인',
+            desc_05: '굵은 테두리와 원색 컬러의 네오브루탈리즘',
+            desc_06: '일본 젠 스타일의 미니멀하고 조용한 디자인',
+            desc_07: '8비트 픽셀아트와 네온 컬러의 레트로 게임 감성',
+            desc_08: '고급 매거진 레이아웃의 에디토리얼 디자인',
+            desc_09: '우주 테마의 파티클 애니메이션과 별빛 디자인',
+            desc_10: '벤토 박스 그리드 레이아웃의 모던 대시보드 스타일',
+            desc_11: '다크 글래스모피즘 프로스트 카드 디자인',
+            desc_12: '사이버펑크 네온 글리치 홀로그래픽',
+            desc_13: '수채화 텍스처 유기적 형태 디자인',
+            desc_14: '그리드 기반 스위스 디자인 타이포그래피',
+            desc_15: '신문 인쇄 레이아웃 컬럼 구조',
+            desc_16: '80/90년대 베이퍼웨이브 레트로 감성',
+            desc_17: '3D 클레이 UI 소프트 쉐도우',
+            desc_18: '아이소메트릭 3D 기하학적 깊이감',
+            desc_19: '와이어프레임 블루프린트 스타일',
+            desc_20: '자연 숲 테마 유기적 곡선 디자인'
+        },
+        en: {
+            hero_title: 'Choose Your Style',
+            hero_desc: 'Pick your favorite from 20 unique personal introduction page designs',
+            grid_label: '20 Unique Designs',
+            filter_label: 'Filter:',
+            preview_label: 'Preview:',
+            footer: 'Built with 20 unique designs \u2014 \u00a9 2025',
+            desc_01: 'Typography-focused design based on black & white minimalism',
+            desc_02: 'Aurora gradient with glassmorphism effects',
+            desc_03: 'Terminal/CLI style hacker-aesthetic interface',
+            desc_04: 'Mouse interaction-based 3D parallax card design',
+            desc_05: 'Neobrutalism with bold borders and primary colors',
+            desc_06: 'Japanese Zen-style minimal and serene design',
+            desc_07: '8-bit pixel art with neon retro arcade vibes',
+            desc_08: 'Premium magazine layout editorial design',
+            desc_09: 'Space-themed particle animation and starlight design',
+            desc_10: 'Modern dashboard style bento box grid layout',
+            desc_11: 'Dark glassmorphism frosted card design',
+            desc_12: 'Cyberpunk neon glitch holographic style',
+            desc_13: 'Watercolor texture organic shape design',
+            desc_14: 'Grid-based Swiss design typography',
+            desc_15: 'Newspaper print layout column structure',
+            desc_16: '80s/90s vaporwave retro aesthetic',
+            desc_17: '3D clay UI with soft shadows',
+            desc_18: 'Isometric 3D geometric depth',
+            desc_19: 'Wireframe blueprint style',
+            desc_20: 'Nature forest theme organic curves design'
+        },
+        ja: {
+            hero_title: 'スタイルを選んでください',
+            hero_desc: '20種のユニークな自己紹介ページデザインからお気に入りのスタイルを選んでください',
+            grid_label: '20種のユニークなデザイン',
+            filter_label: 'フィルター:',
+            preview_label: 'プレビュー:',
+            footer: '20種のユニークなデザインで制作 — \u00a9 2025',
+            desc_01: 'モノクロミニマリズムのタイポグラフィ中心デザイン',
+            desc_02: 'オーロラグラデーションとグラスモーフィズム効果',
+            desc_03: 'ターミナル/CLIスタイルのハッカー感性インターフェース',
+            desc_04: 'マウスインタラクション3Dパララックスカードデザイン',
+            desc_05: '太い枠線と原色カラーのネオブルータリズム',
+            desc_06: '日本の禅スタイルのミニマルで静かなデザイン',
+            desc_07: '8ビットピクセルアートとネオンのレトロゲーム感性',
+            desc_08: '高級マガジンレイアウトのエディトリアルデザイン',
+            desc_09: '宇宙テーマのパーティクルアニメーションと星空デザイン',
+            desc_10: 'ベントーボックスグリッドのモダンダッシュボード',
+            desc_11: 'ダークグラスモーフィズムフロストカードデザイン',
+            desc_12: 'サイバーパンクネオングリッチホログラフィック',
+            desc_13: '水彩テクスチャ有機的形態デザイン',
+            desc_14: 'グリッドベーススイスデザインタイポグラフィ',
+            desc_15: '新聞印刷レイアウトカラム構造',
+            desc_16: '80/90年代ベイパーウェーブレトロ感性',
+            desc_17: '3DクレイUIソフトシャドウ',
+            desc_18: 'アイソメトリック3D幾何学的深み',
+            desc_19: 'ワイヤーフレームブループリントスタイル',
+            desc_20: '自然の森テーマ有機的曲線デザイン'
+        },
+        zh: {
+            hero_title: '选择你的风格',
+            hero_desc: '从20种独特的个人介绍页面设计中选择你喜欢的风格',
+            grid_label: '20种独特设计',
+            filter_label: '筛选:',
+            preview_label: '预览:',
+            footer: '用20种独特设计制作 — \u00a9 2025',
+            desc_01: '基于黑白极简主义的排版中心设计',
+            desc_02: '极光渐变与玻璃拟态效果',
+            desc_03: '终端/CLI风格的黑客感界面',
+            desc_04: '鼠标交互3D视差卡片设计',
+            desc_05: '粗边框和原色的新粗野主义',
+            desc_06: '日式禅风极简宁静设计',
+            desc_07: '8位像素艺术与霓虹复古街机风',
+            desc_08: '高端杂志布局编辑设计',
+            desc_09: '宇宙主题粒子动画与星光设计',
+            desc_10: '便当盒网格布局的现代仪表板风格',
+            desc_11: '暗色玻璃拟态霜冻卡片设计',
+            desc_12: '赛博朋克霓虹故障全息风格',
+            desc_13: '水彩纹理有机形态设计',
+            desc_14: '基于网格的瑞士设计排版',
+            desc_15: '报纸印刷布局栏结构',
+            desc_16: '80/90年代蒸汽波复古风',
+            desc_17: '3D粘土UI柔和阴影',
+            desc_18: '等距3D几何深度',
+            desc_19: '线框蓝图风格',
+            desc_20: '自然森林主题有机曲线设计'
+        }
+    };
+
+    function setGalleryLang(lang) {
+        document.querySelectorAll('[data-i18n]').forEach(function(el) {
+            var key = el.getAttribute('data-i18n');
+            if (GALLERY_I18N[lang] && GALLERY_I18N[lang][key]) {
+                el.textContent = GALLERY_I18N[lang][key];
+            }
+        });
+        document.querySelectorAll('.lang-btn').forEach(function(btn) {
+            btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+        });
+        document.documentElement.lang = lang === 'ko' ? 'ko' : lang === 'ja' ? 'ja' : lang === 'zh' ? 'zh' : 'en';
+        try { localStorage.setItem('preferred-lang', lang); } catch(e) {}
+    }
+
+    // Init language
+    (function() {
+        var params = new URLSearchParams(window.location.search);
+        var urlLang = params.get('lang');
+        var savedLang; try { savedLang = localStorage.getItem('preferred-lang'); } catch(e) {}
+        var lang = urlLang || savedLang || 'ko';
+        setGalleryLang(lang);
+    })();
+
+    (function(){
+        // ── CUSTOM CURSOR ──
+        var glow = document.getElementById('cursorGlow');
+        var dot = document.getElementById('cursorDot');
+        var gx = 0, gy = 0, dx = 0, dy = 0;
+
+        document.addEventListener('mousemove', function(e){
+            dx = e.clientX; dy = e.clientY;
+            dot.style.left = dx + 'px';
+            dot.style.top = dy + 'px';
+        });
+
+        function animateCursor(){
+            gx += (dx - gx) * 0.08;
+            gy += (dy - gy) * 0.08;
+            glow.style.left = gx + 'px';
+            glow.style.top = gy + 'px';
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        document.querySelectorAll('a, button, .design-card').forEach(function(el){
+            el.addEventListener('mouseenter', function(){ dot.classList.add('hovering'); });
+            el.addEventListener('mouseleave', function(){ dot.classList.remove('hovering'); });
+        });
+
+        // ── STAGGERED CARD REVEAL ──
+        var cards = document.querySelectorAll('.design-card');
+        var cardObserver = new IntersectionObserver(function(entries){
+            entries.forEach(function(entry){
+                if(entry.isIntersecting){
+                    entry.target.classList.add('visible');
+                    cardObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.08 });
+
+        cards.forEach(function(card, i){
+            card.style.transitionDelay = (i % 4 * 0.07) + 's';
+            card.style.transitionDuration = '0.6s';
+            card.style.transitionTimingFunction = 'cubic-bezier(0.23, 1, 0.32, 1)';
+            card.style.transitionProperty = 'opacity, transform';
+            cardObserver.observe(card);
+        });
+
+        // ── IFRAME LOADED STATE ──
+        document.querySelectorAll('.card-preview iframe').forEach(function(iframe){
+            iframe.addEventListener('load', function(){
+                iframe.classList.add('loaded');
+            });
+        });
+
+        // ── FILTER ──
+        var filterBtns = document.querySelectorAll('.filter-btn');
+
+        filterBtns.forEach(function(btn){
+            btn.addEventListener('click', function(){
+                filterBtns.forEach(function(b){ b.classList.remove('active'); });
+                btn.classList.add('active');
+
+                var filter = btn.getAttribute('data-filter');
+
+                cards.forEach(function(card){
+                    if(filter === 'all'){
+                        card.classList.remove('filtered-out');
+                    } else {
+                        var tags = card.getAttribute('data-tags') || '';
+                        if(tags.indexOf(filter) !== -1){
+                            card.classList.remove('filtered-out');
+                        } else {
+                            card.classList.add('filtered-out');
+                        }
+                    }
+                });
+            });
+        });
+
+        // ── DEVICE PREVIEW TOGGLE ──
+        var deviceBtns = document.querySelectorAll('.device-btn');
+        deviceBtns.forEach(function(btn){
+            btn.addEventListener('click', function(){
+                deviceBtns.forEach(function(b){ b.classList.remove('active'); });
+                btn.classList.add('active');
+
+                var device = btn.getAttribute('data-device');
+                document.body.classList.remove('preview-tablet', 'preview-mobile');
+                if(device === 'tablet') document.body.classList.add('preview-tablet');
+                else if(device === 'mobile') document.body.classList.add('preview-mobile');
+            });
+        });
+    })();
+    </script>
+</body>
+</html>

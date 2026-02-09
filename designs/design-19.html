@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio - Line Art Wireframe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0D1B2A;--bg-light:#1B2838;--line:#7CB9E8;--line-dim:rgba(124,185,232,0.2);--line-faint:rgba(124,185,232,0.08);--text:#E0F0FF;--text-dim:rgba(224,240,255,0.5);--accent:#7CB9E8;--accent-bright:#A8D4F0}
+body{font-family:'IBM Plex Mono',monospace;background:var(--bg);color:var(--text);overflow-x:hidden;min-height:100vh}
+
+/* Dot grid background */
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;background-image:radial-gradient(circle,rgba(124,185,232,0.12) 1px,transparent 1px);background-size:20px 20px}
+
+/* Navigation */
+.nav{position:fixed;top:0;left:0;width:100%;padding:20px 40px;display:flex;justify-content:space-between;align-items:center;z-index:100;background:rgba(13,27,42,0.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--line-dim)}
+.gallery-link{color:var(--accent);text-decoration:none;font-weight:500;font-size:14px;letter-spacing:0.05em;transition:color 0.3s}
+.gallery-link:hover{color:var(--accent-bright)}
+.lang-switcher{display:flex;gap:4px}
+.lang-btn{background:transparent;border:1px solid var(--line-dim);color:var(--text-dim);padding:6px 12px;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;transition:all 0.3s;letter-spacing:0.05em}
+.lang-btn:hover{border-color:var(--accent);color:var(--accent)}
+.lang-btn.active{border-color:var(--accent);color:var(--bg);background:var(--accent)}
+
+/* Content */
+.content{position:relative;z-index:10;max-width:1000px;margin:0 auto;padding:120px 24px 80px}
+
+/* Watermark */
+.watermark{position:fixed;top:50%;right:40px;transform:rotate(-90deg) translateX(50%);font-size:11px;color:rgba(124,185,232,0.08);letter-spacing:0.3em;text-transform:uppercase;pointer-events:none;z-index:1}
+
+/* Crosshair marker */
+.crosshair{width:20px;height:20px;position:relative;display:inline-block;margin-right:12px;vertical-align:middle}
+.crosshair::before{content:'';position:absolute;top:50%;left:0;width:100%;height:1px;background:var(--accent)}
+.crosshair::after{content:'';position:absolute;left:50%;top:0;width:1px;height:100%;background:var(--accent)}
+
+/* Hero */
+.hero{text-align:center;padding:80px 0 100px;position:relative}
+.hero::before{content:'';position:absolute;top:20px;left:50%;transform:translateX(-50%);width:200px;height:200px;border:1px dashed var(--line-dim);border-radius:50%;animation:heroSpin 30s linear infinite}
+@keyframes heroSpin{0%{transform:translateX(-50%) rotate(0deg)}100%{transform:translateX(-50%) rotate(360deg)}}
+.hero-coords{font-size:11px;color:var(--text-dim);letter-spacing:0.1em;margin-bottom:16px}
+.hero-name{font-size:48px;font-weight:700;color:var(--text);letter-spacing:0.05em;margin-bottom:12px;position:relative;display:inline-block}
+.hero-name::before{content:'[';color:var(--accent);margin-right:8px;opacity:0.5}
+.hero-name::after{content:']';color:var(--accent);margin-left:8px;opacity:0.5}
+.hero-title{font-size:16px;color:var(--accent);font-weight:400;letter-spacing:0.15em}
+.hero-spec{font-size:11px;color:var(--text-dim);margin-top:20px;letter-spacing:0.2em}
+
+/* Dashed connector lines */
+.connector{width:1px;height:60px;margin:0 auto;border-left:1px dashed var(--line-dim);position:relative}
+.connector::after{content:'';position:absolute;bottom:-3px;left:-3px;width:6px;height:6px;border:1px solid var(--accent);border-radius:50%}
+
+/* Section */
+.section{margin-bottom:20px;opacity:0;transform:translateY(20px);transition:all 0.7s cubic-bezier(0.25,0.46,0.45,0.94)}
+.section.visible{opacity:1;transform:translateY(0)}
+
+/* Wireframe card */
+.wire-card{border:1px solid var(--line-dim);padding:32px;position:relative;background:rgba(13,27,42,0.5)}
+.wire-card::before,.wire-card::after{position:absolute;font-size:10px;color:var(--text-dim);letter-spacing:0.05em}
+.wire-card::before{content:attr(data-label);top:-10px;left:16px;background:var(--bg);padding:0 8px}
+
+/* Corner brackets */
+.corner-tl,.corner-tr,.corner-bl,.corner-br{position:absolute;width:12px;height:12px}
+.corner-tl{top:-1px;left:-1px;border-top:2px solid var(--accent);border-left:2px solid var(--accent)}
+.corner-tr{top:-1px;right:-1px;border-top:2px solid var(--accent);border-right:2px solid var(--accent)}
+.corner-bl{bottom:-1px;left:-1px;border-bottom:2px solid var(--accent);border-left:2px solid var(--accent)}
+.corner-br{bottom:-1px;right:-1px;border-bottom:2px solid var(--accent);border-right:2px solid var(--accent)}
+
+/* Section header */
+.section-header{display:flex;align-items:center;margin-bottom:24px}
+.section-title{font-size:20px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent)}
+.section-rev{font-size:11px;color:var(--text-dim);margin-left:auto;letter-spacing:0.1em}
+
+/* Measurement lines */
+.measure{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.measure-line{flex:1;height:1px;background:var(--line-dim);position:relative}
+.measure-line::before,.measure-line::after{content:'';position:absolute;top:-4px;width:1px;height:9px;background:var(--line-dim)}
+.measure-line::before{left:0}
+.measure-line::after{right:0}
+.measure-label{font-size:10px;color:var(--text-dim);letter-spacing:0.1em;white-space:nowrap}
+
+/* About */
+.about-text{font-size:15px;line-height:2;color:var(--text);font-weight:300}
+.about-annotation{font-size:11px;color:var(--text-dim);margin-top:16px;padding-top:12px;border-top:1px dashed var(--line-dim);display:flex;justify-content:space-between}
+
+/* Skills grid */
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.skill-box{border:1px solid var(--line-dim);padding:20px;position:relative;transition:all 0.3s}
+.skill-box:hover{border-color:var(--accent);background:rgba(124,185,232,0.03)}
+.skill-box::before{content:attr(data-id);position:absolute;top:-8px;right:12px;font-size:10px;color:var(--text-dim);background:var(--bg);padding:0 4px}
+.skill-box .corner-tl,.skill-box .corner-tr{width:8px;height:8px}
+.skill-name{font-size:16px;font-weight:600;color:var(--text);margin-bottom:8px;letter-spacing:0.05em}
+.skill-tech{font-size:12px;color:var(--text-dim);line-height:1.6}
+.skill-bar-track{height:2px;background:var(--line-dim);margin-top:12px;position:relative}
+.skill-bar-fill{height:100%;background:var(--accent);transition:width 1.2s ease}
+.skill-bar-dot{position:absolute;top:-3px;width:8px;height:8px;border:1px solid var(--accent);border-radius:50%;background:var(--bg);transition:right 1.2s ease}
+
+/* Dimension indicators */
+.dim-row{display:flex;gap:16px;margin-top:24px;font-size:11px;color:var(--text-dim)}
+.dim-item{display:flex;align-items:center;gap:6px}
+.dim-dot{width:6px;height:6px;border:1px solid var(--accent)}
+
+/* Contact */
+.contact-box{text-align:center;padding:40px}
+.contact-heading{font-size:28px;font-weight:600;color:var(--text);letter-spacing:0.08em;margin-bottom:8px}
+.contact-sub{font-size:14px;color:var(--text-dim);margin-bottom:28px;letter-spacing:0.1em}
+.contact-links{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.contact-link{padding:10px 24px;border:1px solid var(--line-dim);font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--accent);text-decoration:none;letter-spacing:0.05em;transition:all 0.3s;position:relative}
+.contact-link:hover{border-color:var(--accent);background:rgba(124,185,232,0.05)}
+.contact-link::before{content:'>';margin-right:6px;color:var(--text-dim)}
+
+/* Target marker for sections */
+.target-marker{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:10px;color:var(--text-dim);letter-spacing:0.15em;text-transform:uppercase}
+.target-icon{width:12px;height:12px;border:1px solid var(--accent);border-radius:50%;position:relative}
+.target-icon::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:4px;height:4px;border-radius:50%;background:var(--accent)}
+
+/* Footer */
+.footer{text-align:center;padding:40px 20px;font-size:12px;color:var(--text-dim);letter-spacing:0.1em;border-top:1px solid var(--line-dim)}
+
+/* Responsive */
+@media(max-width:768px){
+  .hero-name{font-size:32px}
+  .section-title{font-size:16px}
+  .nav{padding:16px 20px}
+  .content{padding:100px 16px 60px}
+  .skills-grid{grid-template-columns:repeat(2,1fr)}
+  .wire-card{padding:20px}
+  .watermark{display:none}
+  .hero::before{width:150px;height:150px}
+}
+@media(max-width:375px){
+  .hero-name{font-size:24px}
+  .hero-title{font-size:13px}
+  .skills-grid{grid-template-columns:1fr}
+  .lang-btn{padding:4px 8px;font-size:11px}
+  .contact-links{flex-direction:column;align-items:center}
+  .dim-row{flex-wrap:wrap}
+}
+@media(min-width:1440px){
+  .content{max-width:1100px}
+}
+</style>
+</head>
+<body>
+
+<div class="watermark">SPEC // REV 1.0 // DRAFT // PORTFOLIO BLUEPRINT</div>
+
+<nav class="nav">
+  <a href="../index.html" class="gallery-link" data-i18n="gallery_link">&#8592; Gallery</a>
+  <div class="lang-switcher">
+    <button class="lang-btn active" data-lang="en" onclick="setLanguage('en')">EN</button>
+    <button class="lang-btn" data-lang="ko" onclick="setLanguage('ko')">&#54620;&#44397;&#50612;</button>
+    <button class="lang-btn" data-lang="ja" onclick="setLanguage('ja')">&#26085;&#26412;&#35486;</button>
+    <button class="lang-btn" data-lang="zh" onclick="setLanguage('zh')">&#20013;&#25991;</button>
+  </div>
+</nav>
+
+<div class="content">
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-coords">X: 0.00 &nbsp; Y: 0.00 &nbsp; Z: 1.00</div>
+    <h1 class="hero-name" data-i18n="name">Your Name</h1>
+    <p class="hero-title" data-i18n="title">Creative Developer &amp; Designer</p>
+    <div class="hero-spec">SPEC: PORTFOLIO // REV 1.0 // STATUS: ACTIVE</div>
+  </section>
+
+  <div class="connector"></div>
+
+  <!-- About -->
+  <section class="section" id="about">
+    <div class="target-marker"><div class="target-icon"></div>SECTION_01</div>
+    <div class="wire-card" data-label="ABOUT">
+      <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
+      <div class="section-header">
+        <div class="crosshair"></div>
+        <h2 class="section-title" data-i18n="about_label">About</h2>
+        <span class="section-rev">REV 1.0</span>
+      </div>
+      <div class="measure"><span class="measure-label">W: 100%</span><div class="measure-line"></div><span class="measure-label">H: AUTO</span></div>
+      <p class="about-text" data-i18n="about_text">A creative developer crafting digital experiences at the intersection of design and technology. Building beautiful and functional products through clean code and thoughtful interfaces.</p>
+      <div class="about-annotation">
+        <span>PADDING: 32px</span>
+        <span>FONT: IBM Plex Mono 15px/2</span>
+        <span>BORDER: 1px SOLID</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="connector"></div>
+
+  <!-- Skills -->
+  <section class="section" id="skills">
+    <div class="target-marker"><div class="target-icon"></div>SECTION_02</div>
+    <div class="wire-card" data-label="EXPERTISE">
+      <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
+      <div class="section-header">
+        <div class="crosshair"></div>
+        <h2 class="section-title" data-i18n="skills_label">Expertise</h2>
+        <span class="section-rev">GRID: AUTO-FIT</span>
+      </div>
+      <div class="skills-grid">
+        <div class="skill-box" data-id="#01">
+          <div class="corner-tl"></div><div class="corner-tr"></div>
+          <div class="skill-name">Frontend</div>
+          <div class="skill-tech">React / Vue / TypeScript<br>Next.js / Tailwind CSS</div>
+          <div class="skill-bar-track"><div class="skill-bar-fill" style="width:0%" data-width="92%"></div><div class="skill-bar-dot" style="right:100%" data-right="8%"></div></div>
+        </div>
+        <div class="skill-box" data-id="#02">
+          <div class="corner-tl"></div><div class="corner-tr"></div>
+          <div class="skill-name">UI/UX Design</div>
+          <div class="skill-tech">Figma / Prototyping<br>User Research / Systems</div>
+          <div class="skill-bar-track"><div class="skill-bar-fill" style="width:0%" data-width="88%"></div><div class="skill-bar-dot" style="right:100%" data-right="12%"></div></div>
+        </div>
+        <div class="skill-box" data-id="#03">
+          <div class="corner-tl"></div><div class="corner-tr"></div>
+          <div class="skill-name">Backend</div>
+          <div class="skill-tech">Node.js / Python<br>REST APIs / GraphQL</div>
+          <div class="skill-bar-track"><div class="skill-bar-fill" style="width:0%" data-width="80%"></div><div class="skill-bar-dot" style="right:100%" data-right="20%"></div></div>
+        </div>
+        <div class="skill-box" data-id="#04">
+          <div class="corner-tl"></div><div class="corner-tr"></div>
+          <div class="skill-name">Mobile</div>
+          <div class="skill-tech">React Native / Flutter<br>iOS / Android</div>
+          <div class="skill-bar-track"><div class="skill-bar-fill" style="width:0%" data-width="78%"></div><div class="skill-bar-dot" style="right:100%" data-right="22%"></div></div>
+        </div>
+        <div class="skill-box" data-id="#05">
+          <div class="corner-tl"></div><div class="corner-tr"></div>
+          <div class="skill-name">Creative Code</div>
+          <div class="skill-tech">Canvas / WebGL<br>GSAP / Animations</div>
+          <div class="skill-bar-track"><div class="skill-bar-fill" style="width:0%" data-width="85%"></div><div class="skill-bar-dot" style="right:100%" data-right="15%"></div></div>
+        </div>
+        <div class="skill-box" data-id="#06">
+          <div class="corner-tl"></div><div class="corner-tr"></div>
+          <div class="skill-name">DevOps</div>
+          <div class="skill-tech">Docker / CI/CD<br>AWS / Vercel</div>
+          <div class="skill-bar-track"><div class="skill-bar-fill" style="width:0%" data-width="75%"></div><div class="skill-bar-dot" style="right:100%" data-right="25%"></div></div>
+        </div>
+      </div>
+      <div class="dim-row">
+        <div class="dim-item"><div class="dim-dot"></div>GRID-GAP: 16px</div>
+        <div class="dim-item"><div class="dim-dot"></div>MIN-COL: 220px</div>
+        <div class="dim-item"><div class="dim-dot"></div>ITEMS: 6</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="connector"></div>
+
+  <!-- Contact -->
+  <section class="section" id="contact">
+    <div class="target-marker"><div class="target-icon"></div>SECTION_03</div>
+    <div class="wire-card" data-label="CONTACT">
+      <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
+      <div class="section-header">
+        <div class="crosshair"></div>
+        <h2 class="section-title" data-i18n="contact_label">Get in Touch</h2>
+        <span class="section-rev">ALIGN: CENTER</span>
+      </div>
+      <div class="contact-box">
+        <h3 class="contact-heading" data-i18n="contact_heading">Let's Work Together</h3>
+        <p class="contact-sub" data-i18n="contact_sub">Available for freelance projects</p>
+        <div class="contact-links">
+          <a href="mailto:hello@example.com" class="contact-link">email</a>
+          <a href="#" class="contact-link">github</a>
+          <a href="#" class="contact-link">linkedin</a>
+          <a href="#" class="contact-link">twitter</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<footer class="footer">
+  <p>BLUEPRINT // PORTFOLIO v1.0 // DRAFTED 2025 // ALL DIMENSIONS IN PX</p>
+</footer>
+
+<script>
+var TRANSLATIONS={
+  ko:{name:'\uD64D\uAE38\uB3D9',title:'\uD06C\uB9AC\uC5D0\uC774\uD2F0\uBE0C \uAC1C\uBC1C\uC790 & \uB514\uC790\uC774\uB108',about_label:'\uC18C\uAC1C',about_text:'\uB514\uC790\uC778\uACFC \uAE30\uC220\uC758 \uAD50\uCC28\uC810\uC5D0\uC11C \uB514\uC9C0\uD138 \uACBD\uD5D8\uC744 \uB9CC\uB4DC\uB294 \uD06C\uB9AC\uC5D0\uC774\uD2F0\uBE0C \uAC1C\uBC1C\uC790\uC785\uB2C8\uB2E4. \uAE54\uB054\uD55C \uCF54\uB4DC\uC640 \uC138\uC2EC\uD55C \uC778\uD130\uD398\uC774\uC2A4\uB97C \uD1B5\uD574 \uC544\uB984\uB2F5\uACE0 \uAE30\uB2A5\uC801\uC778 \uC81C\uD488\uC744 \uB9CC\uB4ED\uB2C8\uB2E4.',skills_label:'\uC804\uBB38 \uBD84\uC57C',contact_label:'\uC5F0\uB77D\uD558\uAE30',contact_heading:'\uD568\uAED8 \uC77C\uD574\uC694',contact_sub:'\uD504\uB9AC\uB79C\uC11C \uD504\uB85C\uC81D\uD2B8 \uAC00\uB2A5',gallery_link:'\u2190 \uAC24\uB7EC\uB9AC'},
+  en:{name:'Your Name',title:'Creative Developer & Designer',about_label:'About',about_text:'A creative developer crafting digital experiences at the intersection of design and technology. Building beautiful and functional products through clean code and thoughtful interfaces.',skills_label:'Expertise',contact_label:'Get in Touch',contact_heading:"Let's Work Together",contact_sub:'Available for freelance projects',gallery_link:'\u2190 Gallery'},
+  ja:{name:'\u3042\u306A\u305F\u306E\u540D\u524D',title:'\u30AF\u30EA\u30A8\u30A4\u30C6\u30A3\u30D6\u30C7\u30D9\u30ED\u30C3\u30D1\u30FC & \u30C7\u30B6\u30A4\u30CA\u30FC',about_label:'\u7D39\u4ECB',about_text:'\u30C7\u30B6\u30A4\u30F3\u3068\u30C6\u30AF\u30CE\u30ED\u30B8\u30FC\u306E\u4EA4\u5DEE\u70B9\u3067\u30C7\u30B8\u30BF\u30EB\u4F53\u9A13\u3092\u751F\u307F\u51FA\u3059\u30AF\u30EA\u30A8\u30A4\u30C6\u30A3\u30D6\u30C7\u30D9\u30ED\u30C3\u30D1\u30FC\u3067\u3059\u3002\u30AF\u30EA\u30FC\u30F3\u306A\u30B3\u30FC\u30C9\u3068\u601D\u616E\u6DF1\u3044\u30A4\u30F3\u30BF\u30FC\u30D5\u30A7\u30FC\u30B9\u3067\u7F8E\u3057\u304F\u6A5F\u80FD\u7684\u306A\u88FD\u54C1\u3092\u69CB\u7BC9\u3057\u307E\u3059\u3002',skills_label:'\u5C02\u9580\u5206\u91CE',contact_label:'\u304A\u554F\u3044\u5408\u308F\u305B',contact_heading:'\u4E00\u7DD2\u306B\u50CD\u304D\u307E\u3057\u3087\u3046',contact_sub:'\u30D5\u30EA\u30FC\u30E9\u30F3\u30B9\u30D7\u30ED\u30B8\u30A7\u30AF\u30C8\u5BFE\u5FDC\u53EF\u80FD',gallery_link:'\u2190 \u30AE\u30E3\u30E9\u30EA\u30FC'},
+  zh:{name:'\u4F60\u7684\u540D\u5B57',title:'\u521B\u610F\u5F00\u53D1\u8005 & \u8BBE\u8BA1\u5E08',about_label:'\u5173\u4E8E',about_text:'\u5728\u8BBE\u8BA1\u4E0E\u6280\u672F\u7684\u4EA4\u6C47\u5904\u521B\u9020\u6570\u5B57\u4F53\u9A8C\u7684\u521B\u610F\u5F00\u53D1\u8005\u3002\u901A\u8FC7\u7B80\u6D01\u7684\u4EE3\u7801\u548C\u7CBE\u5FC3\u8BBE\u8BA1\u7684\u754C\u9762\uFF0C\u6784\u5EFA\u65E2\u7F8E\u89C2\u53C8\u5B9E\u7528\u7684\u4EA7\u54C1\u3002',skills_label:'\u4E13\u4E1A\u9886\u57DF',contact_label:'\u8054\u7CFB\u6211',contact_heading:'\u4E00\u8D77\u5408\u4F5C\u5427',contact_sub:'\u53EF\u63A5\u53D7\u81EA\u7531\u804C\u4E1A\u9879\u76EE',gallery_link:'\u2190 \u753B\u5ECA'}
+};
+
+function setLanguage(lang){
+  document.querySelectorAll('[data-i18n]').forEach(function(el){
+    var key=el.getAttribute('data-i18n');
+    if(TRANSLATIONS[lang]&&TRANSLATIONS[lang][key])el.textContent=TRANSLATIONS[lang][key];
+  });
+  document.querySelectorAll('.lang-btn').forEach(function(btn){
+    btn.classList.toggle('active',btn.getAttribute('data-lang')===lang);
+  });
+  try{localStorage.setItem('preferred-lang',lang)}catch(e){}
+  document.documentElement.lang=lang==='ko'?'ko':lang==='ja'?'ja':lang==='zh'?'zh':'en';
+}
+(function(){
+  var params=new URLSearchParams(window.location.search);
+  var lang=params.get('lang')||(function(){try{return localStorage.getItem('preferred-lang')}catch(e){return null}})() ||'en';
+  if(lang!=='en')setLanguage(lang);
+  else document.querySelectorAll('.lang-btn').forEach(function(btn){btn.classList.toggle('active',btn.getAttribute('data-lang')==='en')});
+})();
+
+/* Scroll reveal + skill bars */
+var sections=document.querySelectorAll('.section');
+var observer=new IntersectionObserver(function(entries){
+  entries.forEach(function(entry){
+    if(entry.isIntersecting){
+      entry.target.classList.add('visible');
+      var bars=entry.target.querySelectorAll('.skill-bar-fill');
+      var dots=entry.target.querySelectorAll('.skill-bar-dot');
+      bars.forEach(function(bar){
+        setTimeout(function(){bar.style.width=bar.getAttribute('data-width')},300);
+      });
+      dots.forEach(function(dot){
+        setTimeout(function(){dot.style.right=dot.getAttribute('data-right')},300);
+      });
+      observer.unobserve(entry.target);
+    }
+  });
+},{threshold:0.15});
+sections.forEach(function(s){observer.observe(s)});
+</script>
+</body>
+</html>

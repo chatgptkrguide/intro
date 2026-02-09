@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bento Grid - Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #F5F5F7;
+  --card: #FFFFFF;
+  --text-primary: #1D1D1F;
+  --text-secondary: #6E6E73;
+  --text-tertiary: #86868B;
+  --radius: 20px;
+  --radius-sm: 14px;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06), 0 2px 4px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.08), 0 4px 8px rgba(0, 0, 0, 0.04);
+  --shadow-hover: 0 20px 50px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.06);
+  --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  --gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  --gradient-5: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  --gradient-6: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+  --transition-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Dark Mode */
+[data-theme="dark"] {
+  --bg: #0A0A0C;
+  --card: #1C1C1E;
+  --text-primary: #F5F5F7;
+  --text-secondary: #A1A1A6;
+  --text-tertiary: #6E6E73;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.4), 0 4px 8px rgba(0, 0, 0, 0.2);
+  --shadow-hover: 0 20px 50px rgba(0, 0, 0, 0.5), 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .card-hero {
+  background: linear-gradient(135deg, #2C2C2E 0%, #3A3A3C 100%);
+}
+
+[data-theme="dark"] .card-photo {
+  background: linear-gradient(135deg, #2C2C2E 0%, #1C1C1E 100%);
+}
+
+[data-theme="dark"] .card-quote {
+  background: linear-gradient(135deg, #1C1C2E 0%, #1E1E28 100%);
+}
+
+[data-theme="dark"] .stack-tag {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+}
+
+[data-theme="dark"] .stack-tag:hover,
+[data-theme="dark"] .stack-tag.tag-highlight {
+  background: rgba(255, 255, 255, 0.9);
+  color: #1D1D1F;
+}
+
+[data-theme="dark"] .status-badge {
+  background: var(--card);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .photo-placeholder {
+  background: #2C2C2E;
+  color: var(--text-secondary);
+}
+
+[data-theme="dark"] .card-back-link:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* Container */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 0 3rem;
+}
+
+.header-logo {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  transition: color 0.3s ease;
+}
+
+.header-nav {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.header-nav a {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.header-nav a:hover {
+  color: var(--text-primary);
+}
+
+.status-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  background: var(--card);
+  padding: 0.4rem 0.9rem;
+  border-radius: 100px;
+  box-shadow: var(--shadow-sm);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  background: #30D158;
+  border-radius: 50%;
+  animation: statusPulse 2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes statusPulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(48, 209, 88, 0.4); }
+  50% { opacity: 0.7; box-shadow: 0 0 0 5px rgba(48, 209, 88, 0); }
+}
+
+/* Bento Grid */
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: minmax(100px, auto);
+  gap: 1rem;
+}
+
+/* Card base */
+.bento-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 1.75rem;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+  cursor: default;
+  will-change: transform, opacity;
+  transition: background-color 0.4s ease, box-shadow 0.4s ease, color 0.4s ease;
+  /* Staggered entry - starts hidden */
+  opacity: 0;
+  transform: translateY(30px) scale(0.97);
+}
+
+.bento-card.card-visible {
+  animation: springIn 0.7s var(--transition-spring) forwards;
+}
+
+/* Card glow overlay - follows mouse */
+.card-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 0;
+  border-radius: inherit;
+}
+
+.bento-card:hover .card-glow {
+  opacity: 1;
+}
+
+.bento-card > *:not(.card-glow) {
+  position: relative;
+  z-index: 1;
+}
+
+/* Different entry directions for visual variety */
+.bento-card:nth-child(4n+1).card-visible { animation-name: springInLeft; }
+.bento-card:nth-child(4n+2).card-visible { animation-name: springInUp; }
+.bento-card:nth-child(4n+3).card-visible { animation-name: springInRight; }
+.bento-card:nth-child(4n).card-visible { animation-name: springInDown; }
+
+@keyframes springIn {
+  0% { opacity: 0; transform: translateY(30px) scale(0.97); }
+  60% { opacity: 1; transform: translateY(-4px) scale(1.01); }
+  80% { transform: translateY(2px) scale(0.995); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes springInLeft {
+  0% { opacity: 0; transform: translateX(-40px) scale(0.97); }
+  60% { opacity: 1; transform: translateX(5px) scale(1.01); }
+  80% { transform: translateX(-2px) scale(0.995); }
+  100% { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+@keyframes springInUp {
+  0% { opacity: 0; transform: translateY(40px) scale(0.97); }
+  60% { opacity: 1; transform: translateY(-5px) scale(1.01); }
+  80% { transform: translateY(2px) scale(0.995); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes springInRight {
+  0% { opacity: 0; transform: translateX(40px) scale(0.97); }
+  60% { opacity: 1; transform: translateX(-5px) scale(1.01); }
+  80% { transform: translateX(2px) scale(0.995); }
+  100% { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+@keyframes springInDown {
+  0% { opacity: 0; transform: translateY(-40px) scale(0.97); }
+  60% { opacity: 1; transform: translateY(5px) scale(1.01); }
+  80% { transform: translateY(-2px) scale(0.995); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Card sizes */
+.card-hero {
+  grid-column: span 2;
+  grid-row: span 2;
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1D1D1F 0%, #2C2C2E 100%);
+  color: white;
+}
+
+.card-hero::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -30%;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(102, 126, 234, 0.3) 0%, transparent 60%);
+  animation: heroGlow 8s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+.card-hero::after {
+  content: '';
+  position: absolute;
+  bottom: -40%;
+  left: -20%;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(118, 75, 162, 0.2) 0%, transparent 60%);
+  animation: heroGlow 10s ease-in-out infinite alternate-reverse;
+  will-change: transform;
+}
+
+@keyframes heroGlow {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  100% { transform: translate3d(30px, -20px, 0) scale(1.1); }
+}
+
+.card-hero .hero-content {
+  position: relative;
+  z-index: 1;
+}
+
+.card-hero h1 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin-bottom: 0.75rem;
+}
+
+.card-hero .hero-subtitle {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+/* Photo card */
+.card-photo {
+  grid-column: span 2;
+  grid-row: span 2;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #E8E8ED 0%, #D2D2D7 100%);
+  position: relative;
+  overflow: hidden;
+  transition: background 0.4s ease;
+}
+
+.photo-placeholder {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: var(--card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  z-index: 1;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.card-photo::before {
+  content: '';
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(from 0deg, transparent, rgba(102, 126, 234, 0.08), transparent, rgba(118, 75, 162, 0.08), transparent);
+  animation: photoSpin 20s linear infinite;
+  will-change: transform;
+}
+
+@keyframes photoSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* About card */
+.card-about {
+  grid-column: span 2;
+  grid-row: span 1;
+}
+
+.card-about h3 {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-tertiary);
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.card-about p {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  transition: color 0.3s ease;
+}
+
+/* Skill cards */
+.card-skill {
+  grid-column: span 1;
+  grid-row: span 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  min-height: 140px;
+}
+
+.card-skill .skill-emoji {
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+  display: block;
+  transition: transform 0.4s var(--transition-spring);
+}
+
+.card-skill:hover .skill-emoji {
+  transform: scale(1.2) rotate(-5deg) translateY(-3px);
+}
+
+.card-skill h4 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  letter-spacing: -0.01em;
+  transition: color 0.3s ease;
+}
+
+.card-skill p {
+  font-size: 0.78rem;
+  color: var(--text-tertiary);
+  line-height: 1.4;
+  transition: color 0.3s ease;
+}
+
+/* Gradient skill cards */
+.card-skill-gradient {
+  color: white;
+  border: none;
+}
+
+.card-skill-gradient h4 {
+  color: white;
+}
+
+.card-skill-gradient p {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.card-gradient-1 {
+  background: var(--gradient-1);
+}
+
+.card-gradient-2 {
+  background: var(--gradient-2);
+}
+
+.card-gradient-3 {
+  background: var(--gradient-3);
+}
+
+/* Stats card */
+.card-stats {
+  grid-column: span 2;
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  background: var(--gradient-1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.stat-label {
+  font-size: 0.72rem;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 0.2rem;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+/* Contact cards */
+.card-contact {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-decoration: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.card-contact .contact-emoji {
+  font-size: 1.6rem;
+  margin-bottom: 0.75rem;
+  transition: transform 0.4s var(--transition-spring);
+}
+
+.card-contact:hover .contact-emoji {
+  transform: scale(1.25) translateY(-2px);
+}
+
+.card-contact h4 {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-tertiary);
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.card-contact p {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  transition: color 0.3s ease;
+}
+
+/* Quote card */
+.card-quote {
+  grid-column: span 2;
+  background: linear-gradient(135deg, #FAFAFF 0%, #F0EFFF 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: background 0.4s ease;
+}
+
+.card-quote blockquote {
+  font-size: 1.15rem;
+  font-weight: 500;
+  line-height: 1.6;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+  position: relative;
+  padding-left: 1.25rem;
+  border-left: 3px solid #667eea;
+  transition: color 0.3s ease;
+}
+
+.card-quote cite {
+  display: block;
+  margin-top: 0.75rem;
+  padding-left: 1.25rem;
+  font-size: 0.8rem;
+  font-style: normal;
+  color: var(--text-tertiary);
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+/* Location card */
+.card-location {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-location::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  right: -10px;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--gradient-4);
+  opacity: 0.15;
+  transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+.card-location:hover::after {
+  transform: scale(1.5);
+  opacity: 0.25;
+}
+
+/* Tech stack card */
+.card-stack {
+  grid-column: span 2;
+}
+
+.stack-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-tertiary);
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.stack-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.stack-tag {
+  font-size: 0.78rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 100px;
+  background: var(--bg);
+  color: var(--text-secondary);
+  font-weight: 500;
+  transition: all 0.25s ease;
+  cursor: default;
+}
+
+.stack-tag:hover,
+.stack-tag.tag-highlight {
+  background: var(--text-primary);
+  color: var(--bg);
+  transform: translateY(-2px);
+}
+
+/* Animated gradient background card */
+.card-animated-bg {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-animated-bg::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(from 0deg, #fbc2eb22, #a18cd122, #fbc2eb22);
+  animation: gradientRotate 10s linear infinite;
+  will-change: transform;
+}
+
+.card-animated-bg > * {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes gradientRotate {
+  to { transform: rotate(360deg); }
+}
+
+/* Dark Mode Toggle Card */
+.card-theme-toggle {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  cursor: pointer;
+  user-select: none;
+}
+
+.theme-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.theme-switch {
+  width: 44px;
+  height: 24px;
+  background: #D1D1D6;
+  border-radius: 12px;
+  position: relative;
+  transition: background-color 0.3s ease;
+  flex-shrink: 0;
+}
+
+[data-theme="dark"] .theme-switch {
+  background: #667eea;
+}
+
+.theme-switch::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.3s var(--transition-spring);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+[data-theme="dark"] .theme-switch::after {
+  transform: translateX(20px);
+}
+
+.theme-label {
+  font-size: 0.78rem;
+  color: var(--text-tertiary);
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.card-theme-toggle h4 {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-tertiary);
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.card-theme-toggle .theme-emoji {
+  font-size: 1.6rem;
+  margin-bottom: 0.5rem;
+  transition: transform 0.4s var(--transition-spring);
+}
+
+.card-theme-toggle:hover .theme-emoji {
+  transform: rotate(20deg) scale(1.15);
+}
+
+/* Clock Card */
+.card-clock {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-clock::before {
+  content: '';
+  position: absolute;
+  top: -30%;
+  right: -30%;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: var(--gradient-6);
+  opacity: 0.1;
+  transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+.card-clock:hover::before {
+  transform: scale(1.4);
+  opacity: 0.2;
+}
+
+.card-clock h4 {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-tertiary);
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+  transition: color 0.3s ease;
+}
+
+.clock-time {
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  transition: color 0.3s ease;
+}
+
+.clock-date {
+  font-size: 0.78rem;
+  color: var(--text-tertiary);
+  margin-top: 0.2rem;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.clock-seconds {
+  display: inline-block;
+  opacity: 0.4;
+  font-size: 1rem;
+}
+
+/* Back to Gallery Card */
+.card-back-link {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  text-decoration: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.card-back-link:hover {
+  background: var(--bg);
+}
+
+.card-back-link .back-emoji {
+  font-size: 1.6rem;
+  margin-bottom: 0.75rem;
+  transition: transform 0.4s var(--transition-spring);
+}
+
+.card-back-link:hover .back-emoji {
+  transform: translateX(-5px) scale(1.1);
+}
+
+.card-back-link h4 {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-tertiary);
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.card-back-link p {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  transition: color 0.3s ease;
+}
+
+/* CTA Card */
+.card-cta {
+  background: linear-gradient(135deg, #1D1D1F 0%, #48484A 100%);
+  cursor: pointer;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 3rem 0 2rem;
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+  transition: color 0.3s ease;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .bento-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .card-hero {
+    grid-column: span 2;
+    grid-row: span 1;
+    min-height: 250px;
+  }
+
+  .card-photo {
+    grid-column: span 2;
+    grid-row: span 1;
+    min-height: 250px;
+  }
+
+  .card-about,
+  .card-stats,
+  .card-quote,
+  .card-stack {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .bento-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .card-hero,
+  .card-photo,
+  .card-about,
+  .card-stats,
+  .card-quote,
+  .card-stack {
+    grid-column: span 1;
+  }
+
+  .card-hero {
+    min-height: 220px;
+    padding: 2rem;
+  }
+
+  .card-hero h1 {
+    font-size: 2rem;
+  }
+
+  .card-stats {
+    flex-direction: row;
+    gap: 1rem;
+  }
+
+  .stat-number {
+    font-size: 1.5rem;
+  }
+
+  .header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+    padding-bottom: 2rem;
+  }
+
+  .header-nav {
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .photo-placeholder {
+    width: 120px;
+    height: 120px;
+    font-size: 2.5rem;
+  }
+
+  .bento-card {
+    padding: 1.5rem;
+  }
+
+  .clock-time {
+    font-size: 1.4rem;
+  }
+}
+
+.lang-switcher { display: flex; gap: 4px; align-items: center; }
+.lang-btn { font-family: inherit; font-size: 0.7rem; font-weight: 500; padding: 3px 8px; border: 1px solid rgba(0,0,0,0.1); background: transparent; color: var(--text-tertiary); border-radius: 6px; cursor: pointer; transition: all 0.2s; }
+.lang-btn:hover, .lang-btn.active { background: var(--text-primary); color: var(--bg); border-color: transparent; }
+[data-theme="dark"] .lang-btn { border-color: rgba(255,255,255,0.1); }
+[data-theme="dark"] .lang-btn:hover, [data-theme="dark"] .lang-btn.active { background: rgba(255,255,255,0.9); color: #1D1D1F; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Header -->
+  <header class="header" role="banner">
+    <div class="header-logo">YN.</div>
+    <nav class="header-nav" aria-label="Main navigation">
+      <a href="#about" data-i18n="nav_about">About</a>
+      <a href="#work" data-i18n="nav_work">Work</a>
+      <a href="#contact" data-i18n="nav_contact">Contact</a>
+      <div class="status-badge" aria-label="Currently available for work">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span data-i18n="status">Available for work</span>
+      </div>
+      <div class="lang-switcher" role="navigation" aria-label="Language selector">
+        <button class="lang-btn active" data-lang="en" onclick="setLanguage('en')">EN</button>
+        <button class="lang-btn" data-lang="ko" onclick="setLanguage('ko')">한국어</button>
+        <button class="lang-btn" data-lang="ja" onclick="setLanguage('ja')">日本語</button>
+        <button class="lang-btn" data-lang="zh" onclick="setLanguage('zh')">中文</button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Bento Grid -->
+  <div class="bento-grid" role="main">
+
+    <!-- 1. Hero Card (2 cols, 2 rows) -->
+    <div class="bento-card card-hero" aria-label="Introduction">
+      <div class="card-glow" aria-hidden="true"></div>
+      <div class="hero-content">
+        <h1 data-i18n="name">Your Name</h1>
+        <p class="hero-subtitle" data-i18n="hero_subtitle">Creative Developer & Designer crafting digital experiences with code and curiosity.</p>
+      </div>
+    </div>
+
+    <!-- 2. Photo Card (2 cols, 2 rows) -->
+    <div class="bento-card card-photo" aria-label="Profile photo">
+      <div class="card-glow" aria-hidden="true"></div>
+      <div class="photo-placeholder" aria-label="Photo placeholder with initials Y N">YN</div>
+    </div>
+
+    <!-- 3. About Card (2 cols) -->
+    <div class="bento-card card-about" id="about" aria-label="About me">
+      <div class="card-glow" aria-hidden="true"></div>
+      <h3 data-i18n="about_label">About</h3>
+      <p data-i18n="about_text">A creative developer with a keen eye for design and a love for building things that live on the internet. I specialize in creating memorable digital experiences that are both beautiful and functional, blending modern front-end engineering with thoughtful UI/UX design.</p>
+    </div>
+
+    <!-- 4. Stats Card (2 cols) -->
+    <div class="bento-card card-stats" aria-label="Career statistics">
+      <div class="card-glow" aria-hidden="true"></div>
+      <div class="stat-item">
+        <div class="stat-number" aria-label="5 plus years experience">5+</div>
+        <div class="stat-label" data-i18n="stat_years">Years Exp</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" aria-label="40 plus projects">40+</div>
+        <div class="stat-label" data-i18n="stat_projects">Projects</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" aria-label="20 plus clients">20+</div>
+        <div class="stat-label" data-i18n="stat_clients">Clients</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" aria-label="3 awards">3</div>
+        <div class="stat-label" data-i18n="stat_awards">Awards</div>
+      </div>
+    </div>
+
+    <!-- 5. Skill - HTML/CSS (gradient) -->
+    <div class="bento-card card-skill card-skill-gradient card-gradient-1" aria-label="Skill: HTML and CSS">
+      <div class="card-glow" aria-hidden="true"></div>
+      <span class="skill-emoji" aria-hidden="true">&lt;/&gt;</span>
+      <div>
+        <h4 data-i18n="skill_html">HTML / CSS</h4>
+        <p data-i18n="skill_html_desc">Semantic markup & modern layouts</p>
+      </div>
+    </div>
+
+    <!-- 6. Skill - JavaScript -->
+    <div class="bento-card card-skill" aria-label="Skill: JavaScript">
+      <div class="card-glow" aria-hidden="true"></div>
+      <span class="skill-emoji" aria-hidden="true">&#x26A1;</span>
+      <div>
+        <h4 data-i18n="skill_js">JavaScript</h4>
+        <p data-i18n="skill_js_desc">ES6+, DOM, async patterns</p>
+      </div>
+    </div>
+
+    <!-- 7. Skill - React (gradient) -->
+    <div class="bento-card card-skill card-skill-gradient card-gradient-3" aria-label="Skill: React">
+      <div class="card-glow" aria-hidden="true"></div>
+      <span class="skill-emoji" aria-hidden="true">&#x269B;</span>
+      <div>
+        <h4 data-i18n="skill_react">React</h4>
+        <p data-i18n="skill_react_desc">Components, hooks, state mgmt</p>
+      </div>
+    </div>
+
+    <!-- 8. Skill - Node.js -->
+    <div class="bento-card card-skill card-animated-bg" aria-label="Skill: Node.js">
+      <div class="card-glow" aria-hidden="true"></div>
+      <span class="skill-emoji" aria-hidden="true">&#x1F4E6;</span>
+      <div>
+        <h4 data-i18n="skill_node">Node.js</h4>
+        <p data-i18n="skill_node_desc">APIs, Express, serverless</p>
+      </div>
+    </div>
+
+    <!-- 9. Skill - Python -->
+    <div class="bento-card card-skill" aria-label="Skill: Python">
+      <div class="card-glow" aria-hidden="true"></div>
+      <span class="skill-emoji" aria-hidden="true">&#x1F40D;</span>
+      <div>
+        <h4 data-i18n="skill_python">Python</h4>
+        <p data-i18n="skill_python_desc">Scripting, automation, data</p>
+      </div>
+    </div>
+
+    <!-- 10. Skill - UI/UX (gradient) -->
+    <div class="bento-card card-skill card-skill-gradient card-gradient-2" aria-label="Skill: UI/UX Design">
+      <div class="card-glow" aria-hidden="true"></div>
+      <span class="skill-emoji" aria-hidden="true">&#x1F3A8;</span>
+      <div>
+        <h4 data-i18n="skill_uiux">UI/UX Design</h4>
+        <p data-i18n="skill_uiux_desc">Figma, prototyping, systems</p>
+      </div>
+    </div>
+
+    <!-- 11. Quote Card (2 cols) -->
+    <div class="bento-card card-quote" aria-label="Inspirational quote">
+      <div class="card-glow" aria-hidden="true"></div>
+      <blockquote data-i18n="quote">"Design is not just what it looks like and feels like. Design is how it works."</blockquote>
+      <cite data-i18n="quote_author">Steve Jobs</cite>
+    </div>
+
+    <!-- 12. Clock Card -->
+    <div class="bento-card card-clock" aria-label="Current time and date" aria-live="polite">
+      <div class="card-glow" aria-hidden="true"></div>
+      <h4 data-i18n="local_time">Local Time</h4>
+      <div class="clock-time" id="clock-time">--:--</div>
+      <div class="clock-date" id="clock-date">---</div>
+    </div>
+
+    <!-- 13. Dark Mode Toggle Card -->
+    <div class="bento-card card-theme-toggle" id="theme-toggle-card" role="button" tabindex="0" aria-label="Toggle dark mode">
+      <div class="card-glow" aria-hidden="true"></div>
+      <span class="theme-emoji" aria-hidden="true" id="theme-emoji">&#x2600;</span>
+      <h4 data-i18n="appearance">Appearance</h4>
+      <div class="theme-toggle-row">
+        <div class="theme-switch" id="theme-switch" aria-hidden="true"></div>
+        <span class="theme-label" id="theme-label">Light</span>
+      </div>
+    </div>
+
+    <!-- 14. Tech Stack Card (2 cols) -->
+    <div class="bento-card card-stack" id="work" aria-label="Technology stack">
+      <div class="card-glow" aria-hidden="true"></div>
+      <h3 class="stack-label" data-i18n="tech_stack">Tech Stack</h3>
+      <div class="stack-tags" role="list" aria-label="Technologies used">
+        <span class="stack-tag" role="listitem">TypeScript</span>
+        <span class="stack-tag" role="listitem">Next.js</span>
+        <span class="stack-tag" role="listitem">Tailwind CSS</span>
+        <span class="stack-tag" role="listitem">Prisma</span>
+        <span class="stack-tag" role="listitem">PostgreSQL</span>
+        <span class="stack-tag" role="listitem">Docker</span>
+        <span class="stack-tag" role="listitem">AWS</span>
+        <span class="stack-tag" role="listitem">Figma</span>
+        <span class="stack-tag" role="listitem">Git</span>
+        <span class="stack-tag" role="listitem">Vercel</span>
+      </div>
+    </div>
+
+    <!-- 15. Contact - Email -->
+    <a href="mailto:email@example.com" class="bento-card card-contact" id="contact" aria-label="Send email to email@example.com">
+      <div class="card-glow" aria-hidden="true"></div>
+      <span class="contact-emoji" aria-hidden="true">&#x2709;</span>
+      <h4 data-i18n="email_label">Email</h4>
+      <p>email@example.com</p>
+    </a>
+
+    <!-- 16. Contact - GitHub -->
+    <a href="#" class="bento-card card-contact" aria-label="Visit GitHub profile">
+      <div class="card-glow" aria-hidden="true"></div>
+      <span class="contact-emoji" aria-hidden="true">&#x1F4BB;</span>
+      <h4 data-i18n="github_label">GitHub</h4>
+      <p>@yourname</p>
+    </a>
+
+    <!-- 17. Location -->
+    <div class="bento-card card-contact card-location" aria-label="Location: Seoul, Korea">
+      <div class="card-glow" aria-hidden="true"></div>
+      <span class="contact-emoji" aria-hidden="true">&#x1F4CD;</span>
+      <h4 data-i18n="location_label">Location</h4>
+      <p data-i18n="location_value">Seoul, Korea</p>
+    </div>
+
+    <!-- 18. Back to Gallery -->
+    <a href="../index.html" class="bento-card card-back-link" aria-label="Back to gallery">
+      <div class="card-glow" aria-hidden="true"></div>
+      <span class="back-emoji" aria-hidden="true">&#x2190;</span>
+      <h4 data-i18n="navigate_label">Navigate</h4>
+      <p data-i18n="gallery_link">Back to Gallery</p>
+    </a>
+
+    <!-- 19. CTA -->
+    <div class="bento-card card-skill card-skill-gradient card-cta" onclick="window.location.href='mailto:email@example.com'" role="button" tabindex="0" aria-label="Start a conversation via email">
+      <div class="card-glow" aria-hidden="true"></div>
+      <span class="skill-emoji" aria-hidden="true">&#x1F680;</span>
+      <div>
+        <h4 data-i18n="cta_heading">Let's work together</h4>
+        <p data-i18n="cta_text">Start a conversation</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer" role="contentinfo">
+    <p data-i18n="footer">Designed & Built with care · 2025</p>
+  </footer>
+
+</div>
+
+<script>
+// =============================================
+// STAGGERED SPRING ENTRANCE ANIMATION
+// =============================================
+const cards = document.querySelectorAll('.bento-card');
+const enterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const card = entry.target;
+      const idx = Array.from(cards).indexOf(card);
+      const delay = idx * 70;
+      setTimeout(() => {
+        card.classList.add('card-visible');
+      }, delay);
+      enterObserver.unobserve(card);
+    }
+  });
+}, { threshold: 0.05 });
+
+cards.forEach(card => enterObserver.observe(card));
+
+// =============================================
+// MAGNETIC HOVER + TILT EFFECT + CARD GLOW
+// =============================================
+cards.forEach(card => {
+  const glow = card.querySelector('.card-glow');
+
+  card.addEventListener('mousemove', (e) => {
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    // Tilt
+    const rotateX = (y - centerY) / centerY * -3;
+    const rotateY = (x - centerX) / centerX * 3;
+
+    // Magnetic pull (subtle shift toward cursor)
+    const pullX = (x - centerX) / centerX * 4;
+    const pullY = (y - centerY) / centerY * 4;
+
+    card.style.transform = `translate3d(${pullX}px, ${pullY - 4}px, 0) scale(1.01) perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+    card.style.boxShadow = `
+      ${-rotateY * 2}px ${rotateX * 2}px 30px rgba(0,0,0,0.08),
+      0 8px 16px rgba(0,0,0,0.06)
+    `;
+    card.style.transition = 'none';
+
+    // Card glow follow
+    if (glow) {
+      glow.style.background = `radial-gradient(300px circle at ${x}px ${y}px, rgba(102, 126, 234, 0.12), transparent 60%)`;
+    }
+  });
+
+  card.addEventListener('mouseleave', () => {
+    card.style.transition = 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.5s ease';
+    card.style.transform = '';
+    card.style.boxShadow = '';
+    if (glow) {
+      glow.style.background = '';
+    }
+  });
+});
+
+// =============================================
+// STAT COUNTER ANIMATION
+// =============================================
+const statsObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      animateStats();
+      statsObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.5 });
+
+const statsCard = document.querySelector('.card-stats');
+if (statsCard) statsObserver.observe(statsCard);
+
+function animateStats() {
+  document.querySelectorAll('.stat-number').forEach(stat => {
+    const text = stat.textContent;
+    const num = parseInt(text);
+    const suffix = text.replace(/[0-9]/g, '');
+    let current = 0;
+    const step = num / 30;
+    const interval = setInterval(() => {
+      current += step;
+      if (current >= num) {
+        current = num;
+        clearInterval(interval);
+      }
+      stat.textContent = Math.floor(current) + suffix;
+    }, 30);
+  });
+}
+
+// =============================================
+// DARK MODE TOGGLE
+// =============================================
+const themeCard = document.getElementById('theme-toggle-card');
+const themeEmoji = document.getElementById('theme-emoji');
+const themeLabel = document.getElementById('theme-label');
+
+function setTheme(dark) {
+  if (dark) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    themeEmoji.innerHTML = '&#x1F319;';
+    themeLabel.textContent = 'Dark';
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+    themeEmoji.innerHTML = '&#x2600;';
+    themeLabel.textContent = 'Light';
+  }
+}
+
+function toggleTheme() {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  setTheme(!isDark);
+  try { localStorage.setItem('bento-theme', isDark ? 'light' : 'dark'); } catch(e) {}
+}
+
+themeCard.addEventListener('click', toggleTheme);
+themeCard.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleTheme(); }
+});
+
+// Load saved theme
+try {
+  const saved = localStorage.getItem('bento-theme');
+  if (saved === 'dark') setTheme(true);
+} catch(e) {}
+
+// =============================================
+// LIVE CLOCK
+// =============================================
+function updateClock() {
+  const now = new Date();
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
+
+  const timeEl = document.getElementById('clock-time');
+  const dateEl = document.getElementById('clock-date');
+
+  if (timeEl) {
+    timeEl.innerHTML = `${hours}:${minutes}<span class="clock-seconds">:${seconds}</span>`;
+  }
+
+  if (dateEl) {
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    dateEl.textContent = now.toLocaleDateString('en-US', options);
+  }
+}
+
+updateClock();
+setInterval(updateClock, 1000);
+
+// =============================================
+// STACK TAG RANDOM HIGHLIGHT
+// =============================================
+const stackTags = document.querySelectorAll('.stack-tag');
+let highlightedTag = null;
+
+function highlightRandomTag() {
+  if (highlightedTag) {
+    highlightedTag.classList.remove('tag-highlight');
+  }
+  const idx = Math.floor(Math.random() * stackTags.length);
+  highlightedTag = stackTags[idx];
+  highlightedTag.classList.add('tag-highlight');
+}
+
+if (stackTags.length > 0) {
+  highlightRandomTag();
+  setInterval(highlightRandomTag, 3000);
+}
+
+// =============================================
+// SMOOTH SCROLL FOR NAV
+// =============================================
+document.querySelectorAll('.header-nav a').forEach(link => {
+  link.addEventListener('click', (e) => {
+    const href = link.getAttribute('href');
+    if (href.startsWith('#')) {
+      e.preventDefault();
+      const target = document.querySelector(href);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  });
+});
+
+// =============================================
+// CTA KEYBOARD SUPPORT
+// =============================================
+document.querySelectorAll('[role="button"][onclick]').forEach(btn => {
+  btn.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); btn.click(); }
+  });
+});
+
+// =============================================
+// I18N TRANSLATIONS
+// =============================================
+var TRANSLATIONS = {
+  ko: {
+    name: '홍길동',
+    hero_subtitle: '코드와 호기심으로 디지털 경험을 만드는 크리에이티브 개발자 & 디자이너.',
+    nav_about: '소개',
+    nav_work: '작업',
+    nav_contact: '연락처',
+    status: '프리랜서 가능',
+    about_label: '소개',
+    about_text: '디자인에 대한 날카로운 감각과 인터넷에 사는 것들을 만드는 것을 사랑하는 크리에이티브 개발자입니다. 아름답고 기능적인 기억에 남는 디지털 경험을 만드는 것을 전문으로 하며, 모던 프론트엔드 엔지니어링과 세심한 UI/UX 디자인을 결합합니다.',
+    stat_years: '경력',
+    stat_projects: '프로젝트',
+    stat_clients: '클라이언트',
+    stat_awards: '수상',
+    skill_html: 'HTML / CSS',
+    skill_html_desc: '시맨틱 마크업 & 모던 레이아웃',
+    skill_js: 'JavaScript',
+    skill_js_desc: 'ES6+, DOM, 비동기 패턴',
+    skill_react: 'React',
+    skill_react_desc: '컴포넌트, 훅, 상태 관리',
+    skill_node: 'Node.js',
+    skill_node_desc: 'API, Express, 서버리스',
+    skill_python: 'Python',
+    skill_python_desc: '스크립팅, 자동화, 데이터',
+    skill_uiux: 'UI/UX 디자인',
+    skill_uiux_desc: 'Figma, 프로토타이핑, 시스템',
+    quote: '"디자인은 어떻게 보이고 느껴지는지만이 아닙니다. 디자인은 어떻게 작동하는지입니다."',
+    quote_author: '스티브 잡스',
+    local_time: '현지 시간',
+    appearance: '외관',
+    tech_stack: '기술 스택',
+    email_label: '이메일',
+    github_label: '깃허브',
+    location_label: '위치',
+    location_value: '서울, 대한민국',
+    navigate_label: '이동',
+    gallery_link: '갤러리로 돌아가기',
+    cta_heading: '함께 일해요',
+    cta_text: '대화를 시작하세요',
+    footer: '정성을 담아 디자인 & 제작 · 2025'
+  },
+  en: {
+    name: 'Your Name',
+    hero_subtitle: 'Creative Developer & Designer crafting digital experiences with code and curiosity.',
+    nav_about: 'About',
+    nav_work: 'Work',
+    nav_contact: 'Contact',
+    status: 'Available for work',
+    about_label: 'About',
+    about_text: 'A creative developer with a keen eye for design and a love for building things that live on the internet. I specialize in creating memorable digital experiences that are both beautiful and functional, blending modern front-end engineering with thoughtful UI/UX design.',
+    stat_years: 'Years Exp',
+    stat_projects: 'Projects',
+    stat_clients: 'Clients',
+    stat_awards: 'Awards',
+    skill_html: 'HTML / CSS',
+    skill_html_desc: 'Semantic markup & modern layouts',
+    skill_js: 'JavaScript',
+    skill_js_desc: 'ES6+, DOM, async patterns',
+    skill_react: 'React',
+    skill_react_desc: 'Components, hooks, state mgmt',
+    skill_node: 'Node.js',
+    skill_node_desc: 'APIs, Express, serverless',
+    skill_python: 'Python',
+    skill_python_desc: 'Scripting, automation, data',
+    skill_uiux: 'UI/UX Design',
+    skill_uiux_desc: 'Figma, prototyping, systems',
+    quote: '"Design is not just what it looks like and feels like. Design is how it works."',
+    quote_author: 'Steve Jobs',
+    local_time: 'Local Time',
+    appearance: 'Appearance',
+    tech_stack: 'Tech Stack',
+    email_label: 'Email',
+    github_label: 'GitHub',
+    location_label: 'Location',
+    location_value: 'Seoul, Korea',
+    navigate_label: 'Navigate',
+    gallery_link: 'Back to Gallery',
+    cta_heading: "Let's work together",
+    cta_text: 'Start a conversation',
+    footer: 'Designed & Built with care \u00b7 2025'
+  },
+  ja: {
+    name: 'あなたの名前',
+    hero_subtitle: 'コードと好奇心でデジタル体験を生み出すクリエイティブデベロッパー & デザイナー。',
+    nav_about: '紹介',
+    nav_work: '作品',
+    nav_contact: 'お問い合わせ',
+    status: 'お仕事募集中',
+    about_label: '紹介',
+    about_text: 'デザインへの鋭い感覚とインターネット上で生きるものを作ることへの愛情を持つクリエイティブデベロッパーです。美しく機能的な印象に残るデジタル体験の創造を専門とし、モダンなフロントエンドエンジニアリングと思慮深いUI/UXデザインを融合します。',
+    stat_years: '経験年数',
+    stat_projects: 'プロジェクト',
+    stat_clients: 'クライアント',
+    stat_awards: '受賞',
+    skill_html: 'HTML / CSS',
+    skill_html_desc: 'セマンティックマークアップ & モダンレイアウト',
+    skill_js: 'JavaScript',
+    skill_js_desc: 'ES6+, DOM, 非同期パターン',
+    skill_react: 'React',
+    skill_react_desc: 'コンポーネント, フック, 状態管理',
+    skill_node: 'Node.js',
+    skill_node_desc: 'API, Express, サーバーレス',
+    skill_python: 'Python',
+    skill_python_desc: 'スクリプティング, 自動化, データ',
+    skill_uiux: 'UI/UXデザイン',
+    skill_uiux_desc: 'Figma, プロトタイピング, システム',
+    quote: '"デザインとは、見た目や感触だけではない。デザインとは、どう機能するかだ。"',
+    quote_author: 'スティーブ・ジョブズ',
+    local_time: '現地時間',
+    appearance: '外観',
+    tech_stack: '技術スタック',
+    email_label: 'メール',
+    github_label: 'GitHub',
+    location_label: '所在地',
+    location_value: 'ソウル、韓国',
+    navigate_label: 'ナビゲーション',
+    gallery_link: 'ギャラリーに戻る',
+    cta_heading: '一緒に働きましょう',
+    cta_text: '会話を始める',
+    footer: '丁寧にデザイン＆構築 · 2025'
+  },
+  zh: {
+    name: '你的名字',
+    hero_subtitle: '用代码和好奇心打造数字体验的创意开发者与设计师。',
+    nav_about: '关于',
+    nav_work: '作品',
+    nav_contact: '联系',
+    status: '可接受工作',
+    about_label: '关于',
+    about_text: '一位对设计有敏锐眼光、热爱构建互联网产品的创意开发者。我专注于创造既美观又实用的难忘数字体验，将现代前端工程与深思熟虑的UI/UX设计相融合。',
+    stat_years: '年经验',
+    stat_projects: '项目',
+    stat_clients: '客户',
+    stat_awards: '获奖',
+    skill_html: 'HTML / CSS',
+    skill_html_desc: '语义化标记与现代布局',
+    skill_js: 'JavaScript',
+    skill_js_desc: 'ES6+, DOM, 异步模式',
+    skill_react: 'React',
+    skill_react_desc: '组件、Hooks、状态管理',
+    skill_node: 'Node.js',
+    skill_node_desc: 'API、Express、无服务器',
+    skill_python: 'Python',
+    skill_python_desc: '脚本、自动化、数据',
+    skill_uiux: 'UI/UX 设计',
+    skill_uiux_desc: 'Figma、原型设计、系统',
+    quote: '"设计不仅仅是外观和感觉。设计是它如何运作的。"',
+    quote_author: '史蒂夫·乔布斯',
+    local_time: '当地时间',
+    appearance: '外观',
+    tech_stack: '技术栈',
+    email_label: '邮箱',
+    github_label: 'GitHub',
+    location_label: '位置',
+    location_value: '首尔，韩国',
+    navigate_label: '导航',
+    gallery_link: '返回画廊',
+    cta_heading: '一起合作吧',
+    cta_text: '开始对话',
+    footer: '用心设计与构建 · 2025'
+  }
+};
+
+function setLanguage(lang) {
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    if (TRANSLATIONS[lang] && TRANSLATIONS[lang][key]) {
+      el.textContent = TRANSLATIONS[lang][key];
+    }
+  });
+  document.querySelectorAll('.lang-btn').forEach(function(btn) {
+    btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+  });
+  try { localStorage.setItem('preferred-lang', lang); } catch(e) {}
+  document.documentElement.lang = lang === 'ko' ? 'ko' : lang === 'ja' ? 'ja' : lang === 'zh' ? 'zh' : 'en';
+}
+
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  var urlLang = params.get('lang');
+  var savedLang; try { savedLang = localStorage.getItem('preferred-lang'); } catch(e) {}
+  var lang = urlLang || savedLang || 'en';
+  if (lang !== 'en') setLanguage(lang);
+  else document.querySelectorAll('.lang-btn').forEach(function(btn) { btn.classList.toggle('active', btn.getAttribute('data-lang') === 'en'); });
+})();
+</script>
+
+</body>
+</html>

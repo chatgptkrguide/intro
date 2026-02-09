@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Name - Neobrutalism Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+  :root{
+    --yellow:#FFE500;
+    --pink:#FF6B9D;
+    --blue:#0066FF;
+    --green:#A8FF00;
+    --orange:#FF9B00;
+    --black:#111;
+    --white:#fff;
+    --shadow:4px 4px 0 var(--black);
+    --shadow-lg:6px 6px 0 var(--black);
+    --shadow-xl:8px 8px 0 var(--black);
+    --border:3px solid var(--black);
+    --radius:0px;
+  }
+
+  html{scroll-behavior:smooth;font-size:16px}
+
+  body{
+    font-family:'Space Grotesk',system-ui,sans-serif;
+    background:var(--white);
+    color:var(--black);
+    overflow-x:hidden;
+    line-height:1.6;
+    cursor:none;
+  }
+
+  /* ── CUSTOM CURSOR ── */
+  .cursor{
+    position:fixed;
+    width:32px;height:32px;
+    border:3px solid var(--black);
+    border-radius:50%;
+    pointer-events:none;
+    z-index:9999;
+    transition:transform .15s ease-out, background .15s, border-color .15s;
+    transform:translate(-50%,-50%);
+    will-change:left,top;
+    mix-blend-mode:difference;
+    background:transparent;
+  }
+  .cursor.hovering{
+    transform:translate(-50%,-50%) scale(1.6);
+    background:var(--yellow);
+    border-color:var(--yellow);
+  }
+  .cursor-dot{
+    position:fixed;
+    width:6px;height:6px;
+    background:var(--black);
+    border-radius:50%;
+    pointer-events:none;
+    z-index:10000;
+    transform:translate(-50%,-50%);
+    will-change:left,top;
+    mix-blend-mode:difference;
+  }
+  @media(pointer:coarse){
+    .cursor,.cursor-dot{display:none}
+    body{cursor:auto}
+  }
+
+  /* ── BACK TO GALLERY ── */
+  .back-btn{
+    position:fixed;
+    top:72px;left:20px;
+    z-index:99;
+    padding:8px 18px;
+    background:var(--white);
+    border:var(--border);
+    box-shadow:var(--shadow);
+    font-family:inherit;font-weight:700;font-size:0.85rem;
+    text-decoration:none;color:var(--black);
+    transition:all .15s;
+    will-change:transform;
+  }
+  .back-btn:hover{
+    transform:translate(-2px,-2px);
+    box-shadow:6px 6px 0 var(--black);
+    background:var(--yellow);
+  }
+
+  /* ── PAGE LOAD ANIMATION ── */
+  .slam{
+    opacity:0;
+    transform:translateY(-60px) scale(1.1);
+    will-change:transform,opacity;
+  }
+  .slam.slammed{
+    opacity:1;
+    transform:translateY(0) scale(1);
+    transition:transform .45s cubic-bezier(.22,.68,0,1.3), opacity .3s ease-out;
+  }
+
+  /* ── NAV ── */
+  nav{
+    position:fixed;top:0;left:0;width:100%;z-index:100;
+    background:var(--yellow);
+    border-bottom:var(--border);
+    padding:14px 32px;
+    display:flex;justify-content:space-between;align-items:center;
+  }
+  nav .logo{font-weight:700;font-size:1.3rem;letter-spacing:-0.5px}
+  nav ul{list-style:none;display:flex;gap:8px}
+  nav ul li a{
+    display:inline-block;
+    padding:6px 16px;
+    text-decoration:none;color:var(--black);
+    font-weight:600;font-size:0.95rem;
+    border:2px solid transparent;
+    border-radius:var(--radius);
+    transition:all .15s;
+  }
+  nav ul li a:hover{
+    background:var(--black);color:var(--white);
+    border-color:var(--black);
+    transform:translate(-2px,-2px);
+    box-shadow:2px 2px 0 var(--black);
+  }
+
+  /* ── MARQUEE ── */
+  .marquee-wrap{
+    margin-top:58px;
+    background:var(--black);color:var(--yellow);
+    border-bottom:var(--border);
+    padding:10px 0;overflow:hidden;
+    white-space:nowrap;
+  }
+  .marquee-wrap:hover .marquee-inner{
+    animation-play-state:paused;
+  }
+  .marquee-wrap-reverse{
+    margin-top:0;
+    background:var(--pink);color:var(--black);
+    border-bottom:var(--border);
+    padding:8px 0;overflow:hidden;
+    white-space:nowrap;
+  }
+  .marquee-wrap-reverse:hover .marquee-inner-reverse{
+    animation-play-state:paused;
+  }
+  .marquee-inner{
+    display:inline-block;
+    animation:marquee 22s linear infinite;
+    font-weight:700;font-size:1.1rem;letter-spacing:1px;
+    will-change:transform;
+  }
+  .marquee-inner-reverse{
+    display:inline-block;
+    animation:marqueeReverse 20s linear infinite;
+    font-weight:700;font-size:0.9rem;letter-spacing:1px;
+    will-change:transform;
+  }
+  @keyframes marquee{
+    0%{transform:translateX(0)}
+    100%{transform:translateX(-50%)}
+  }
+  @keyframes marqueeReverse{
+    0%{transform:translateX(-50%)}
+    100%{transform:translateX(0)}
+  }
+
+  /* ── HERO ── */
+  .hero{
+    background:var(--yellow);
+    border-bottom:var(--border);
+    padding:80px 32px 100px;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero h1{
+    font-size:clamp(3rem,10vw,8rem);
+    font-weight:700;
+    line-height:0.95;
+    letter-spacing:-3px;
+    position:relative;
+    display:inline-block;
+  }
+  .hero h1 .outline{
+    -webkit-text-stroke:3px var(--black);
+    color:transparent;
+  }
+  .hero .subtitle{
+    font-size:clamp(1.1rem,3vw,1.6rem);
+    margin-top:24px;font-weight:600;
+  }
+  .hero .sticker{
+    position:absolute;
+    font-size:3rem;
+    animation:wiggle 2s ease-in-out infinite alternate;
+    will-change:transform;
+    transition:transform 0.3s;
+  }
+  .hero .sticker:hover{
+    animation-play-state:paused;
+    transform:scale(1.4) rotate(0deg) !important;
+  }
+  .hero .sticker-1{top:20%;left:8%}
+  .hero .sticker-2{top:15%;right:8%;animation-delay:.5s}
+  .hero .sticker-3{bottom:10%;left:15%;animation-delay:1s}
+  .hero .sticker-4{bottom:8%;right:12%;animation-delay:1.5s}
+  @keyframes wiggle{
+    0%{transform:rotate(-8deg) scale(1)}
+    100%{transform:rotate(8deg) scale(1.1)}
+  }
+
+  .hero .cta-row{
+    margin-top:40px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap;
+  }
+
+  /* ── BUTTONS ── */
+  .btn{
+    display:inline-block;
+    padding:14px 32px;
+    font-family:inherit;font-size:1.05rem;font-weight:700;
+    border:var(--border);
+    cursor:none;
+    transition:all .12s;
+    text-decoration:none;
+    border-radius:var(--radius);
+    will-change:transform;
+    position:relative;
+    overflow:hidden;
+  }
+  .btn-primary{background:var(--blue);color:var(--white);box-shadow:var(--shadow-lg)}
+  .btn-primary:hover{transform:translate(-3px,-3px);box-shadow:9px 9px 0 var(--black)}
+  .btn-secondary{background:var(--white);color:var(--black);box-shadow:var(--shadow-lg)}
+  .btn-secondary:hover{transform:translate(-3px,-3px);box-shadow:9px 9px 0 var(--black)}
+  .btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--black)}
+
+  /* ── RIPPLE EFFECT ── */
+  .ripple{
+    position:absolute;
+    border-radius:50%;
+    background:rgba(255,255,255,0.4);
+    transform:scale(0);
+    animation:rippleAnim 0.6s ease-out forwards;
+    pointer-events:none;
+  }
+  @keyframes rippleAnim{
+    to{transform:scale(3);opacity:0}
+  }
+
+  /* ── SECTIONS ── */
+  section{padding:80px 32px}
+  .section-title{
+    font-size:clamp(2rem,5vw,3.5rem);
+    font-weight:700;letter-spacing:-1px;
+    margin-bottom:40px;
+    position:relative;display:inline-block;
+  }
+  .section-title::after{
+    content:'';position:absolute;left:0;bottom:-6px;
+    width:100%;height:6px;background:var(--pink);
+    transform:scaleX(0);transform-origin:left;
+    transition:transform 0.6s cubic-bezier(.22,.68,0,1.3);
+  }
+  .section-title.visible::after{
+    transform:scaleX(1);
+  }
+
+  /* ── ABOUT ── */
+  .about{background:var(--pink);border-bottom:var(--border);border-top:var(--border)}
+  .about-grid{
+    max-width:1000px;margin:0 auto;
+    display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;
+  }
+  .about-card{
+    background:var(--white);
+    border:var(--border);
+    box-shadow:var(--shadow-xl);
+    padding:40px;
+    transition:all .25s cubic-bezier(.22,.68,0,1.1);
+    will-change:transform;
+  }
+  .about-card:hover{transform:translate(-4px,-4px) rotate(-0.5deg);box-shadow:12px 12px 0 var(--black)}
+  .about-card p{font-size:1.1rem;line-height:1.7}
+  .about-photo{
+    background:var(--yellow);
+    border:var(--border);
+    box-shadow:var(--shadow-xl);
+    aspect-ratio:1/1;
+    display:flex;align-items:center;justify-content:center;
+    font-size:6rem;
+    transition:all .25s cubic-bezier(.22,.68,0,1.1);
+    will-change:transform;
+  }
+  .about-photo:hover{transform:translate(-4px,-4px) rotate(1deg);box-shadow:12px 12px 0 var(--black)}
+
+  /* ── SKILLS ── */
+  .skills{background:var(--white);border-bottom:var(--border)}
+  .skills-grid{
+    max-width:900px;margin:0 auto;
+    display:flex;flex-wrap:wrap;gap:16px;
+  }
+  .skill-badge{
+    padding:12px 24px;
+    font-weight:700;font-size:1.05rem;
+    border:var(--border);
+    box-shadow:var(--shadow);
+    cursor:default;
+    transition:all .2s cubic-bezier(.22,.68,0,1.3);
+    will-change:transform;
+    position:relative;
+  }
+  .skill-badge:nth-child(6n+1){background:var(--yellow)}
+  .skill-badge:nth-child(6n+2){background:var(--pink)}
+  .skill-badge:nth-child(6n+3){background:var(--blue);color:var(--white)}
+  .skill-badge:nth-child(6n+4){background:var(--white)}
+  .skill-badge:nth-child(6n+5){background:var(--green)}
+  .skill-badge:nth-child(6n+6){background:var(--orange)}
+  .skill-badge:hover{
+    transform:translate(-3px,-3px) rotate(-2deg);
+    box-shadow:7px 7px 0 var(--black);
+  }
+  .skill-badge:active{
+    transform:translate(1px,1px) rotate(0deg);
+    box-shadow:2px 2px 0 var(--black);
+  }
+
+  /* Staggered bounce entrance for skills */
+  .skill-badge.reveal{
+    opacity:0;
+    transform:translateY(40px) rotate(5deg) scale(0.8);
+  }
+  .skill-badge.reveal.visible{
+    opacity:1;
+    transform:translateY(0) rotate(0deg) scale(1);
+    transition:all .5s cubic-bezier(.22,.68,0,1.3);
+  }
+
+  /* ── EXPERIENCE ── */
+  .experience{background:var(--blue);color:var(--white);border-bottom:var(--border)}
+  .experience .section-title::after{background:var(--yellow)}
+  .exp-cards{max-width:900px;margin:0 auto;display:grid;gap:24px}
+  .exp-card{
+    background:var(--white);color:var(--black);
+    border:var(--border);box-shadow:var(--shadow-lg);
+    padding:32px;
+    display:grid;grid-template-columns:auto 1fr;gap:24px;
+    align-items:start;
+    transition:all .2s cubic-bezier(.22,.68,0,1.1);
+    will-change:transform;
+  }
+  .exp-card:hover{transform:translate(-3px,-3px) rotate(-0.3deg);box-shadow:9px 9px 0 var(--black)}
+  .exp-year{
+    background:var(--yellow);
+    border:var(--border);
+    padding:8px 16px;
+    font-weight:700;font-size:1rem;
+    white-space:nowrap;
+  }
+  .exp-card h3{font-size:1.3rem;margin-bottom:4px}
+  .exp-card p{font-size:0.95rem;opacity:0.8}
+
+  /* ── COUNTER ANIMATION ── */
+  .stat-row{
+    max-width:900px;margin:0 auto;
+    display:flex;gap:16px;justify-content:center;flex-wrap:wrap;
+    margin-bottom:40px;
+  }
+  .stat-box{
+    background:var(--white);
+    border:var(--border);
+    box-shadow:var(--shadow-lg);
+    padding:24px 32px;
+    text-align:center;
+    min-width:140px;
+    transition:all .2s;
+    will-change:transform;
+  }
+  .stat-box:hover{
+    transform:translate(-3px,-3px);
+    box-shadow:9px 9px 0 var(--black);
+  }
+  .stat-number{
+    font-size:2.5rem;
+    font-weight:700;
+    line-height:1;
+    margin-bottom:4px;
+  }
+  .stat-label{
+    font-size:0.8rem;
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    opacity:0.7;
+  }
+
+  /* ── CONTACT ── */
+  .contact{
+    background:var(--yellow);
+    border-top:var(--border);
+    text-align:center;
+    padding:100px 32px;
+  }
+  .contact .section-title::after{background:var(--blue)}
+  .contact p{font-size:1.2rem;max-width:600px;margin:0 auto 32px;font-weight:500}
+  .contact-links{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+  .contact-link{
+    padding:16px 32px;
+    background:var(--white);
+    border:var(--border);
+    box-shadow:var(--shadow-lg);
+    font-weight:700;font-size:1.1rem;
+    text-decoration:none;color:var(--black);
+    transition:all .15s;
+    will-change:transform;
+    position:relative;
+    overflow:hidden;
+  }
+  .contact-link:hover{
+    background:var(--black);color:var(--white);
+    transform:translate(-3px,-3px);box-shadow:9px 9px 0 var(--pink);
+  }
+
+  /* ── FOOTER ── */
+  footer{
+    background:var(--black);color:var(--white);
+    text-align:center;padding:24px;
+    font-weight:600;font-size:0.95rem;
+    border-top:var(--border);
+  }
+
+  /* ── SCROLL ANIMATIONS ── */
+  .reveal{
+    opacity:0;transform:translateY(30px);
+    transition:all .6s cubic-bezier(.23,1,.32,1);
+    will-change:transform,opacity;
+  }
+  .reveal.visible{opacity:1;transform:translateY(0)}
+
+  /* ── KONAMI OVERLAY ── */
+  .konami-overlay{
+    position:fixed;inset:0;z-index:10000;
+    background:var(--black);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    opacity:0;pointer-events:none;
+    transition:opacity .4s;
+  }
+  .konami-overlay.active{opacity:1;pointer-events:auto}
+  .konami-overlay h2{
+    font-size:clamp(2rem,6vw,5rem);
+    color:var(--yellow);
+    font-weight:700;
+    text-align:center;
+    animation:konamiPulse 1s ease-in-out infinite alternate;
+  }
+  .konami-overlay p{
+    color:var(--pink);
+    font-size:1.2rem;
+    margin-top:16px;
+    font-weight:600;
+  }
+  .konami-overlay .close-konami{
+    margin-top:40px;
+    padding:12px 28px;
+    background:var(--yellow);
+    border:var(--border);
+    box-shadow:var(--shadow);
+    font-family:inherit;font-weight:700;font-size:1rem;
+    cursor:pointer;
+    transition:all .15s;
+    color:var(--black);
+  }
+  .konami-overlay .close-konami:hover{
+    transform:translate(-2px,-2px);
+    box-shadow:6px 6px 0 var(--pink);
+  }
+  @keyframes konamiPulse{
+    0%{transform:scale(1);text-shadow:0 0 20px var(--yellow)}
+    100%{transform:scale(1.05);text-shadow:0 0 40px var(--pink)}
+  }
+  .konami-rain{
+    position:absolute;inset:0;overflow:hidden;pointer-events:none;
+  }
+  .konami-emoji{
+    position:absolute;
+    font-size:2rem;
+    animation:emojiRain 3s linear infinite;
+    will-change:transform;
+  }
+  @keyframes emojiRain{
+    0%{transform:translateY(-40px) rotate(0deg);opacity:1}
+    100%{transform:translateY(100vh) rotate(360deg);opacity:0}
+  }
+
+  /* ── SECTION DIVIDER ── */
+  .section-divider{
+    height:4px;
+    background:repeating-linear-gradient(
+      90deg,
+      var(--yellow) 0px,
+      var(--yellow) 20px,
+      var(--pink) 20px,
+      var(--pink) 40px,
+      var(--blue) 40px,
+      var(--blue) 60px,
+      var(--green) 60px,
+      var(--green) 80px
+    );
+    background-size:80px 4px;
+    animation:stripeScroll 3s linear infinite;
+  }
+  @keyframes stripeScroll{
+    to{background-position:80px 0}
+  }
+
+  /* ── LANGUAGE SWITCHER ── */
+  .lang-switcher{
+    position:fixed;top:72px;right:20px;z-index:101;
+    display:flex;gap:4px;
+  }
+  .lang-btn{
+    font-family:inherit;font-size:0.75rem;font-weight:700;
+    padding:5px 12px;
+    border:2px solid var(--black);
+    background:var(--white);color:var(--black);
+    cursor:none;transition:all .15s;
+  }
+  .lang-btn:hover,.lang-btn.active{
+    background:var(--black);color:var(--white);
+    transform:translate(-2px,-2px);
+    box-shadow:3px 3px 0 var(--black);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media(max-width:768px){
+    nav{padding:12px 16px}
+    nav ul{gap:4px}
+    nav ul li a{padding:4px 10px;font-size:0.85rem}
+    section{padding:60px 20px}
+    .about-grid{grid-template-columns:1fr;gap:24px}
+    .about-photo{max-width:280px;margin:0 auto}
+    .hero .sticker{font-size:2rem}
+    .exp-card{grid-template-columns:1fr}
+    .contact{padding:60px 20px}
+    .back-btn{top:64px;left:12px;padding:6px 12px;font-size:0.8rem}
+    .stat-box{min-width:100px;padding:16px 20px}
+    .stat-number{font-size:2rem}
+  }
+  @media(max-width:480px){
+    nav .logo{font-size:1rem}
+    .hero{padding:60px 16px 80px}
+    .hero .sticker{display:none}
+    .back-btn{top:60px;left:8px;padding:5px 10px;font-size:0.75rem}
+  }
+</style>
+</head>
+<body>
+
+<!-- CUSTOM CURSOR -->
+<div class="cursor" id="cursor" aria-hidden="true"></div>
+<div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+
+<!-- BACK TO GALLERY -->
+<a href="../index.html" class="back-btn slam" aria-label="Back to gallery" data-i18n="backBtn">&larr; Back to Gallery</a>
+
+<!-- LANGUAGE SWITCHER -->
+<div class="lang-switcher" aria-label="Language selector">
+  <button class="lang-btn" data-lang="en">EN</button>
+  <button class="lang-btn" data-lang="ko">KO</button>
+  <button class="lang-btn" data-lang="ja">JA</button>
+  <button class="lang-btn" data-lang="zh">ZH</button>
+</div>
+
+<!-- KONAMI OVERLAY -->
+<div class="konami-overlay" id="konamiOverlay" role="dialog" aria-label="Easter egg" aria-hidden="true">
+  <div class="konami-rain" id="konamiRain"></div>
+  <h2>YOU FOUND IT!</h2>
+  <p>The secret neobrutalist level has been unlocked.</p>
+  <button class="close-konami" id="closeKonami" aria-label="Close easter egg">NICE &mdash; CLOSE</button>
+</div>
+
+<!-- NAV -->
+<nav aria-label="Main navigation" class="slam">
+  <div class="logo">YN.</div>
+  <ul role="list">
+    <li><a href="#about" data-i18n="navAbout">About</a></li>
+    <li><a href="#skills" data-i18n="navSkills">Skills</a></li>
+    <li><a href="#experience" data-i18n="navWork">Work</a></li>
+    <li><a href="#contact" data-i18n="navContact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap slam" aria-hidden="true">
+  <div class="marquee-inner" id="marquee">
+    <span>CREATIVE DEVELOPER &bull; UI DESIGNER &bull; PROBLEM SOLVER &bull; CODE ENTHUSIAST &bull; PIXEL PERFECTIONIST &bull; CREATIVE DEVELOPER &bull; UI DESIGNER &bull; PROBLEM SOLVER &bull; CODE ENTHUSIAST &bull; PIXEL PERFECTIONIST &bull;&nbsp;</span>
+  </div>
+</div>
+<div class="marquee-wrap-reverse slam" aria-hidden="true">
+  <div class="marquee-inner-reverse" id="marquee2">
+    <span>NEOBRUTALISM &star; THICK BORDERS &star; RAW ENERGY &star; NO ROUNDED CORNERS &star; BOLD COLORS &star; ANTI-CORPORATE &star; NEOBRUTALISM &star; THICK BORDERS &star; RAW ENERGY &star; NO ROUNDED CORNERS &star; BOLD COLORS &star; ANTI-CORPORATE &star;&nbsp;</span>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero" aria-label="Introduction">
+  <span class="sticker sticker-1" aria-hidden="true">&#9733;</span>
+  <span class="sticker sticker-2" aria-hidden="true">&#9883;</span>
+  <span class="sticker sticker-3" aria-hidden="true">&#9889;</span>
+  <span class="sticker sticker-4" aria-hidden="true">&#10024;</span>
+  <h1 class="slam" data-i18n="heroName">YOUR<br><span class="outline">NAME</span></h1>
+  <p class="subtitle slam" data-i18n="heroSub">Creative Developer & Designer</p>
+  <div class="cta-row slam">
+    <a href="#contact" class="btn btn-primary" data-i18n="heroCta1">Get In Touch</a>
+    <a href="#about" class="btn btn-secondary" data-i18n="heroCta2">Learn More</a>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ABOUT -->
+<section class="about" id="about" aria-label="About section">
+  <div class="about-grid">
+    <div class="about-photo reveal" role="img" aria-label="Photo placeholder">&#9786;</div>
+    <div class="about-card reveal">
+      <h2 class="section-title reveal" data-i18n="aboutTitle">About Me</h2>
+      <p data-i18n="aboutText">I'm a creative developer who thrives at the intersection of design and code. I build bold, expressive digital experiences that break the mold of corporate blandness. With a passion for raw aesthetics and clean engineering, I turn wild ideas into pixel-perfect reality. Currently crafting the future of the web, one chunky border at a time.</p>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- SKILLS -->
+<section class="skills" id="skills" aria-label="Skills section">
+  <h2 class="section-title reveal" data-i18n="skillsTitle">Skills &amp; Tools</h2>
+  <div class="stat-row">
+    <div class="stat-box reveal">
+      <div class="stat-number" data-target="50">0</div>
+      <div class="stat-label" data-i18n="statProjects">Projects</div>
+    </div>
+    <div class="stat-box reveal">
+      <div class="stat-number" data-target="30">0</div>
+      <div class="stat-label" data-i18n="statClients">Clients</div>
+    </div>
+    <div class="stat-box reveal">
+      <div class="stat-number" data-target="5">0</div>
+      <div class="stat-label" data-i18n="statYears">Years Exp</div>
+    </div>
+  </div>
+  <div class="skills-grid" role="list" aria-label="Technical skills">
+    <span class="skill-badge reveal" role="listitem">HTML / CSS</span>
+    <span class="skill-badge reveal" role="listitem">JavaScript</span>
+    <span class="skill-badge reveal" role="listitem">React</span>
+    <span class="skill-badge reveal" role="listitem">Node.js</span>
+    <span class="skill-badge reveal" role="listitem">Python</span>
+    <span class="skill-badge reveal" role="listitem">UI/UX Design</span>
+    <span class="skill-badge reveal" role="listitem">TypeScript</span>
+    <span class="skill-badge reveal" role="listitem">Figma</span>
+    <span class="skill-badge reveal" role="listitem">Git</span>
+    <span class="skill-badge reveal" role="listitem">REST APIs</span>
+    <span class="skill-badge reveal" role="listitem">Responsive Design</span>
+    <span class="skill-badge reveal" role="listitem">Animation</span>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- EXPERIENCE -->
+<section class="experience" id="experience" aria-label="Experience section">
+  <h2 class="section-title reveal" data-i18n="expTitle">Experience</h2>
+  <div class="exp-cards">
+    <div class="exp-card reveal">
+      <div class="exp-year">2024 - Now</div>
+      <div>
+        <h3 data-i18n="exp1Title">Senior Creative Developer</h3>
+        <p data-i18n="exp1Desc">Leading front-end architecture and design systems for bold digital products. Building component libraries that don't look like every other SaaS.</p>
+      </div>
+    </div>
+    <div class="exp-card reveal">
+      <div class="exp-year">2022 - 2024</div>
+      <div>
+        <h3 data-i18n="exp2Title">Front-End Developer</h3>
+        <p data-i18n="exp2Desc">Built interactive web experiences and SPAs using React and TypeScript. Collaborated closely with designers to ship expressive, high-fidelity interfaces.</p>
+      </div>
+    </div>
+    <div class="exp-card reveal">
+      <div class="exp-year">2020 - 2022</div>
+      <div>
+        <h3 data-i18n="exp3Title">Junior Developer &amp; Designer</h3>
+        <p data-i18n="exp3Desc">Started the journey crafting websites and visual identities for startups. Learned to move fast, break things, and glue them back with style.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- CONTACT -->
+<section class="contact" id="contact" aria-label="Contact section">
+  <h2 class="section-title reveal" data-i18n="contactTitle">Let's Talk!</h2>
+  <p class="reveal" data-i18n="contactText">Got a wild idea? A boring project that needs some personality? I'm your person. Let's make something unforgettable.</p>
+  <div class="contact-links reveal" role="list" aria-label="Contact links">
+    <a href="mailto:email@example.com" class="contact-link" role="listitem">email@example.com</a>
+    <a href="#" class="contact-link" role="listitem" aria-label="GitHub profile">GitHub</a>
+    <a href="#" class="contact-link" role="listitem" aria-label="LinkedIn profile">LinkedIn</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer role="contentinfo">
+  <p data-i18n="footer">&copy; 2026 Your Name &mdash; Built with raw energy and thick borders.</p>
+</footer>
+
+<script>
+  // ── CUSTOM CURSOR ──
+  (function(){
+    var cursor=document.getElementById('cursor');
+    var dot=document.getElementById('cursorDot');
+    var cx=0,cy=0,dx=0,dy=0;
+
+    document.addEventListener('mousemove',function(e){
+      dx=e.clientX;dy=e.clientY;
+      dot.style.left=dx+'px';
+      dot.style.top=dy+'px';
+    });
+
+    function animate(){
+      cx+=(dx-cx)*0.15;
+      cy+=(dy-cy)*0.15;
+      cursor.style.left=cx+'px';
+      cursor.style.top=cy+'px';
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    document.querySelectorAll('a,button,.btn,.skill-badge,.contact-link,.exp-card,.about-card,.about-photo,.stat-box').forEach(function(el){
+      el.addEventListener('mouseenter',function(){cursor.classList.add('hovering')});
+      el.addEventListener('mouseleave',function(){cursor.classList.remove('hovering')});
+    });
+  })();
+
+  // ── RIPPLE EFFECT ON BUTTONS ──
+  document.querySelectorAll('.btn, .contact-link').forEach(function(btn){
+    btn.addEventListener('click',function(e){
+      var rect=btn.getBoundingClientRect();
+      var ripple=document.createElement('span');
+      ripple.className='ripple';
+      var size=Math.max(rect.width,rect.height);
+      ripple.style.width=ripple.style.height=size+'px';
+      ripple.style.left=(e.clientX-rect.left-size/2)+'px';
+      ripple.style.top=(e.clientY-rect.top-size/2)+'px';
+      btn.appendChild(ripple);
+      ripple.addEventListener('animationend',function(){ripple.remove()});
+    });
+  });
+
+  // ── DUPLICATE MARQUEE CONTENT ──
+  (function(){
+    var m=document.getElementById('marquee');
+    m.innerHTML+=m.innerHTML;
+    var m2=document.getElementById('marquee2');
+    m2.innerHTML+=m2.innerHTML;
+  })();
+
+  // ── PAGE LOAD SLAM ANIMATION ──
+  (function(){
+    var slams=document.querySelectorAll('.slam');
+    slams.forEach(function(el,i){
+      setTimeout(function(){
+        el.classList.add('slammed');
+      }, 150 + i * 120);
+    });
+  })();
+
+  // ── SCROLL REVEAL with staggered skill badges ──
+  var observer=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        // Staggered delay for skill badges
+        if(e.target.classList.contains('skill-badge')){
+          var badges=Array.from(document.querySelectorAll('.skill-badge'));
+          var idx=badges.indexOf(e.target);
+          e.target.style.transitionDelay=(idx*0.06)+'s';
+        }
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  },{threshold:0.15});
+  document.querySelectorAll('.reveal, .section-title').forEach(function(el){observer.observe(el)});
+
+  // ── COUNTER ANIMATION ──
+  var counterObserver=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        var target=parseInt(e.target.getAttribute('data-target'));
+        var current=0;
+        var duration=1500;
+        var step=Math.ceil(target/(duration/16));
+        function count(){
+          current+=step;
+          if(current>=target){
+            e.target.textContent=target+'+';
+          }else{
+            e.target.textContent=current;
+            requestAnimationFrame(count);
+          }
+        }
+        count();
+        counterObserver.unobserve(e.target);
+      }
+    });
+  },{threshold:0.5});
+  document.querySelectorAll('.stat-number[data-target]').forEach(function(el){
+    counterObserver.observe(el);
+  });
+
+  // ── TILT EFFECT ON CARDS ──
+  document.querySelectorAll('.about-card,.about-photo,.exp-card,.stat-box').forEach(function(card){
+    card.addEventListener('mousemove',function(e){
+      var rect=card.getBoundingClientRect();
+      var x=(e.clientX-rect.left)/rect.width-0.5;
+      var y=(e.clientY-rect.top)/rect.height-0.5;
+      var tiltX=y*-6;
+      var tiltY=x*6;
+      card.style.transform='translate(-4px,-4px) perspective(600px) rotateX('+tiltX+'deg) rotateY('+tiltY+'deg)';
+    });
+    card.addEventListener('mouseleave',function(){
+      card.style.transform='';
+    });
+  });
+
+  // ── i18n TRANSLATION SYSTEM ──
+  var TRANSLATIONS = {
+    en: {
+      backBtn: '\u2190 Back to Gallery', navAbout:'About', navSkills:'Skills', navWork:'Work', navContact:'Contact',
+      heroName:'YOUR<br><span class="outline">NAME</span>', heroSub:'Creative Developer & Designer',
+      heroCta1:'Get In Touch', heroCta2:'Learn More',
+      aboutTitle:'About Me', aboutText:"I'm a creative developer who thrives at the intersection of design and code. I build bold, expressive digital experiences that break the mold of corporate blandness. With a passion for raw aesthetics and clean engineering, I turn wild ideas into pixel-perfect reality. Currently crafting the future of the web, one chunky border at a time.",
+      skillsTitle:'Skills & Tools', statProjects:'Projects', statClients:'Clients', statYears:'Years Exp',
+      expTitle:'Experience',
+      exp1Title:'Senior Creative Developer', exp1Desc:"Leading front-end architecture and design systems for bold digital products. Building component libraries that don't look like every other SaaS.",
+      exp2Title:'Front-End Developer', exp2Desc:'Built interactive web experiences and SPAs using React and TypeScript. Collaborated closely with designers to ship expressive, high-fidelity interfaces.',
+      exp3Title:'Junior Developer & Designer', exp3Desc:'Started the journey crafting websites and visual identities for startups. Learned to move fast, break things, and glue them back with style.',
+      contactTitle:"Let's Talk!", contactText:"Got a wild idea? A boring project that needs some personality? I'm your person. Let's make something unforgettable.",
+      footer:'\u00a9 2026 Your Name \u2014 Built with raw energy and thick borders.'
+    },
+    ko: {
+      backBtn:'\u2190 \uac24\ub7ec\ub9ac\ub85c', navAbout:'\uc18c\uac1c', navSkills:'\uae30\uc220', navWork:'\uacbd\ub825', navContact:'\uc5f0\ub77d',
+      heroName:'\ud64d<br><span class="outline">\uae38\ub3d9</span>', heroSub:'\ud06c\ub9ac\uc5d0\uc774\ud2f0\ube0c \uac1c\ubc1c\uc790 & \ub514\uc790\uc774\ub108',
+      heroCta1:'\uc5f0\ub77d\ud558\uae30', heroCta2:'\ub354 \uc54c\uc544\ubcf4\uae30',
+      aboutTitle:'\uc18c\uac1c', aboutText:'\ub514\uc790\uc778\uacfc \ucf54\ub4dc\uc758 \uad50\ucc28\uc810\uc5d0\uc11c \ubc1c\uc804\ud558\ub294 \ud06c\ub9ac\uc5d0\uc774\ud2f0\ube0c \uac1c\ubc1c\uc790\uc785\ub2c8\ub2e4. \ub300\ub2f4\ud558\uace0 \ud45c\ud604\ub825 \uc788\ub294 \ub514\uc9c0\ud138 \uacbd\ud5d8\uc744 \ub9cc\ub4e4\uba70, \ub0a0\uac83 \uadf8\ub300\ub85c\uc758 \ubbf8\ud559\uacfc \uae68\ub057\ud55c \uc5d4\uc9c0\ub2c8\uc5b4\ub9c1\uc73c\ub85c \uc640\uc77c\ub4dc\ud55c \uc544\uc774\ub514\uc5b4\ub97c \ud53d\uc140 \ud37c\ud399\ud2b8\ud55c \ud604\uc2e4\ub85c \ub9cc\ub4ed\ub2c8\ub2e4.',
+      skillsTitle:'\uae30\uc220 & \ub3c4\uad6c', statProjects:'\ud504\ub85c\uc81d\ud2b8', statClients:'\ud074\ub77c\uc774\uc5b8\ud2b8', statYears:'\uacbd\ub825',
+      expTitle:'\uacbd\ub825',
+      exp1Title:'\uc2dc\ub2c8\uc5b4 \ud06c\ub9ac\uc5d0\uc774\ud2f0\ube0c \uac1c\ubc1c\uc790', exp1Desc:'\ub300\ub2f4\ud55c \ub514\uc9c0\ud138 \uc81c\ud488\uc744 \uc704\ud55c \ud504\ub860\ud2b8\uc5d4\ub4dc \uc544\ud0a4\ud14d\ucc98\uc640 \ub514\uc790\uc778 \uc2dc\uc2a4\ud15c\uc744 \ub9ac\ub4dc\ud558\uace0 \uc788\uc2b5\ub2c8\ub2e4.',
+      exp2Title:'\ud504\ub860\ud2b8\uc5d4\ub4dc \uac1c\ubc1c\uc790', exp2Desc:'React\uc640 TypeScript\ub97c \uc0ac\uc6a9\ud558\uc5ec \uc778\ud130\ub799\ud2f0\ube0c \uc6f9 \uacbd\ud5d8\uacfc SPA\ub97c \uad6c\ucd95\ud588\uc2b5\ub2c8\ub2e4.',
+      exp3Title:'\uc8fc\ub2c8\uc5b4 \uac1c\ubc1c\uc790 & \ub514\uc790\uc774\ub108', exp3Desc:'\uc2a4\ud0c0\ud2b8\uc5c5\uc744 \uc704\ud55c \uc6f9\uc0ac\uc774\ud2b8\uc640 \ube44\uc8fc\uc5bc \uc544\uc774\ub374\ud2f0\ud2f0\ub97c \ub9cc\ub4dc\ub294 \uc5ec\uc815\uc744 \uc2dc\uc791\ud588\uc2b5\ub2c8\ub2e4.',
+      contactTitle:'\ub300\ud654\ud574\uc694!', contactText:'\uc640\uc77c\ub4dc\ud55c \uc544\uc774\ub514\uc5b4\uac00 \uc788\ub098\uc694? \uac1c\uc131\uc774 \ud544\uc694\ud55c \ud504\ub85c\uc81d\ud2b8\uac00 \uc788\ub098\uc694? \uc81c\uac00 \ub2f9\uc2e0\uc758 \uc0ac\ub78c\uc785\ub2c8\ub2e4.',
+      footer:'\u00a9 2026 \ud64d\uae38\ub3d9 \u2014 \ub0a0\uac83\uc758 \uc5d0\ub108\uc9c0\uc640 \ub450\uaebc\uc6b4 \ud14c\ub450\ub9ac\ub85c \uc81c\uc791.'
+    },
+    ja: {
+      backBtn:'\u2190 \u30ae\u30e3\u30e9\u30ea\u30fc\u3078', navAbout:'\u7d39\u4ecb', navSkills:'\u30b9\u30ad\u30eb', navWork:'\u7d4c\u6b74', navContact:'\u304a\u554f\u3044\u5408\u308f\u305b',
+      heroName:'\u304a\u540d<br><span class="outline">\u524d</span>', heroSub:'\u30af\u30ea\u30a8\u30a4\u30c6\u30a3\u30d6\u30c7\u30d9\u30ed\u30c3\u30d1\u30fc & \u30c7\u30b6\u30a4\u30ca\u30fc',
+      heroCta1:'\u304a\u554f\u3044\u5408\u308f\u305b', heroCta2:'\u3082\u3063\u3068\u898b\u308b',
+      aboutTitle:'\u7d39\u4ecb', aboutText:'\u30c7\u30b6\u30a4\u30f3\u3068\u30b3\u30fc\u30c9\u306e\u4ea4\u5dee\u70b9\u3067\u6d3b\u8e8d\u3059\u308b\u30af\u30ea\u30a8\u30a4\u30c6\u30a3\u30d6\u958b\u767a\u8005\u3067\u3059\u3002\u5927\u80c6\u3067\u8868\u73fe\u529b\u8c4a\u304b\u306a\u30c7\u30b8\u30bf\u30eb\u4f53\u9a13\u3092\u4f5c\u308a\u3001\u751f\u306e\u7f8e\u5b66\u3068\u30af\u30ea\u30fc\u30f3\u30a8\u30f3\u30b8\u30cb\u30a2\u30ea\u30f3\u30b0\u3067\u30ef\u30a4\u30eb\u30c9\u306a\u30a2\u30a4\u30c7\u30a2\u3092\u30d4\u30af\u30bb\u30eb\u30d1\u30fc\u30d5\u30a7\u30af\u30c8\u306b\u5b9f\u73fe\u3057\u307e\u3059\u3002',
+      skillsTitle:'\u30b9\u30ad\u30eb & \u30c4\u30fc\u30eb', statProjects:'\u30d7\u30ed\u30b8\u30a7\u30af\u30c8', statClients:'\u30af\u30e9\u30a4\u30a2\u30f3\u30c8', statYears:'\u7d4c\u9a13\u5e74\u6570',
+      expTitle:'\u7d4c\u6b74',
+      exp1Title:'\u30b7\u30cb\u30a2\u30af\u30ea\u30a8\u30a4\u30c6\u30a3\u30d6\u958b\u767a\u8005', exp1Desc:'\u5927\u80c6\u306a\u30c7\u30b8\u30bf\u30eb\u88fd\u54c1\u306e\u30d5\u30ed\u30f3\u30c8\u30a8\u30f3\u30c9\u30a2\u30fc\u30ad\u30c6\u30af\u30c1\u30e3\u3068\u30c7\u30b6\u30a4\u30f3\u30b7\u30b9\u30c6\u30e0\u3092\u30ea\u30fc\u30c9\u3002',
+      exp2Title:'\u30d5\u30ed\u30f3\u30c8\u30a8\u30f3\u30c9\u958b\u767a\u8005', exp2Desc:'React\u3068TypeScript\u3092\u4f7f\u7528\u3057\u3066\u30a4\u30f3\u30bf\u30e9\u30af\u30c6\u30a3\u30d6\u306aWeb\u4f53\u9a13\u3068SPA\u3092\u69cb\u7bc9\u3002',
+      exp3Title:'\u30b8\u30e5\u30cb\u30a2\u958b\u767a\u8005 & \u30c7\u30b6\u30a4\u30ca\u30fc', exp3Desc:'\u30b9\u30bf\u30fc\u30c8\u30a2\u30c3\u30d7\u306e\u305f\u3081\u306e\u30a6\u30a7\u30d6\u30b5\u30a4\u30c8\u3068\u30d3\u30b8\u30e5\u30a2\u30eb\u30a2\u30a4\u30c7\u30f3\u30c6\u30a3\u30c6\u30a3\u306e\u5236\u4f5c\u3092\u958b\u59cb\u3002',
+      contactTitle:'\u304a\u8a71\u3057\u307e\u3057\u3087\u3046\uff01', contactText:'\u30ef\u30a4\u30eb\u30c9\u306a\u30a2\u30a4\u30c7\u30a2\u304c\u3042\u308a\u307e\u3059\u304b\uff1f\u5fd8\u308c\u3089\u308c\u306a\u3044\u3082\u306e\u3092\u4f5c\u308a\u307e\u3057\u3087\u3046\u3002',
+      footer:'\u00a9 2026 \u304a\u540d\u524d \u2014 \u751f\u306e\u30a8\u30cd\u30eb\u30ae\u30fc\u3068\u592a\u3044\u30dc\u30fc\u30c0\u30fc\u3067\u5236\u4f5c\u3002'
+    },
+    zh: {
+      backBtn:'\u2190 \u8fd4\u56de\u753b\u5eca', navAbout:'\u5173\u4e8e', navSkills:'\u6280\u80fd', navWork:'\u7ecf\u5386', navContact:'\u8054\u7cfb',
+      heroName:'\u4f60\u7684<br><span class="outline">\u540d\u5b57</span>', heroSub:'\u521b\u610f\u5f00\u53d1\u8005 & \u8bbe\u8ba1\u5e08',
+      heroCta1:'\u8054\u7cfb\u6211', heroCta2:'\u4e86\u89e3\u66f4\u591a',
+      aboutTitle:'\u5173\u4e8e\u6211', aboutText:'\u6211\u662f\u4e00\u540d\u5728\u8bbe\u8ba1\u4e0e\u4ee3\u7801\u4ea4\u6c47\u5904\u84ec\u52c3\u53d1\u5c55\u7684\u521b\u610f\u5f00\u53d1\u8005\u3002\u6211\u6784\u5efa\u5927\u80c6\u3001\u5bcc\u6709\u8868\u73b0\u529b\u7684\u6570\u5b57\u4f53\u9a8c\uff0c\u7528\u539f\u59cb\u7f8e\u5b66\u548c\u6574\u6d01\u5de5\u7a0b\u5c06\u75af\u72c2\u7684\u60f3\u6cd5\u53d8\u4e3a\u50cf\u7d20\u7ea7\u5b8c\u7f8e\u73b0\u5b9e\u3002',
+      skillsTitle:'\u6280\u80fd & \u5de5\u5177', statProjects:'\u9879\u76ee', statClients:'\u5ba2\u6237', statYears:'\u7ecf\u9a8c',
+      expTitle:'\u7ecf\u5386',
+      exp1Title:'\u9ad8\u7ea7\u521b\u610f\u5f00\u53d1\u8005', exp1Desc:'\u4e3a\u5927\u80c6\u7684\u6570\u5b57\u4ea7\u54c1\u9886\u5bfc\u524d\u7aef\u67b6\u6784\u548c\u8bbe\u8ba1\u7cfb\u7edf\u3002',
+      exp2Title:'\u524d\u7aef\u5f00\u53d1\u8005', exp2Desc:'\u4f7f\u7528React\u548cTypeScript\u6784\u5efa\u4ea4\u4e92\u5f0fWeb\u4f53\u9a8c\u548cSPA\u3002',
+      exp3Title:'\u521d\u7ea7\u5f00\u53d1\u8005 & \u8bbe\u8ba1\u5e08', exp3Desc:'\u5f00\u59cb\u4e3a\u521d\u521b\u516c\u53f8\u5236\u4f5c\u7f51\u7ad9\u548c\u89c6\u89c9\u8bc6\u522b\u7684\u65c5\u7a0b\u3002',
+      contactTitle:'\u8ba9\u6211\u4eec\u804a\u804a\uff01', contactText:'\u6709\u4e2a\u75af\u72c2\u7684\u60f3\u6cd5\uff1f\u8ba9\u6211\u4eec\u505a\u4e00\u4e9b\u96be\u5fd8\u7684\u4e8b\u60c5\u3002',
+      footer:'\u00a9 2026 \u4f60\u7684\u540d\u5b57 \u2014 \u7528\u539f\u59cb\u80fd\u91cf\u548c\u7c97\u8fb9\u6846\u6253\u9020\u3002'
+    }
+  };
+
+  function setLanguage(lang) {
+    if (!TRANSLATIONS[lang]) return;
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-i18n]').forEach(function(el) {
+      var key = el.getAttribute('data-i18n');
+      if (TRANSLATIONS[lang][key] !== undefined) {
+        if (TRANSLATIONS[lang][key].indexOf('<') !== -1) {
+          el.innerHTML = TRANSLATIONS[lang][key];
+        } else {
+          el.textContent = TRANSLATIONS[lang][key];
+        }
+      }
+    });
+    document.querySelectorAll('.lang-btn').forEach(function(btn) {
+      btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+    });
+    localStorage.setItem('preferred-lang', lang);
+  }
+
+  document.querySelectorAll('.lang-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() { setLanguage(btn.getAttribute('data-lang')); });
+  });
+
+  (function() {
+    var params = new URLSearchParams(window.location.search);
+    var urlLang = params.get('lang');
+    var savedLang = localStorage.getItem('preferred-lang');
+    setLanguage(urlLang || savedLang || 'en');
+  })();
+
+  // ── KONAMI CODE EASTER EGG ──
+  (function(){
+    var konamiCode=['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+    var pos=0;
+    var overlay=document.getElementById('konamiOverlay');
+    var rain=document.getElementById('konamiRain');
+    var closeBtn=document.getElementById('closeKonami');
+
+    document.addEventListener('keydown',function(e){
+      if(e.key===konamiCode[pos]){
+        pos++;
+        if(pos===konamiCode.length){
+          activateKonami();
+          pos=0;
+        }
+      }else{
+        pos=0;
+      }
+    });
+
+    function activateKonami(){
+      overlay.classList.add('active');
+      overlay.setAttribute('aria-hidden','false');
+      var emojis=['&#9733;','&#9889;','&#10024;','&#9883;','&#9786;','&#9829;','&#9734;','&#9728;'];
+      for(var i=0;i<30;i++){
+        var span=document.createElement('span');
+        span.className='konami-emoji';
+        span.innerHTML=emojis[Math.floor(Math.random()*emojis.length)];
+        span.style.left=Math.random()*100+'%';
+        span.style.animationDelay=Math.random()*3+'s';
+        span.style.fontSize=(1.5+Math.random()*2)+'rem';
+        rain.appendChild(span);
+      }
+    }
+
+    closeBtn.addEventListener('click',function(){
+      overlay.classList.remove('active');
+      overlay.setAttribute('aria-hidden','true');
+      rain.innerHTML='';
+    });
+  })();
+</script>
+</body>
+</html>

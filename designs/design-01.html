@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Name — Creative Developer</title>
+<meta name="description" content="Minimal noir portfolio page">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --black: #000000;
+  --white: #ffffff;
+  --gray-light: #888888;
+  --gray-dark: #333333;
+  --gray-mid: #555555;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans: 'Inter', -apple-system, Helvetica, Arial, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  background: var(--black);
+  color: var(--white);
+  font-family: var(--sans);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* Noise texture overlay */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+}
+
+/* Spotlight / vignette that follows cursor */
+.spotlight {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 1s ease;
+  will-change: background;
+}
+
+.spotlight.active {
+  opacity: 1;
+}
+
+/* Back to Gallery */
+.back-link {
+  position: fixed;
+  top: 2rem;
+  right: 3rem;
+  z-index: 1001;
+  color: var(--gray-dark);
+  text-decoration: none;
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: none;
+  mix-blend-mode: difference;
+  transition: color 0.4s;
+  opacity: 0;
+  animation: fadeIn 1s ease 1.5s forwards;
+}
+
+.back-link:hover {
+  color: var(--white);
+}
+
+.back-link::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--white);
+  transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.back-link:hover::after {
+  width: 100%;
+}
+
+/* Custom cursor */
+.cursor-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--white);
+  border-radius: 50%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 10000;
+  transform: translate(-50%, -50%);
+  transition: width 0.2s, height 0.2s, background 0.2s;
+  will-change: left, top;
+}
+
+.cursor-ring {
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 10000;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease;
+  will-change: left, top;
+}
+
+.cursor-dot.hover {
+  width: 14px;
+  height: 14px;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.cursor-ring.hover {
+  width: 60px;
+  height: 60px;
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Navigation */
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 2rem 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000;
+  mix-blend-mode: difference;
+}
+
+nav .logo {
+  font-family: var(--serif);
+  font-size: 1.4rem;
+  font-weight: 300;
+  letter-spacing: 0.05em;
+  cursor: none;
+}
+
+nav .nav-links {
+  display: flex;
+  gap: 2.5rem;
+  list-style: none;
+}
+
+nav .nav-links a {
+  color: var(--white);
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 400;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  position: relative;
+  cursor: none;
+}
+
+nav .nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--white);
+  transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+nav .nav-links a:hover::after {
+  width: 100%;
+}
+
+/* Sections common */
+section {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6rem 3rem;
+  position: relative;
+}
+
+/* Section divider lines */
+.section-line {
+  width: 60px;
+  height: 1px;
+  background: var(--gray-dark);
+  margin: 0 auto;
+  transform: scaleX(0);
+  transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.section-line.visible {
+  transform: scaleX(1);
+}
+
+/* Hero Section */
+.hero {
+  flex-direction: column;
+  text-align: center;
+  position: relative;
+}
+
+.hero-name {
+  font-family: var(--serif);
+  font-size: clamp(3.5rem, 10vw, 9rem);
+  font-weight: 300;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  opacity: 0;
+  transform: translateY(60px);
+  animation: fadeUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.8s forwards;
+}
+
+/* Text scramble state */
+.hero-name.scrambling .char {
+  opacity: 0.4;
+  filter: blur(2px);
+  transition: none;
+}
+
+.hero-name.scrambled .char {
+  opacity: 1;
+  filter: blur(0);
+  transition: opacity 0.3s, filter 0.3s;
+}
+
+/* Letter-by-letter hover glow */
+.hero-name .char {
+  display: inline-block;
+  transition: text-shadow 0.3s, transform 0.3s;
+  will-change: transform;
+}
+
+.hero-name .char:hover {
+  text-shadow: 0 0 30px rgba(255, 255, 255, 0.3), 0 0 60px rgba(255, 255, 255, 0.1);
+  transform: translateY(-4px);
+}
+
+.hero-title {
+  font-family: var(--sans);
+  font-size: clamp(0.85rem, 1.5vw, 1.1rem);
+  font-weight: 300;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gray-light);
+  margin-top: 1.5rem;
+  opacity: 0;
+  transform: translateY(40px);
+  animation: fadeUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) 1.2s forwards;
+}
+
+.hero-line {
+  width: 60px;
+  height: 1px;
+  background: var(--gray-mid);
+  margin: 2rem auto 0;
+  opacity: 0;
+  transform: scaleX(0);
+  animation: lineGrow 0.8s cubic-bezier(0.16, 1, 0.3, 1) 1.5s forwards;
+}
+
+@keyframes lineGrow {
+  to { opacity: 1; transform: scaleX(1); }
+}
+
+.scroll-indicator {
+  position: absolute;
+  bottom: 3rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  opacity: 0;
+  animation: fadeIn 1s ease 2s forwards;
+}
+
+.scroll-indicator span {
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gray-light);
+}
+
+.scroll-indicator .scroll-line {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, var(--gray-light), transparent);
+  animation: scrollPulse 2s ease-in-out infinite;
+  transform-origin: top;
+}
+
+@keyframes scrollPulse {
+  0%, 100% { opacity: 1; transform: scaleY(1); }
+  50% { opacity: 0.3; transform: scaleY(0.5); }
+}
+
+/* About Section */
+.about {
+  flex-direction: column;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.section-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gray-light);
+  margin-bottom: 3rem;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.section-label::before {
+  content: '';
+  width: 30px;
+  height: 1px;
+  background: var(--gray-light);
+}
+
+.about-text {
+  font-family: var(--serif);
+  font-size: clamp(1.6rem, 3.5vw, 2.8rem);
+  font-weight: 300;
+  line-height: 1.5;
+  color: var(--gray-light);
+  max-width: 800px;
+}
+
+.about-text em {
+  color: var(--white);
+  font-style: italic;
+  transition: text-shadow 0.3s;
+}
+
+.about-text em:hover {
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Word reveal animation */
+.about-text .word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(15px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.about-text.words-visible .word {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Skills Section */
+.skills {
+  flex-direction: column;
+}
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1px;
+  max-width: 900px;
+  width: 100%;
+  margin-top: 2rem;
+  background: var(--gray-dark);
+}
+
+.skill-item {
+  background: var(--black);
+  padding: 2.5rem 2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.5s ease;
+  cursor: none;
+}
+
+.skill-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.03);
+  transform: translateY(100%);
+  transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.skill-item:hover::before {
+  transform: translateY(0);
+}
+
+/* Magnetic tilt on skill items */
+.skill-item .skill-inner {
+  transition: transform 0.2s ease-out;
+  will-change: transform;
+}
+
+.skill-number {
+  font-family: var(--serif);
+  font-size: 0.75rem;
+  color: var(--gray-dark);
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.1em;
+  transition: color 0.4s ease;
+}
+
+.skill-item:hover .skill-number {
+  color: var(--gray-mid);
+}
+
+.skill-name {
+  font-size: 0.85rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gray-light);
+  transition: color 0.4s ease;
+}
+
+.skill-item:hover .skill-name {
+  color: var(--white);
+}
+
+/* Horizontal line accent on hover */
+.skill-item::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 1px;
+  background: var(--white);
+  transition: width 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), left 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.skill-item:hover::after {
+  width: 40px;
+  left: calc(50% - 20px);
+}
+
+/* Contact Section */
+.contact {
+  flex-direction: column;
+  text-align: center;
+}
+
+.contact-heading {
+  font-family: var(--serif);
+  font-size: clamp(2.5rem, 7vw, 6rem);
+  font-weight: 300;
+  line-height: 1.1;
+  margin-bottom: 2rem;
+}
+
+.contact-email {
+  display: inline-block;
+  color: var(--white);
+  text-decoration: none;
+  font-size: clamp(1rem, 2vw, 1.3rem);
+  font-weight: 300;
+  letter-spacing: 0.05em;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--gray-mid);
+  transition: border-color 0.4s ease, letter-spacing 0.4s ease, transform 0.2s ease;
+  cursor: none;
+}
+
+.contact-email:hover {
+  border-color: var(--white);
+  letter-spacing: 0.1em;
+}
+
+.contact-sub {
+  margin-top: 3rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gray-dark);
+}
+
+/* Footer */
+footer {
+  padding: 2rem 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+footer span {
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gray-dark);
+}
+
+/* Animations */
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+/* Reveal animations */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+.reveal-delay-5 { transition-delay: 0.5s; }
+.reveal-delay-6 { transition-delay: 0.6s; }
+
+/* Language Switcher */
+.lang-switcher {
+  position: fixed;
+  top: 1.5rem;
+  right: 7rem;
+  z-index: 1001;
+  display: flex;
+  gap: 4px;
+  mix-blend-mode: difference;
+}
+.lang-btn {
+  font-family: var(--sans);
+  font-size: 0.65rem;
+  font-weight: 500;
+  padding: 4px 10px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.5);
+  border-radius: 4px;
+  cursor: none;
+  transition: all 0.2s;
+  letter-spacing: 0.05em;
+}
+.lang-btn:hover, .lang-btn.active {
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  border-color: rgba(255,255,255,0.4);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  nav {
+    padding: 1.5rem 1.5rem;
+  }
+
+  nav .nav-links {
+    gap: 1.5rem;
+  }
+
+  nav .nav-links a {
+    font-size: 0.7rem;
+  }
+
+  section {
+    padding: 5rem 1.5rem;
+  }
+
+  .skills-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .cursor-dot, .cursor-ring {
+    display: none;
+  }
+
+  body {
+    cursor: auto;
+  }
+
+  nav .nav-links a,
+  .contact-email,
+  .skill-item,
+  .back-link {
+    cursor: pointer;
+  }
+
+  .back-link {
+    right: 1.5rem;
+    top: 1.5rem;
+  }
+
+  footer {
+    padding: 2rem 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .skills-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 1440px) {
+  .about {
+    max-width: 1000px;
+  }
+  .skills-grid {
+    max-width: 1000px;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="spotlight" id="spotlight" aria-hidden="true"></div>
+<div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+<div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
+
+<a href="../index.html" class="back-link hover-target" aria-label="Back to design gallery" data-i18n="backLink">&larr; Gallery</a>
+
+<div class="lang-switcher" aria-label="Language selector">
+  <button class="lang-btn hover-target" data-lang="en">EN</button>
+  <button class="lang-btn hover-target" data-lang="ko">KO</button>
+  <button class="lang-btn hover-target" data-lang="ja">JA</button>
+  <button class="lang-btn hover-target" data-lang="zh">ZH</button>
+</div>
+
+<nav role="navigation" aria-label="Main navigation">
+  <div class="logo">YN</div>
+  <ul class="nav-links">
+    <li><a href="#about" class="hover-target" data-i18n="navAbout">About</a></li>
+    <li><a href="#skills" class="hover-target" data-i18n="navSkills">Skills</a></li>
+    <li><a href="#contact" class="hover-target" data-i18n="navContact">Contact</a></li>
+  </ul>
+</nav>
+
+<section class="hero" id="hero" role="banner" aria-label="Introduction">
+  <h1 class="hero-name" id="heroName" aria-label="Your Name" data-i18n="heroName">Your Name</h1>
+  <p class="hero-title" data-i18n="heroTitle">Creative Developer & Designer</p>
+  <div class="hero-line" aria-hidden="true"></div>
+  <div class="scroll-indicator" aria-hidden="true">
+    <span data-i18n="scroll">Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<div class="section-line" aria-hidden="true"></div>
+
+<section class="about" id="about" role="region" aria-label="About me">
+  <div class="reveal">
+    <span class="section-label" data-i18n="aboutLabel">About</span>
+  </div>
+  <p class="about-text reveal reveal-delay-1" id="aboutText" data-i18n="aboutText">
+    I craft <em>digital experiences</em> that live at the intersection of design and technology.
+    With a passion for clean code and thoughtful interfaces, I build products that are both
+    <em>beautiful</em> and functional. Every pixel matters, every interaction tells a story.
+  </p>
+</section>
+
+<div class="section-line" aria-hidden="true"></div>
+
+<section class="skills" id="skills" role="region" aria-label="Skills and expertise">
+  <div class="reveal">
+    <span class="section-label" data-i18n="skillsLabel">Expertise</span>
+  </div>
+  <div class="skills-grid" role="list" aria-label="Technical skills">
+    <div class="skill-item reveal reveal-delay-1 hover-target" role="listitem">
+      <div class="skill-inner">
+        <div class="skill-number">01</div>
+        <div class="skill-name" data-i18n="skill1">HTML / CSS</div>
+      </div>
+    </div>
+    <div class="skill-item reveal reveal-delay-2 hover-target" role="listitem">
+      <div class="skill-inner">
+        <div class="skill-number">02</div>
+        <div class="skill-name" data-i18n="skill2">JavaScript</div>
+      </div>
+    </div>
+    <div class="skill-item reveal reveal-delay-3 hover-target" role="listitem">
+      <div class="skill-inner">
+        <div class="skill-number">03</div>
+        <div class="skill-name" data-i18n="skill3">React</div>
+      </div>
+    </div>
+    <div class="skill-item reveal reveal-delay-4 hover-target" role="listitem">
+      <div class="skill-inner">
+        <div class="skill-number">04</div>
+        <div class="skill-name" data-i18n="skill4">Node.js</div>
+      </div>
+    </div>
+    <div class="skill-item reveal reveal-delay-5 hover-target" role="listitem">
+      <div class="skill-inner">
+        <div class="skill-number">05</div>
+        <div class="skill-name" data-i18n="skill5">Python</div>
+      </div>
+    </div>
+    <div class="skill-item reveal reveal-delay-6 hover-target" role="listitem">
+      <div class="skill-inner">
+        <div class="skill-number">06</div>
+        <div class="skill-name" data-i18n="skill6">UI/UX Design</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-line" aria-hidden="true"></div>
+
+<section class="contact" id="contact" role="region" aria-label="Contact information">
+  <div class="reveal">
+    <span class="section-label" data-i18n="contactLabel">Get in Touch</span>
+  </div>
+  <h2 class="contact-heading reveal reveal-delay-1" data-i18n="contactHeading">Let's Work<br>Together</h2>
+  <a href="mailto:email@example.com" class="contact-email reveal reveal-delay-2 hover-target magnetic-target" aria-label="Send email to email@example.com">email@example.com</a>
+  <p class="contact-sub reveal reveal-delay-3" data-i18n="contactSub">Available for freelance projects</p>
+</section>
+
+<footer role="contentinfo">
+  <span data-i18n="footerCopy">&copy; 2026 Your Name</span>
+  <span data-i18n="footerRights">All Rights Reserved</span>
+</footer>
+
+<script>
+// Custom cursor
+const dot = document.getElementById('cursorDot');
+const ring = document.getElementById('cursorRing');
+let mouseX = -100, mouseY = -100;
+let ringX = -100, ringY = -100;
+
+document.addEventListener('mousemove', (e) => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+  dot.style.left = mouseX + 'px';
+  dot.style.top = mouseY + 'px';
+});
+
+function animateRing() {
+  ringX += (mouseX - ringX) * 0.12;
+  ringY += (mouseY - ringY) * 0.12;
+  ring.style.left = ringX + 'px';
+  ring.style.top = ringY + 'px';
+  requestAnimationFrame(animateRing);
+}
+animateRing();
+
+// Hover effect on interactive elements
+document.querySelectorAll('.hover-target').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    dot.classList.add('hover');
+    ring.classList.add('hover');
+  });
+  el.addEventListener('mouseleave', () => {
+    dot.classList.remove('hover');
+    ring.classList.remove('hover');
+  });
+});
+
+// Spotlight / vignette following mouse
+const spotlight = document.getElementById('spotlight');
+setTimeout(() => { spotlight.classList.add('active'); }, 500);
+
+document.addEventListener('mousemove', (e) => {
+  const x = e.clientX;
+  const y = e.clientY;
+  spotlight.style.background = 'radial-gradient(600px circle at ' + x + 'px ' + y + 'px, rgba(255,255,255,0.03) 0%, transparent 60%)';
+});
+
+// Scroll reveal
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.15 });
+
+reveals.forEach(el => observer.observe(el));
+
+// Section line draw-on animation
+const lineObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      lineObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.5 });
+
+document.querySelectorAll('.section-line').forEach(el => lineObserver.observe(el));
+
+// Parallax on hero (GPU-accelerated with transform)
+const heroNameEl = document.querySelector('.hero-name');
+const heroTitle = document.querySelector('.hero-title');
+window.addEventListener('scroll', () => {
+  const scrolled = window.pageYOffset;
+  const rate = scrolled * 0.3;
+  if (heroNameEl) heroNameEl.style.transform = 'translateY(' + rate + 'px)';
+  if (heroTitle) {
+    heroTitle.style.transform = 'translateY(' + (rate * 0.6) + 'px)';
+    heroTitle.style.opacity = Math.max(0, 1 - scrolled / 500);
+  }
+  if (heroNameEl) heroNameEl.style.opacity = Math.max(0, 1 - scrolled / 700);
+});
+
+// Hero name: text scramble effect, then wrap chars for hover
+(function() {
+  const nameEl = document.getElementById('heroName');
+  const finalText = nameEl.textContent;
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+  let iteration = 0;
+
+  // Wait for fade-up animation to complete
+  setTimeout(() => {
+    nameEl.classList.add('scrambling');
+
+    const interval = setInterval(() => {
+      nameEl.textContent = finalText
+        .split('')
+        .map((char, index) => {
+          if (char === ' ') return ' ';
+          if (index < iteration) return finalText[index];
+          return chars[Math.floor(Math.random() * chars.length)];
+        })
+        .join('');
+
+      if (iteration >= finalText.length) {
+        clearInterval(interval);
+        nameEl.classList.remove('scrambling');
+        nameEl.classList.add('scrambled');
+
+        // Now wrap each character in spans for hover effect
+        nameEl.innerHTML = '';
+        for (let i = 0; i < finalText.length; i++) {
+          const span = document.createElement('span');
+          span.className = 'char';
+          span.textContent = finalText[i] === ' ' ? '\u00A0' : finalText[i];
+          nameEl.appendChild(span);
+        }
+      }
+      iteration += 1 / 3;
+    }, 30);
+  }, 1000);
+})();
+
+// About text: word-by-word staggered reveal
+(function() {
+  const aboutEl = document.getElementById('aboutText');
+  const html = aboutEl.innerHTML;
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = html;
+
+  function wrapWords(node) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      const words = node.textContent.split(/(\s+)/);
+      const frag = document.createDocumentFragment();
+      words.forEach(w => {
+        if (/^\s+$/.test(w)) {
+          frag.appendChild(document.createTextNode(w));
+        } else if (w) {
+          const span = document.createElement('span');
+          span.className = 'word';
+          span.textContent = w;
+          frag.appendChild(span);
+        }
+      });
+      node.parentNode.replaceChild(frag, node);
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      Array.from(node.childNodes).forEach(wrapWords);
+    }
+  }
+
+  wrapWords(tempDiv);
+  aboutEl.innerHTML = tempDiv.innerHTML;
+
+  const words = aboutEl.querySelectorAll('.word');
+  words.forEach((w, i) => {
+    w.style.transitionDelay = (i * 0.03) + 's';
+  });
+
+  const wordObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('words-visible');
+        wordObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.2 });
+  wordObserver.observe(aboutEl);
+})();
+
+// Magnetic tilt on skill items
+document.querySelectorAll('.skill-item').forEach(item => {
+  const inner = item.querySelector('.skill-inner');
+  if (!inner) return;
+
+  item.addEventListener('mousemove', (e) => {
+    const rect = item.getBoundingClientRect();
+    const x = (e.clientX - rect.left - rect.width / 2) / rect.width;
+    const y = (e.clientY - rect.top - rect.height / 2) / rect.height;
+    inner.style.transform = 'translate(' + (x * 8) + 'px, ' + (y * 8) + 'px)';
+  });
+
+  item.addEventListener('mouseleave', () => {
+    inner.style.transform = 'translate(0, 0)';
+  });
+});
+
+// Magnetic hover on contact links
+document.querySelectorAll('.magnetic-target').forEach(el => {
+  el.addEventListener('mousemove', (e) => {
+    const rect = el.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    el.style.transform = 'translate(' + (x * 0.2) + 'px, ' + (y * 0.3) + 'px)';
+  });
+
+  el.addEventListener('mouseleave', () => {
+    el.style.transform = 'translate(0, 0)';
+  });
+});
+
+// Smooth anchor scrolling
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+
+// --- i18n Translation System ---
+const TRANSLATIONS = {
+  en: {
+    backLink: '\u2190 Gallery',
+    navAbout: 'About',
+    navSkills: 'Skills',
+    navContact: 'Contact',
+    heroName: 'Your Name',
+    heroTitle: 'Creative Developer & Designer',
+    scroll: 'Scroll',
+    aboutLabel: 'About',
+    aboutText: 'I craft <em>digital experiences</em> that live at the intersection of design and technology. With a passion for clean code and thoughtful interfaces, I build products that are both <em>beautiful</em> and functional. Every pixel matters, every interaction tells a story.',
+    skillsLabel: 'Expertise',
+    skill1: 'HTML / CSS',
+    skill2: 'JavaScript',
+    skill3: 'React',
+    skill4: 'Node.js',
+    skill5: 'Python',
+    skill6: 'UI/UX Design',
+    contactLabel: 'Get in Touch',
+    contactHeading: "Let's Work<br>Together",
+    contactSub: 'Available for freelance projects',
+    footerCopy: '\u00a9 2026 Your Name',
+    footerRights: 'All Rights Reserved'
+  },
+  ko: {
+    backLink: '\u2190 \uac24\ub7ec\ub9ac',
+    navAbout: '\uc18c\uac1c',
+    navSkills: '\uae30\uc220',
+    navContact: '\uc5f0\ub77d',
+    heroName: '\ud64d\uae38\ub3d9',
+    heroTitle: '\ud06c\ub9ac\uc5d0\uc774\ud2f0\ube0c \uac1c\ubc1c\uc790 & \ub514\uc790\uc774\ub108',
+    scroll: '\uc2a4\ud06c\ub864',
+    aboutLabel: '\uc18c\uac1c',
+    aboutText: '\ub514\uc790\uc778\uacfc \uae30\uc220\uc758 \uad50\ucc28\uc810\uc5d0\uc11c <em>\ub514\uc9c0\ud138 \uacbd\ud5d8</em>\uc744 \ub9cc\ub4e4\uc5b4\uac11\ub2c8\ub2e4. \uae68\ub057\ud55c \ucf54\ub4dc\uc640 \uc0ac\ub824 \uae4a\uc740 \uc778\ud130\ud398\uc774\uc2a4\uc5d0 \ub300\ud55c \uc5f4\uc815\uc73c\ub85c, <em>\uc544\ub984\ub2f5\uace0</em> \uae30\ub2a5\uc801\uc778 \uc81c\ud488\uc744 \ub9cc\ub4ed\ub2c8\ub2e4. \ubaa8\ub4e0 \ud53d\uc140\uc774 \uc911\uc694\ud558\uace0, \ubaa8\ub4e0 \uc778\ud130\ub799\uc158\uc774 \uc774\uc57c\uae30\ub97c \uc804\ud569\ub2c8\ub2e4.',
+    skillsLabel: '\uc804\ubb38 \ubd84\uc57c',
+    skill1: 'HTML / CSS',
+    skill2: 'JavaScript',
+    skill3: 'React',
+    skill4: 'Node.js',
+    skill5: 'Python',
+    skill6: 'UI/UX \ub514\uc790\uc778',
+    contactLabel: '\uc5f0\ub77d\ud558\uae30',
+    contactHeading: '\ud568\uaed8<br>\uc77c\ud574\uc694',
+    contactSub: '\ud504\ub9ac\ub79c\uc11c \ud504\ub85c\uc81d\ud2b8 \uac00\ub2a5',
+    footerCopy: '\u00a9 2026 \ud64d\uae38\ub3d9',
+    footerRights: '\ubaa8\ub4e0 \uad8c\ub9ac \ubcf4\uc720'
+  },
+  ja: {
+    backLink: '\u2190 \u30ae\u30e3\u30e9\u30ea\u30fc',
+    navAbout: '\u7d39\u4ecb',
+    navSkills: '\u30b9\u30ad\u30eb',
+    navContact: '\u304a\u554f\u3044\u5408\u308f\u305b',
+    heroName: '\u304a\u540d\u524d',
+    heroTitle: '\u30af\u30ea\u30a8\u30a4\u30c6\u30a3\u30d6\u30c7\u30d9\u30ed\u30c3\u30d1\u30fc & \u30c7\u30b6\u30a4\u30ca\u30fc',
+    scroll: '\u30b9\u30af\u30ed\u30fc\u30eb',
+    aboutLabel: '\u7d39\u4ecb',
+    aboutText: '\u30c7\u30b6\u30a4\u30f3\u3068\u30c6\u30af\u30ce\u30ed\u30b8\u30fc\u306e\u4ea4\u5dee\u70b9\u3067<em>\u30c7\u30b8\u30bf\u30eb\u4f53\u9a13</em>\u3092\u5275\u9020\u3057\u3066\u3044\u307e\u3059\u3002\u30af\u30ea\u30fc\u30f3\u30b3\u30fc\u30c9\u3068\u601d\u3044\u3084\u308a\u306e\u3042\u308b\u30a4\u30f3\u30bf\u30fc\u30d5\u30a7\u30fc\u30b9\u3078\u306e\u60c5\u71b1\u3092\u6301\u3061\u3001<em>\u7f8e\u3057\u304f</em>\u6a5f\u80fd\u7684\u306a\u88fd\u54c1\u3092\u4f5c\u308a\u307e\u3059\u3002\u3059\u3079\u3066\u306e\u30d4\u30af\u30bb\u30eb\u304c\u91cd\u8981\u3067\u3001\u3059\u3079\u3066\u306e\u30a4\u30f3\u30bf\u30e9\u30af\u30b7\u30e7\u30f3\u304c\u7269\u8a9e\u3092\u8a9e\u308a\u307e\u3059\u3002',
+    skillsLabel: '\u5c02\u9580\u5206\u91ce',
+    skill1: 'HTML / CSS',
+    skill2: 'JavaScript',
+    skill3: 'React',
+    skill4: 'Node.js',
+    skill5: 'Python',
+    skill6: 'UI/UX \u30c7\u30b6\u30a4\u30f3',
+    contactLabel: '\u304a\u554f\u3044\u5408\u308f\u305b',
+    contactHeading: '\u4e00\u7dd2\u306b<br>\u50cd\u304d\u307e\u3057\u3087\u3046',
+    contactSub: '\u30d5\u30ea\u30fc\u30e9\u30f3\u30b9\u30d7\u30ed\u30b8\u30a7\u30af\u30c8\u53d7\u4ed8\u4e2d',
+    footerCopy: '\u00a9 2026 \u304a\u540d\u524d',
+    footerRights: '\u5168\u8457\u4f5c\u6a29\u6240\u6709'
+  },
+  zh: {
+    backLink: '\u2190 \u753b\u5eca',
+    navAbout: '\u5173\u4e8e',
+    navSkills: '\u6280\u80fd',
+    navContact: '\u8054\u7cfb',
+    heroName: '\u4f60\u7684\u540d\u5b57',
+    heroTitle: '\u521b\u610f\u5f00\u53d1\u8005 & \u8bbe\u8ba1\u5e08',
+    scroll: '\u6eda\u52a8',
+    aboutLabel: '\u5173\u4e8e',
+    aboutText: '\u6211\u5728\u8bbe\u8ba1\u4e0e\u6280\u672f\u7684\u4ea4\u6c47\u5904\u521b\u9020<em>\u6570\u5b57\u4f53\u9a8c</em>\u3002\u51ed\u501f\u5bf9\u6574\u6d01\u4ee3\u7801\u548c\u7528\u5fc3\u754c\u9762\u7684\u70ed\u60c5\uff0c\u6211\u6253\u9020\u65e2<em>\u7f8e\u89c2</em>\u53c8\u5b9e\u7528\u7684\u4ea7\u54c1\u3002\u6bcf\u4e2a\u50cf\u7d20\u90fd\u5f88\u91cd\u8981\uff0c\u6bcf\u6b21\u4ea4\u4e92\u90fd\u8bb2\u8ff0\u4e00\u4e2a\u6545\u4e8b\u3002',
+    skillsLabel: '\u4e13\u4e1a\u9886\u57df',
+    skill1: 'HTML / CSS',
+    skill2: 'JavaScript',
+    skill3: 'React',
+    skill4: 'Node.js',
+    skill5: 'Python',
+    skill6: 'UI/UX \u8bbe\u8ba1',
+    contactLabel: '\u8054\u7cfb\u6211',
+    contactHeading: '\u8ba9\u6211\u4eec<br>\u4e00\u8d77\u5de5\u4f5c',
+    contactSub: '\u53ef\u63a5\u53d7\u81ea\u7531\u804c\u4e1a\u9879\u76ee',
+    footerCopy: '\u00a9 2026 \u4f60\u7684\u540d\u5b57',
+    footerRights: '\u7248\u6743\u6240\u6709'
+  }
+};
+
+function setLanguage(lang) {
+  if (!TRANSLATIONS[lang]) return;
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (TRANSLATIONS[lang][key] !== undefined) {
+      if (TRANSLATIONS[lang][key].includes('<')) {
+        el.innerHTML = TRANSLATIONS[lang][key];
+      } else {
+        el.textContent = TRANSLATIONS[lang][key];
+      }
+    }
+  });
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+  });
+  localStorage.setItem('preferred-lang', lang);
+
+  // Re-run hero name scramble effect with new text
+  const nameEl = document.getElementById('heroName');
+  if (nameEl) {
+    const finalText = TRANSLATIONS[lang].heroName;
+    nameEl.innerHTML = '';
+    for (let i = 0; i < finalText.length; i++) {
+      const span = document.createElement('span');
+      span.className = 'char';
+      span.textContent = finalText[i] === ' ' ? '\u00A0' : finalText[i];
+      nameEl.appendChild(span);
+    }
+  }
+
+  // Re-run about text word wrapping
+  const aboutEl = document.getElementById('aboutText');
+  if (aboutEl) {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = TRANSLATIONS[lang].aboutText || aboutEl.innerHTML;
+    function wrapWords(node) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const words = node.textContent.split(/(\s+)/);
+        const frag = document.createDocumentFragment();
+        words.forEach(w => {
+          if (/^\s+$/.test(w)) {
+            frag.appendChild(document.createTextNode(w));
+          } else if (w) {
+            const span = document.createElement('span');
+            span.className = 'word';
+            span.textContent = w;
+            frag.appendChild(span);
+          }
+        });
+        node.parentNode.replaceChild(frag, node);
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        Array.from(node.childNodes).forEach(wrapWords);
+      }
+    }
+    wrapWords(tempDiv);
+    aboutEl.innerHTML = tempDiv.innerHTML;
+    const words = aboutEl.querySelectorAll('.word');
+    words.forEach((w, i) => { w.style.transitionDelay = (i * 0.03) + 's'; });
+    aboutEl.classList.add('words-visible');
+  }
+}
+
+// Language switcher button events
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.addEventListener('click', () => setLanguage(btn.getAttribute('data-lang')));
+});
+
+// Initialize language
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  const urlLang = params.get('lang');
+  const savedLang = localStorage.getItem('preferred-lang');
+  const lang = urlLang || savedLang || 'en';
+  setLanguage(lang);
+})();
+</script>
+
+</body>
+</html>

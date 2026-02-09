@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terminal Portfolio</title>
+<meta name="description" content="Terminal-style portfolio page">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --fg: #00ff41;
+  --fg-dim: #00aa2a;
+  --fg-bright: #33ff66;
+  --bg: #0a0a0a;
+  --bg-line: rgba(0, 255, 65, 0.03);
+  --prompt: #00ff41;
+  --cursor: #00ff41;
+  --selection: rgba(0, 255, 65, 0.2);
+  --link: #00ccff;
+}
+
+body.amber {
+  --fg: #ffb000;
+  --fg-dim: #cc8a00;
+  --fg-bright: #ffd966;
+  --prompt: #ffb000;
+  --cursor: #ffb000;
+  --selection: rgba(255, 176, 0, 0.2);
+  --link: #ff6600;
+}
+
+html { font-size: 16px; }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: 'JetBrains Mono', monospace;
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+::selection {
+  background: var(--selection);
+  color: var(--fg-bright);
+}
+
+/* Back to Gallery */
+.back-link {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 1100;
+  color: var(--fg-dim);
+  text-decoration: none;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  padding: 6px 12px;
+  border: 1px solid var(--fg-dim);
+  border-radius: 4px;
+  background: rgba(10, 10, 10, 0.9);
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+  opacity: 0;
+  transform: translateY(-8px);
+  animation: fadeInBack 0.5s ease 0.5s forwards;
+}
+
+.back-link:hover {
+  color: var(--fg-bright);
+  border-color: var(--fg-bright);
+  background: rgba(0, 255, 65, 0.08);
+}
+
+body.amber .back-link:hover {
+  background: rgba(255, 176, 0, 0.08);
+}
+
+@keyframes fadeInBack {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* CRT Scanline Overlay */
+.scanlines {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 1px,
+    rgba(0, 0, 0, 0.15) 1px,
+    rgba(0, 0, 0, 0.15) 2px
+  );
+}
+
+.crt-flicker {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  animation: flicker 0.15s infinite;
+  opacity: 0;
+}
+
+@keyframes flicker {
+  0% { opacity: 0.02; }
+  50% { opacity: 0; }
+  100% { opacity: 0.01; }
+}
+
+/* Matrix Canvas */
+#matrix-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  opacity: 0.06;
+}
+
+/* Terminal Window */
+.terminal-wrapper {
+  position: relative;
+  z-index: 10;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  min-height: 100vh;
+}
+
+.terminal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #1a1a1a;
+  border: 1px solid var(--fg-dim);
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  padding: 10px 16px;
+  margin-top: 20px;
+}
+
+.terminal-dots {
+  display: flex;
+  gap: 8px;
+}
+
+.terminal-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.terminal-dot.red { background: #ff5f57; }
+.terminal-dot.yellow { background: #ffbd2e; }
+.terminal-dot.green { background: #28c840; }
+
+.terminal-title {
+  font-size: 0.8rem;
+  color: #888;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.terminal-controls {
+  display: flex;
+  gap: 12px;
+}
+
+.mode-toggle {
+  background: none;
+  border: 1px solid var(--fg-dim);
+  color: var(--fg);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mode-toggle:hover {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+.terminal-body {
+  background: rgba(10, 10, 10, 0.95);
+  border: 1px solid var(--fg-dim);
+  border-radius: 0 0 8px 8px;
+  padding: 24px;
+  min-height: 70vh;
+  position: relative;
+  box-shadow:
+    0 0 40px rgba(0, 255, 65, 0.05),
+    inset 0 0 80px rgba(0, 0, 0, 0.3);
+}
+
+body.amber .terminal-body {
+  box-shadow:
+    0 0 40px rgba(255, 176, 0, 0.05),
+    inset 0 0 80px rgba(0, 0, 0, 0.3);
+}
+
+/* Terminal Lines */
+.terminal-output {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.line {
+  opacity: 0;
+  margin-bottom: 2px;
+  min-height: 1.6em;
+}
+
+.line.visible {
+  opacity: 1;
+}
+
+.line.typing .text {
+  display: inline;
+}
+
+.prompt-symbol {
+  color: var(--fg-bright);
+  font-weight: 700;
+}
+
+.command {
+  color: var(--fg);
+  font-weight: 700;
+}
+
+.output-text {
+  color: var(--fg-dim);
+}
+
+.output-text.highlight {
+  color: var(--fg);
+}
+
+.output-text.bright {
+  color: var(--fg-bright);
+}
+
+.output-text.error {
+  color: #ff4444;
+}
+
+.output-text.warning {
+  color: #ffaa00;
+}
+
+.output-text.link {
+  color: var(--link);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.output-text.link:hover {
+  text-decoration: underline;
+}
+
+.separator {
+  color: var(--fg-dim);
+  opacity: 0.4;
+}
+
+/* Blinking Cursor */
+.cursor {
+  display: inline-block;
+  width: 8px;
+  height: 1.2em;
+  background: var(--cursor);
+  vertical-align: text-bottom;
+  animation: blink 1s step-end infinite;
+  margin-left: 2px;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Interactive input */
+.input-line {
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.input-line .prompt-symbol {
+  margin-right: 0;
+  white-space: pre;
+}
+
+#user-input {
+  background: none;
+  border: none;
+  color: var(--fg);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  outline: none;
+  flex: 1;
+  caret-color: var(--cursor);
+  line-height: 1.6;
+}
+
+/* Sound wave visualization */
+.sound-wave {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 1em;
+  margin-left: 8px;
+  vertical-align: middle;
+  opacity: 0.5;
+}
+
+.sound-wave .bar {
+  width: 2px;
+  background: var(--fg);
+  border-radius: 1px;
+  animation: soundBar 1.2s ease-in-out infinite;
+  transform-origin: bottom;
+  will-change: transform;
+}
+
+.sound-wave .bar:nth-child(1) { height: 40%; animation-delay: 0s; }
+.sound-wave .bar:nth-child(2) { height: 70%; animation-delay: 0.15s; }
+.sound-wave .bar:nth-child(3) { height: 100%; animation-delay: 0.3s; }
+.sound-wave .bar:nth-child(4) { height: 60%; animation-delay: 0.45s; }
+.sound-wave .bar:nth-child(5) { height: 80%; animation-delay: 0.6s; }
+
+@keyframes soundBar {
+  0%, 100% { transform: scaleY(0.3); }
+  50% { transform: scaleY(1); }
+}
+
+/* Tab completion hint */
+.tab-hint {
+  color: var(--fg-dim);
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+/* Boot sequence */
+.boot-text {
+  color: var(--fg-dim);
+  font-size: 0.85rem;
+}
+
+/* Language Switcher */
+.lang-switcher {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 1100;
+  display: flex;
+  gap: 4px;
+}
+.lang-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border: 1px solid var(--fg-dim);
+  background: rgba(10,10,10,0.9);
+  color: var(--fg-dim);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.lang-btn:hover, .lang-btn.active {
+  color: var(--fg-bright);
+  border-color: var(--fg-bright);
+  background: rgba(0,255,65,0.1);
+}
+body.amber .lang-btn:hover, body.amber .lang-btn.active {
+  background: rgba(255,176,0,0.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .terminal-wrapper {
+    padding: 10px;
+  }
+  .terminal-body {
+    padding: 16px;
+    font-size: 0.85rem;
+  }
+  .terminal-header {
+    margin-top: 10px;
+  }
+  .back-link {
+    font-size: 0.7rem;
+    padding: 4px 8px;
+    top: 10px;
+    left: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  html { font-size: 14px; }
+  .terminal-body {
+    padding: 12px;
+    font-size: 0.8rem;
+  }
+}
+
+@media (min-width: 1440px) {
+  .terminal-wrapper {
+    max-width: 1000px;
+  }
+}
+
+/* Glow effect on text */
+.glow {
+  text-shadow: 0 0 5px var(--fg), 0 0 10px rgba(0, 255, 65, 0.3);
+}
+
+body.amber .glow {
+  text-shadow: 0 0 5px var(--fg), 0 0 10px rgba(255, 176, 0, 0.3);
+}
+
+/* ASCII Art */
+.ascii-art {
+  color: var(--fg);
+  font-size: 0.7rem;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
+@media (max-width: 600px) {
+  .ascii-art {
+    font-size: 0.45rem;
+  }
+}
+</style>
+</head>
+<body>
+
+<a href="../index.html" class="back-link" aria-label="Back to gallery">$ cd ../gallery</a>
+
+<div class="lang-switcher" aria-label="Language selector">
+  <button class="lang-btn" data-lang="en">EN</button>
+  <button class="lang-btn" data-lang="ko">KO</button>
+  <button class="lang-btn" data-lang="ja">JA</button>
+  <button class="lang-btn" data-lang="zh">ZH</button>
+</div>
+
+<canvas id="matrix-canvas" aria-hidden="true"></canvas>
+<div class="scanlines" aria-hidden="true"></div>
+<div class="crt-flicker" aria-hidden="true"></div>
+
+<div class="terminal-wrapper" role="main" aria-label="Terminal portfolio">
+  <div class="terminal-header" role="banner">
+    <div class="terminal-dots" aria-hidden="true">
+      <div class="terminal-dot red"></div>
+      <div class="terminal-dot yellow"></div>
+      <div class="terminal-dot green"></div>
+    </div>
+    <span class="terminal-title">guest@portfolio ~ bash</span>
+    <div class="terminal-controls">
+      <button class="mode-toggle" id="amber-toggle" title="Toggle amber mode" aria-label="Toggle between green and amber color mode">AMBER</button>
+    </div>
+  </div>
+  <div class="terminal-body" id="terminal-body" role="log" aria-live="polite" aria-label="Terminal output">
+    <div class="terminal-output" id="terminal-output"></div>
+    <div class="input-line" id="input-line" style="display:none;" role="form">
+      <span class="prompt-symbol" aria-hidden="true">guest@portfolio:~$ </span>
+      <div class="sound-wave" aria-hidden="true">
+        <span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span>
+      </div>
+      <span style="width:6px;display:inline-block"></span>
+      <input type="text" id="user-input" autocomplete="off" spellcheck="false" autofocus aria-label="Terminal command input">
+    </div>
+  </div>
+</div>
+
+<script>
+// --- Matrix Rain Background ---
+(function() {
+  const canvas = document.getElementById('matrix-canvas');
+  const ctx = canvas.getContext('2d');
+  let w, h, columns, drops;
+  const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEF';
+
+  function resize() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+    const fontSize = 14;
+    columns = Math.floor(w / fontSize);
+    drops = Array.from({ length: columns }, () => Math.random() * -100);
+  }
+
+  resize();
+  window.addEventListener('resize', resize);
+
+  function draw() {
+    ctx.fillStyle = 'rgba(10, 10, 10, 0.08)';
+    ctx.fillRect(0, 0, w, h);
+
+    const isAmber = document.body.classList.contains('amber');
+    ctx.fillStyle = isAmber ? '#ffb000' : '#00ff41';
+    ctx.font = '14px JetBrains Mono, monospace';
+
+    for (let i = 0; i < drops.length; i++) {
+      if (drops[i] < 0) {
+        drops[i] += 0.1;
+        continue;
+      }
+      const char = chars[Math.floor(Math.random() * chars.length)];
+      ctx.fillText(char, i * 14, drops[i] * 14);
+      if (drops[i] * 14 > h && Math.random() > 0.975) {
+        drops[i] = Math.random() * -20;
+      }
+      drops[i]++;
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// --- Terminal Engine ---
+const output = document.getElementById('terminal-output');
+const inputLine = document.getElementById('input-line');
+const userInput = document.getElementById('user-input');
+
+// --- Command History ---
+const commandHistory = [];
+let historyIndex = -1;
+
+const ASCII_ART = `
+ __   __                    _  _
+ \\ \\ / /___  _  _  _ _    | \\| | __ _  _ __   ___
+  \\ V // _ \\| || || '_|   | .  |/ _\` || '  \\ / -_)
+   |_| \\___/ \\_,_||_|     |_|\\_|\\__,_||_|_|_|\\___|
+`;
+
+const FORTUNES = [
+  '"The best way to predict the future is to invent it." - Alan Kay',
+  '"First, solve the problem. Then, write the code." - John Johnson',
+  '"Code is like humor. When you have to explain it, it\'s bad." - Cory House',
+  '"Simplicity is the soul of efficiency." - Austin Freeman',
+  '"Make it work, make it right, make it fast." - Kent Beck',
+  '"Any fool can write code that a computer can understand. Good programmers write code that humans can understand." - Martin Fowler',
+  '"Talk is cheap. Show me the code." - Linus Torvalds',
+  '"Programs must be written for people to read, and only incidentally for machines to execute." - Harold Abelson',
+];
+
+const BOOT_SEQUENCE = [
+  { text: 'BIOS v3.2.1 ... OK', delay: 40 },
+  { text: 'Loading kernel modules ... OK', delay: 40 },
+  { text: 'Initializing network ... OK', delay: 40 },
+  { text: 'Mounting /dev/portfolio ... OK', delay: 40 },
+  { text: 'Starting terminal session ...', delay: 60 },
+  { text: '', delay: 200 },
+];
+
+const COMMANDS_SEQUENCE = [
+  {
+    cmd: 'whoami',
+    output: [
+      { text: '', type: 'blank' },
+      { text: ASCII_ART, type: 'ascii' },
+      { text: '', type: 'blank' },
+      { text: '  Name     : Your Name', type: 'highlight' },
+      { text: '  Title    : Creative Developer & Designer', type: 'highlight' },
+      { text: '  Location : Seoul, South Korea', type: 'normal' },
+      { text: '  Status   : Available for hire', type: 'bright' },
+      { text: '', type: 'blank' },
+    ]
+  },
+  {
+    cmd: 'cat about.txt',
+    output: [
+      { text: '', type: 'blank' },
+      { text: '  I build things that live on the internet. With a passion', type: 'normal' },
+      { text: '  for clean code and creative design, I craft digital', type: 'normal' },
+      { text: '  experiences that are both beautiful and functional.', type: 'normal' },
+      { text: '', type: 'blank' },
+      { text: '  When I\'m not pushing pixels or debugging code, you\'ll', type: 'normal' },
+      { text: '  find me exploring new technologies, contributing to', type: 'normal' },
+      { text: '  open source, and drinking way too much coffee.', type: 'normal' },
+      { text: '', type: 'blank' },
+    ]
+  },
+  {
+    cmd: 'ls -la skills/',
+    output: [
+      { text: '', type: 'blank' },
+      { text: '  drwxr-xr-x  frontend/', type: 'bright' },
+      { text: '    HTML/CSS       [##########--------]  ████████░░  90%', type: 'normal' },
+      { text: '    JavaScript     [#########---------]  █████████░  95%', type: 'normal' },
+      { text: '    React          [########----------]  ████████░░  85%', type: 'normal' },
+      { text: '    TypeScript     [########----------]  ████████░░  80%', type: 'normal' },
+      { text: '', type: 'blank' },
+      { text: '  drwxr-xr-x  backend/', type: 'bright' },
+      { text: '    Node.js        [########----------]  ████████░░  85%', type: 'normal' },
+      { text: '    Python         [#######-----------]  ███████░░░  75%', type: 'normal' },
+      { text: '    PostgreSQL     [#######-----------]  ███████░░░  70%', type: 'normal' },
+      { text: '', type: 'blank' },
+      { text: '  drwxr-xr-x  design/', type: 'bright' },
+      { text: '    UI/UX Design   [########----------]  ████████░░  80%', type: 'normal' },
+      { text: '    Figma          [#########---------]  █████████░  90%', type: 'normal' },
+      { text: '', type: 'blank' },
+    ]
+  },
+  {
+    cmd: 'cat contact.txt',
+    output: [
+      { text: '', type: 'blank' },
+      { text: '  ┌──────────────────────────────────────────┐', type: 'normal' },
+      { text: '  │                                          │', type: 'normal' },
+      { text: '  │   Email  : email@example.com             │', type: 'highlight' },
+      { text: '  │   GitHub : github.com/yourname            │', type: 'highlight' },
+      { text: '  │   Web    : yourname.dev                  │', type: 'highlight' },
+      { text: '  │                                          │', type: 'normal' },
+      { text: '  └──────────────────────────────────────────┘', type: 'normal' },
+      { text: '', type: 'blank' },
+      { text: '  Type "help" to see all available commands.', type: 'bright' },
+      { text: '', type: 'blank' },
+    ]
+  },
+];
+
+// All available command names for tab-autocomplete
+const ALL_COMMANDS = [
+  'help', 'whoami', 'about', 'cat about.txt', 'skills',
+  'ls skills/', 'ls -la skills/', 'contact', 'cat contact.txt',
+  'projects', 'ls projects/', 'clear', 'neofetch', 'date',
+  'fortune', 'sudo rm -rf /', 'history', 'gallery'
+];
+
+const INTERACTIVE_COMMANDS = {
+  help: [
+    '',
+    '  Available commands:',
+    '  ───────────────────────────────────────',
+    '  whoami         - Display profile info',
+    '  about          - Show about section',
+    '  skills         - List technical skills',
+    '  contact        - Show contact info',
+    '  projects       - View recent projects',
+    '  neofetch       - System info',
+    '  date           - Current date & time',
+    '  fortune        - Random dev wisdom',
+    '  history        - Command history',
+    '  gallery        - Back to design gallery',
+    '  clear          - Clear the terminal',
+    '  help           - Show this help text',
+    '',
+    '  Tip: Use Tab for autocomplete, Up/Down for history.',
+    '',
+  ],
+  whoami: COMMANDS_SEQUENCE[0].output.map(o => o.text),
+  about: COMMANDS_SEQUENCE[1].output.map(o => o.text),
+  skills: COMMANDS_SEQUENCE[2].output.map(o => o.text),
+  contact: COMMANDS_SEQUENCE[3].output.map(o => o.text),
+  projects: [
+    '',
+    '  ┌─ Recent Projects ─────────────────────────────┐',
+    '  │                                                │',
+    '  │  01  Portfolio Terminal     [LIVE]  2024        │',
+    '  │      A terminal-style personal website         │',
+    '  │                                                │',
+    '  │  02  Task Manager App      [LIVE]  2024        │',
+    '  │      Full-stack productivity tool              │',
+    '  │                                                │',
+    '  │  03  Weather Dashboard     [WIP]   2024        │',
+    '  │      Real-time weather visualization           │',
+    '  │                                                │',
+    '  │  04  E-Commerce Platform   [LIVE]  2023        │',
+    '  │      Modern shopping experience                │',
+    '  │                                                │',
+    '  │  05  Chat Application      [LIVE]  2023        │',
+    '  │      Real-time messaging with WebSocket        │',
+    '  │                                                │',
+    '  └────────────────────────────────────────────────┘',
+    '',
+  ],
+  neofetch: [
+    '',
+    '       ████████████         guest@portfolio',
+    '     ██            ██       ──────────────────────────',
+    '    █   ████  ████   █      OS      : PortfolioOS v2.0',
+    '    █   ████  ████   █      Host    : The Internet',
+    '    █                █      Kernel  : creativity-6.1.0',
+    '    █   ██████████   █      Uptime  : Since 1995',
+    '     █  ██████████  █       Shell   : bash 5.2.0',
+    '      ██          ██        DE      : Terminal-UI v3.0',
+    '     ██ ██  ████ ██ █       Theme   : Hacker [Green/Amber]',
+    '    ██  ████  ████  ██      CPU     : Caffeine-Powered',
+    '    ██  ██      ██  ██      Memory  : 42 open tabs / 64 max',
+    '        ██      ██          Disk    : 99% projects, 1% sleep',
+    '        ██████████          Lang    : JS, TS, Python, Rust',
+    '',
+    '  ████████████████████████████████████████',
+    '  ████████████████████████████████████████',
+    '',
+  ],
+};
+
+// --- Typing Engine ---
+function sleep(ms) {
+  return new Promise(r => setTimeout(r, ms));
+}
+
+function createLine() {
+  const div = document.createElement('div');
+  div.className = 'line';
+  output.appendChild(div);
+  return div;
+}
+
+async function typeText(element, text, speed = 30) {
+  element.classList.add('visible');
+  for (let i = 0; i < text.length; i++) {
+    element.textContent += text[i];
+    scrollToBottom();
+    if (text[i] !== ' ') {
+      await sleep(speed + Math.random() * 15);
+    } else {
+      await sleep(speed * 0.3);
+    }
+  }
+}
+
+async function printLine(text, type = 'normal', instant = false) {
+  const line = createLine();
+  if (type === 'ascii') {
+    line.classList.add('ascii-art', 'glow');
+  }
+  if (instant || type === 'blank') {
+    const cls = type === 'highlight' ? 'output-text highlight' :
+                type === 'bright' ? 'output-text bright' :
+                type === 'error' ? 'output-text error' :
+                type === 'warning' ? 'output-text warning' :
+                type === 'ascii' ? '' :
+                'output-text';
+    if (type === 'ascii') {
+      line.textContent = text;
+    } else {
+      line.innerHTML = `<span class="${cls}">${escapeHtml(text)}</span>`;
+    }
+    line.classList.add('visible');
+  } else {
+    const span = document.createElement('span');
+    span.className = type === 'highlight' ? 'output-text highlight' :
+                     type === 'bright' ? 'output-text bright' :
+                     'output-text';
+    line.appendChild(span);
+    line.classList.add('visible');
+    for (let i = 0; i < text.length; i++) {
+      span.textContent += text[i];
+      scrollToBottom();
+      await sleep(2);
+    }
+  }
+  scrollToBottom();
+}
+
+async function typeCommand(cmd) {
+  const line = createLine();
+  line.classList.add('visible');
+
+  const prompt = document.createElement('span');
+  prompt.className = 'prompt-symbol';
+  prompt.textContent = 'guest@portfolio:~$ ';
+  line.appendChild(prompt);
+
+  const cmdSpan = document.createElement('span');
+  cmdSpan.className = 'command glow';
+  line.appendChild(cmdSpan);
+
+  const cursor = document.createElement('span');
+  cursor.className = 'cursor';
+  line.appendChild(cursor);
+
+  for (let i = 0; i < cmd.length; i++) {
+    cmdSpan.textContent += cmd[i];
+    scrollToBottom();
+    await sleep(60 + Math.random() * 50);
+  }
+
+  cursor.remove();
+  await sleep(300);
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function scrollToBottom() {
+  const body = document.getElementById('terminal-body');
+  body.scrollTop = body.scrollHeight;
+  window.scrollTo(0, document.body.scrollHeight);
+}
+
+// --- Boot & Run ---
+async function bootSequence() {
+  for (const step of BOOT_SEQUENCE) {
+    const line = createLine();
+    line.classList.add('boot-text', 'visible');
+    line.textContent = step.text;
+    scrollToBottom();
+    await sleep(step.delay);
+  }
+  await sleep(400);
+
+  await printLine('  Welcome to PortfolioOS v2.0', 'bright', true);
+  await printLine('  Type "help" for available commands.', 'normal', true);
+  await printLine('', 'blank', true);
+  await sleep(500);
+}
+
+async function runSequence() {
+  await bootSequence();
+
+  for (const block of COMMANDS_SEQUENCE) {
+    await typeCommand(block.cmd);
+    await sleep(200);
+
+    for (const line of block.output) {
+      if (line.type === 'ascii') {
+        await printLine(line.text, 'ascii', true);
+      } else if (line.type === 'blank') {
+        await printLine('', 'blank', true);
+      } else {
+        await printLine(line.text, line.type, true);
+        await sleep(30);
+      }
+    }
+    await sleep(600);
+  }
+
+  // Show interactive input
+  inputLine.style.display = 'flex';
+  userInput.focus();
+  scrollToBottom();
+}
+
+// --- Interactive Commands ---
+async function handleCommand(cmd) {
+  const trimmed = cmd.trim().toLowerCase();
+  const rawCmd = cmd.trim();
+  inputLine.style.display = 'none';
+
+  // Add to history
+  if (rawCmd !== '') {
+    commandHistory.push(rawCmd);
+    historyIndex = commandHistory.length;
+  }
+
+  // Print the command
+  const line = createLine();
+  line.classList.add('visible');
+  line.innerHTML = `<span class="prompt-symbol">guest@portfolio:~$ </span><span class="command glow">${escapeHtml(rawCmd)}</span>`;
+
+  if (trimmed === 'clear') {
+    output.innerHTML = '';
+    inputLine.style.display = 'flex';
+    userInput.value = '';
+    userInput.focus();
+    return;
+  }
+
+  // Gallery / back
+  if (trimmed === 'gallery' || trimmed === 'cd ..' || trimmed === 'cd ../gallery') {
+    await printLine('', 'blank', true);
+    await printLine('  Navigating to gallery...', 'bright', true);
+    await sleep(500);
+    window.location.href = '../index.html';
+    return;
+  }
+
+  // Date
+  if (trimmed === 'date') {
+    const now = new Date();
+    const dateStr = now.toString();
+    await printLine('', 'blank', true);
+    await printLine('  ' + dateStr, 'highlight', true);
+    await printLine('', 'blank', true);
+    showInput();
+    return;
+  }
+
+  // Fortune
+  if (trimmed === 'fortune') {
+    const f = FORTUNES[Math.floor(Math.random() * FORTUNES.length)];
+    await printLine('', 'blank', true);
+    await printLine('  ' + f, 'bright', true);
+    await printLine('', 'blank', true);
+    showInput();
+    return;
+  }
+
+  // sudo rm -rf /
+  if (trimmed === 'sudo rm -rf /' || trimmed === 'sudo rm -rf / --no-preserve-root') {
+    await printLine('', 'blank', true);
+    await printLine('  [sudo] password for guest: ********', 'normal', true);
+    await sleep(400);
+    await printLine('', 'blank', true);
+    await printLine('  Nice try! But this portfolio is protected by:', 'error', true);
+    await printLine('', 'blank', true);
+    await printLine('    ██████╗  █████╗  ██████╗██╗  ██╗██╗   ██╗██████╗ ███████╗', 'warning', true);
+    await printLine('    ██╔══██╗██╔══██╗██╔════╝██║ ██╔╝██║   ██║██╔══██╗██╔════╝', 'warning', true);
+    await printLine('    ██████╔╝███████║██║     █████╔╝ ██║   ██║██████╔╝███████╗', 'warning', true);
+    await printLine('    ██╔══██╗██╔══██║██║     ██╔═██╗ ██║   ██║██╔═══╝ ╚════██║', 'warning', true);
+    await printLine('    ██████╔╝██║  ██║╚██████╗██║  ██╗╚██████╔╝██║     ███████║', 'warning', true);
+    await printLine('    ╚═════╝ ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝     ╚══════╝', 'warning', true);
+    await printLine('', 'blank', true);
+    await printLine('  Permission denied. The portfolio survives another day.', 'error', true);
+    await printLine('  Incident reported to /dev/null', 'normal', true);
+    await printLine('', 'blank', true);
+    showInput();
+    return;
+  }
+
+  // Any other sudo
+  if (trimmed.startsWith('sudo ')) {
+    await printLine('', 'blank', true);
+    await printLine('  guest is not in the sudoers file. This incident will be reported.', 'error', true);
+    await printLine('', 'blank', true);
+    showInput();
+    return;
+  }
+
+  // History
+  if (trimmed === 'history') {
+    await printLine('', 'blank', true);
+    if (commandHistory.length === 0) {
+      await printLine('  No commands in history.', 'normal', true);
+    } else {
+      for (let i = 0; i < commandHistory.length; i++) {
+        const num = String(i + 1).padStart(4, ' ');
+        await printLine(`  ${num}  ${commandHistory[i]}`, 'normal', true);
+      }
+    }
+    await printLine('', 'blank', true);
+    showInput();
+    return;
+  }
+
+  // ls projects/ alias
+  if (trimmed === 'ls projects/' || trimmed === 'ls -la projects/') {
+    const lines = INTERACTIVE_COMMANDS.projects;
+    for (const l of lines) {
+      await printLine(l, l.includes('[') && l.includes(']') ? 'highlight' : 'normal', true);
+      await sleep(15);
+    }
+    showInput();
+    return;
+  }
+
+  const cmdKey = trimmed === 'cat about.txt' ? 'about' :
+                 trimmed === 'ls skills/' || trimmed === 'ls -la skills/' ? 'skills' :
+                 trimmed === 'cat contact.txt' ? 'contact' :
+                 trimmed;
+
+  const lines = INTERACTIVE_COMMANDS[cmdKey];
+
+  if (lines) {
+    for (const l of lines) {
+      const ltype = (l.includes('[') && l.includes(']')) ? 'highlight' : 'normal';
+      await printLine(l, ltype, true);
+      await sleep(15);
+    }
+  } else if (trimmed !== '') {
+    await printLine(`  bash: ${escapeHtml(trimmed)}: command not found`, 'normal', true);
+    await printLine('  Type "help" for available commands.', 'bright', true);
+    await printLine('', 'blank', true);
+  }
+
+  showInput();
+}
+
+function showInput() {
+  inputLine.style.display = 'flex';
+  userInput.value = '';
+  userInput.focus();
+  scrollToBottom();
+}
+
+// --- Tab Autocomplete ---
+function tabComplete(value) {
+  const lower = value.toLowerCase();
+  if (lower === '') return null;
+  const matches = ALL_COMMANDS.filter(c => c.startsWith(lower));
+  if (matches.length === 1) return matches[0];
+  if (matches.length > 1) {
+    // Find longest common prefix
+    let prefix = matches[0];
+    for (let i = 1; i < matches.length; i++) {
+      while (!matches[i].startsWith(prefix)) {
+        prefix = prefix.slice(0, -1);
+      }
+    }
+    return prefix.length > lower.length ? prefix : null;
+  }
+  return null;
+}
+
+// --- Key Handlers ---
+userInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    const val = userInput.value;
+    handleCommand(val);
+    return;
+  }
+
+  // Tab autocomplete
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    const completed = tabComplete(userInput.value);
+    if (completed) {
+      userInput.value = completed;
+    }
+    return;
+  }
+
+  // Command history with up/down arrows
+  if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    if (commandHistory.length > 0 && historyIndex > 0) {
+      historyIndex--;
+      userInput.value = commandHistory[historyIndex];
+    }
+    return;
+  }
+
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    if (historyIndex < commandHistory.length - 1) {
+      historyIndex++;
+      userInput.value = commandHistory[historyIndex];
+    } else {
+      historyIndex = commandHistory.length;
+      userInput.value = '';
+    }
+    return;
+  }
+
+  // Ctrl+L to clear
+  if (e.key === 'l' && e.ctrlKey) {
+    e.preventDefault();
+    output.innerHTML = '';
+    return;
+  }
+});
+
+// Focus input on click anywhere in terminal
+document.getElementById('terminal-body').addEventListener('click', () => {
+  if (inputLine.style.display !== 'none') {
+    userInput.focus();
+  }
+});
+
+// Amber mode toggle
+document.getElementById('amber-toggle').addEventListener('click', () => {
+  document.body.classList.toggle('amber');
+  const btn = document.getElementById('amber-toggle');
+  btn.textContent = document.body.classList.contains('amber') ? 'GREEN' : 'AMBER';
+});
+
+// --- i18n Translation System ---
+// Terminal commands stay in English. Content inside command outputs is translated.
+var TERM_TRANSLATIONS = {
+  en: {
+    name: 'Your Name', title: 'Creative Developer & Designer', location: 'Seoul, South Korea', status: 'Available for hire',
+    aboutLines: [
+      '  I build things that live on the internet. With a passion',
+      '  for clean code and creative design, I craft digital',
+      '  experiences that are both beautiful and functional.',
+      '',
+      "  When I'm not pushing pixels or debugging code, you'll",
+      '  find me exploring new technologies, contributing to',
+      '  open source, and drinking way too much coffee.'
+    ],
+    welcome: '  Welcome to PortfolioOS v2.0',
+    helpHint: '  Type "help" for available commands.',
+    helpCmdHint: '  Type "help" to see all available commands.'
+  },
+  ko: {
+    name: '\ud64d\uae38\ub3d9', title: '\ud06c\ub9ac\uc5d0\uc774\ud2f0\ube0c \uac1c\ubc1c\uc790 & \ub514\uc790\uc774\ub108', location: '\ub300\ud55c\ubbfc\uad6d \uc11c\uc6b8', status: '\ucc44\uc6a9 \uac00\ub2a5',
+    aboutLines: [
+      '  \uc778\ud130\ub137\uc5d0 \uc0b4\uc544 \uc228\uc26c\ub294 \uac83\ub4e4\uc744 \ub9cc\ub4ed\ub2c8\ub2e4.',
+      '  \uae68\ub057\ud55c \ucf54\ub4dc\uc640 \ucc3d\uc758\uc801\uc778 \ub514\uc790\uc778\uc5d0 \ub300\ud55c \uc5f4\uc815\uc73c\ub85c',
+      '  \uc544\ub984\ub2f5\uace0 \uae30\ub2a5\uc801\uc778 \ub514\uc9c0\ud138 \uacbd\ud5d8\uc744 \ub9cc\ub4e4\uc5b4\uac11\ub2c8\ub2e4.',
+      '',
+      '  \ucf54\ub529\ud558\uc9c0 \uc54a\uc744 \ub54c\ub294 \uc0c8\ub85c\uc6b4 \uae30\uc220\uc744 \ud0d0\uc0c9\ud558\uace0,',
+      '  \uc624\ud508\uc18c\uc2a4\uc5d0 \uae30\uc5ec\ud558\uace0, \ucee4\ud53c\ub97c \ub9c8\uc2ed\ub2c8\ub2e4.',
+      '  (\ub108\ubb34 \ub9ce\uc774 \ub9c8\uc2dc\uae34 \ud569\ub2c8\ub2e4.)'
+    ],
+    welcome: '  PortfolioOS v2.0\uc5d0 \uc624\uc2e0 \uac83\uc744 \ud658\uc601\ud569\ub2c8\ub2e4',
+    helpHint: '  \uc0ac\uc6a9 \uac00\ub2a5\ud55c \uba85\ub839\uc5b4\ub294 "help"\uc744 \uc785\ub825\ud558\uc138\uc694.',
+    helpCmdHint: '  \uc0ac\uc6a9 \uac00\ub2a5\ud55c \ubaa8\ub4e0 \uba85\ub839\uc5b4\ub294 "help"\uc744 \uc785\ub825\ud558\uc138\uc694.'
+  },
+  ja: {
+    name: '\u304a\u540d\u524d', title: '\u30af\u30ea\u30a8\u30a4\u30c6\u30a3\u30d6\u30c7\u30d9\u30ed\u30c3\u30d1\u30fc & \u30c7\u30b6\u30a4\u30ca\u30fc', location: '\u97d3\u56fd \u30bd\u30a6\u30eb', status: '\u63a1\u7528\u53ef\u80fd',
+    aboutLines: [
+      '  \u30a4\u30f3\u30bf\u30fc\u30cd\u30c3\u30c8\u4e0a\u3067\u751f\u304d\u308b\u3082\u306e\u3092\u4f5c\u3063\u3066\u3044\u307e\u3059\u3002',
+      '  \u30af\u30ea\u30fc\u30f3\u30b3\u30fc\u30c9\u3068\u30af\u30ea\u30a8\u30a4\u30c6\u30a3\u30d6\u306a\u30c7\u30b6\u30a4\u30f3\u3078\u306e',
+      '  \u60c5\u71b1\u3092\u6301\u3061\u3001\u7f8e\u3057\u304f\u6a5f\u80fd\u7684\u306a\u30c7\u30b8\u30bf\u30eb\u4f53\u9a13\u3092\u5275\u9020\u3057\u307e\u3059\u3002',
+      '',
+      '  \u30b3\u30fc\u30c7\u30a3\u30f3\u30b0\u4ee5\u5916\u306e\u6642\u9593\u306f\u3001\u65b0\u3057\u3044\u6280\u8853\u3092\u63a2\u6c42\u3057\u3001',
+      '  \u30aa\u30fc\u30d7\u30f3\u30bd\u30fc\u30b9\u306b\u8ca2\u732e\u3057\u3001\u30b3\u30fc\u30d2\u30fc\u3092\u98f2\u307f\u904e\u304e\u3066',
+      '  \u3044\u307e\u3059\u3002'
+    ],
+    welcome: '  PortfolioOS v2.0\u3078\u3088\u3046\u3053\u305d',
+    helpHint: '  \u4f7f\u7528\u53ef\u80fd\u306a\u30b3\u30de\u30f3\u30c9\u306f"help"\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044\u3002',
+    helpCmdHint: '  \u5229\u7528\u53ef\u80fd\u306a\u5168\u30b3\u30de\u30f3\u30c9\u306f"help"\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044\u3002'
+  },
+  zh: {
+    name: '\u4f60\u7684\u540d\u5b57', title: '\u521b\u610f\u5f00\u53d1\u8005 & \u8bbe\u8ba1\u5e08', location: '\u97e9\u56fd \u9996\u5c14', status: '\u53ef\u63a5\u53d7\u5de5\u4f5c',
+    aboutLines: [
+      '  \u6211\u6784\u5efa\u751f\u6d3b\u5728\u4e92\u8054\u7f51\u4e0a\u7684\u4e8b\u7269\u3002',
+      '  \u51ed\u501f\u5bf9\u6574\u6d01\u4ee3\u7801\u548c\u521b\u610f\u8bbe\u8ba1\u7684\u70ed\u60c5\uff0c',
+      '  \u6211\u6253\u9020\u65e2\u7f8e\u89c2\u53c8\u5b9e\u7528\u7684\u6570\u5b57\u4f53\u9a8c\u3002',
+      '',
+      '  \u4e0d\u5199\u4ee3\u7801\u7684\u65f6\u5019\uff0c\u6211\u4f1a\u63a2\u7d22\u65b0\u6280\u672f\uff0c',
+      '  \u4e3a\u5f00\u6e90\u505a\u8d21\u732e\uff0c\u8fd8\u6709\u559d\u592a\u591a\u54a1\u5561\u3002',
+      ''
+    ],
+    welcome: '  \u6b22\u8fce\u6765\u5230 PortfolioOS v2.0',
+    helpHint: '  \u8f93\u5165"help"\u67e5\u770b\u53ef\u7528\u547d\u4ee4\u3002',
+    helpCmdHint: '  \u8f93\u5165"help"\u67e5\u770b\u6240\u6709\u53ef\u7528\u547d\u4ee4\u3002'
+  }
+};
+
+var currentTermLang = 'en';
+
+function setTermLanguage(lang) {
+  if (!TERM_TRANSLATIONS[lang]) return;
+  currentTermLang = lang;
+  document.documentElement.lang = lang;
+  // Update the COMMANDS_SEQUENCE content for future renders
+  var t = TERM_TRANSLATIONS[lang];
+  COMMANDS_SEQUENCE[0].output[3].text = '  Name     : ' + t.name;
+  COMMANDS_SEQUENCE[0].output[4].text = '  Title    : ' + t.title;
+  COMMANDS_SEQUENCE[0].output[5].text = '  Location : ' + t.location;
+  COMMANDS_SEQUENCE[0].output[6].text = '  Status   : ' + t.status;
+  // Update about output
+  COMMANDS_SEQUENCE[1].output = [{text:'',type:'blank'}];
+  t.aboutLines.forEach(function(line) {
+    COMMANDS_SEQUENCE[1].output.push({text: line, type: line.trim() === '' ? 'blank' : 'normal'});
+  });
+  COMMANDS_SEQUENCE[1].output.push({text:'',type:'blank'});
+  // Update contact help hint
+  COMMANDS_SEQUENCE[3].output[COMMANDS_SEQUENCE[3].output.length - 2].text = t.helpCmdHint;
+  // Update interactive command maps
+  INTERACTIVE_COMMANDS.whoami = COMMANDS_SEQUENCE[0].output.map(function(o){return o.text});
+  INTERACTIVE_COMMANDS.about = COMMANDS_SEQUENCE[1].output.map(function(o){return o.text});
+  INTERACTIVE_COMMANDS.contact = COMMANDS_SEQUENCE[3].output.map(function(o){return o.text});
+
+  document.querySelectorAll('.lang-btn').forEach(function(btn) {
+    btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+  });
+  localStorage.setItem('preferred-lang', lang);
+}
+
+document.querySelectorAll('.lang-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() { setTermLanguage(btn.getAttribute('data-lang')); });
+});
+
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  var urlLang = params.get('lang');
+  var savedLang = localStorage.getItem('preferred-lang');
+  setTermLanguage(urlLang || savedLang || 'en');
+})();
+
+// Start
+runSequence();
+</script>
+</body>
+</html>

@@ -1,0 +1,1544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PLAYER 1 - Retro Arcade Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --pink: #FF2D95;
+    --cyan: #00F5FF;
+    --green: #39FF14;
+    --yellow: #FFE600;
+    --orange: #FF6B00;
+    --bg: #1a0033;
+    --bg-light: #2a0050;
+    --pixel: 4px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Press Start 2P', monospace;
+    background: var(--bg);
+    color: #fff;
+    overflow-x: hidden;
+    font-size: 10px;
+    line-height: 1.8;
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Crect x='4' y='0' width='4' height='4' fill='%2300F5FF'/%3E%3Crect x='0' y='4' width='4' height='4' fill='%2300F5FF'/%3E%3Crect x='4' y='4' width='4' height='4' fill='%23FF2D95'/%3E%3Crect x='8' y='4' width='4' height='4' fill='%2300F5FF'/%3E%3Crect x='4' y='8' width='4' height='4' fill='%2300F5FF'/%3E%3C/svg%3E") 6 6, auto;
+  }
+
+  /* Scanline overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.15) 2px,
+      rgba(0,0,0,0.15) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ===================== LOADING SCREEN ===================== */
+  .loading-screen {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: #000;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+  }
+
+  .loading-screen.done {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .load-cartridge {
+    font-size: 8px;
+    color: var(--cyan);
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: loadFadeIn 0.5s 0.3s forwards;
+  }
+
+  .load-bar-outer {
+    width: 260px;
+    height: 16px;
+    border: 2px solid var(--cyan);
+    position: relative;
+    margin-bottom: 30px;
+    opacity: 0;
+    animation: loadFadeIn 0.5s 0.6s forwards;
+  }
+
+  .load-bar-inner {
+    height: 100%;
+    width: 0;
+    background: var(--cyan);
+    animation: loadFill 1.8s 0.8s steps(12) forwards;
+  }
+
+  .load-bar-inner::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(90deg, transparent, transparent 18px, rgba(0,0,0,0.4) 18px, rgba(0,0,0,0.4) 20px);
+  }
+
+  .load-insert-coin {
+    font-size: 12px;
+    color: var(--yellow);
+    animation: blink 0.6s step-end infinite;
+    opacity: 0;
+  }
+
+  .load-insert-coin.show {
+    animation: loadFadeIn 0.3s forwards, blink 0.6s 0.3s step-end infinite;
+  }
+
+  @keyframes loadFadeIn {
+    to { opacity: 1; }
+  }
+
+  @keyframes loadFill {
+    to { width: 100%; }
+  }
+
+  /* ===================== BACK BUTTON ===================== */
+  .back-btn {
+    position: fixed;
+    top: 14px;
+    left: 14px;
+    z-index: 100;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(26, 0, 51, 0.85);
+    border: 2px solid var(--cyan);
+    color: var(--cyan);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    padding: 8px 14px;
+    text-decoration: none;
+    transition: all 0.2s;
+    will-change: transform;
+  }
+
+  .back-btn:hover {
+    background: var(--cyan);
+    color: var(--bg);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 245, 255, 0.3);
+  }
+
+  .back-btn span { font-size: 10px; }
+
+  /* ===================== PARTICLE EXPLOSION ===================== */
+  .particle-container {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 9998;
+  }
+
+  .particle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    pointer-events: none;
+    will-change: transform, opacity;
+    animation: particleBurst 0.6s ease-out forwards;
+  }
+
+  @keyframes particleBurst {
+    0% { opacity: 1; transform: translate(0, 0) scale(1); }
+    100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0); }
+  }
+
+  /* ===================== KONAMI EFFECT ===================== */
+  .konami-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 9990;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .konami-overlay.active {
+    opacity: 1;
+  }
+
+  .konami-text {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    font-size: 24px;
+    color: var(--yellow);
+    text-shadow: 0 0 20px var(--yellow), 0 0 40px var(--yellow), 0 0 80px var(--yellow);
+    z-index: 9991;
+    pointer-events: none;
+    white-space: nowrap;
+    will-change: transform, opacity;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s;
+  }
+
+  .konami-text.active {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+
+  .konami-text.fade {
+    transform: translate(-50%, -50%) scale(1.3);
+    opacity: 0;
+  }
+
+  .konami-rain {
+    position: fixed;
+    font-size: 16px;
+    z-index: 9990;
+    pointer-events: none;
+    will-change: transform;
+    animation: konamiDrop 2s linear forwards;
+  }
+
+  @keyframes konamiDrop {
+    0% { transform: translateY(-40px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* ===================== SECTION DIVIDERS ===================== */
+  .section-divider {
+    text-align: center;
+    padding: 30px 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .section-divider .divider-text {
+    font-size: 10px;
+    color: var(--pink);
+    text-shadow: 0 0 8px var(--pink);
+    letter-spacing: 4px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.5s, transform 0.5s;
+  }
+
+  .section-divider.visible .divider-text {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .section-divider .divider-line {
+    display: block;
+    margin: 10px auto;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--pink), transparent);
+    transition: width 0.8s 0.2s ease;
+  }
+
+  .section-divider.visible .divider-line {
+    width: 200px;
+  }
+
+  /* ===================== EQUALIZER ===================== */
+  .equalizer {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+    align-items: flex-end;
+    height: 30px;
+    margin: 16px 0 10px;
+  }
+
+  .eq-bar {
+    width: 6px;
+    background: var(--cyan);
+    will-change: height;
+    animation: eqBounce var(--d, 0.8s) ease-in-out infinite alternate;
+    box-shadow: 0 0 4px var(--cyan);
+  }
+
+  @keyframes eqBounce {
+    0% { height: var(--h1, 4px); }
+    100% { height: var(--h2, 24px); }
+  }
+
+  /* Starfield background */
+  .starfield {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: #fff;
+    will-change: opacity;
+    animation: twinkle var(--dur) ease-in-out infinite alternate;
+  }
+
+  @keyframes twinkle {
+    0% { opacity: 0.2; }
+    100% { opacity: 1; }
+  }
+
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  /* Pixel border mixin via box-shadow */
+  .pixel-border {
+    box-shadow:
+      var(--pixel) 0 0 0 var(--border-color, var(--cyan)),
+      calc(var(--pixel) * -1) 0 0 0 var(--border-color, var(--cyan)),
+      0 var(--pixel) 0 0 var(--border-color, var(--cyan)),
+      0 calc(var(--pixel) * -1) 0 0 var(--border-color, var(--cyan)),
+      var(--pixel) var(--pixel) 0 0 var(--border-color, var(--cyan)),
+      calc(var(--pixel) * -1) var(--pixel) 0 0 var(--border-color, var(--cyan)),
+      var(--pixel) calc(var(--pixel) * -1) 0 0 var(--border-color, var(--cyan)),
+      calc(var(--pixel) * -1) calc(var(--pixel) * -1) 0 0 var(--border-color, var(--cyan));
+  }
+
+  /* Header / Nav */
+  .top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: 4px solid var(--pink);
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .top-bar .logo {
+    color: var(--pink);
+    font-size: 12px;
+    text-shadow: 0 0 10px var(--pink), 0 0 30px var(--pink);
+    animation: neonFlicker 3s infinite;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 20px;
+    list-style: none;
+    flex-wrap: wrap;
+  }
+
+  .nav-links a {
+    color: var(--cyan);
+    text-decoration: none;
+    font-size: 8px;
+    transition: color 0.2s, text-shadow 0.2s;
+    position: relative;
+  }
+
+  .nav-links a:hover {
+    color: var(--green);
+    text-shadow: 0 0 8px var(--green);
+  }
+
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--green);
+    transition: width 0.3s;
+  }
+
+  .nav-links a:hover::after { width: 100%; }
+
+  .sound-toggle {
+    background: none;
+    border: 2px solid var(--cyan);
+    color: var(--cyan);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    padding: 6px 10px;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .sound-toggle:hover {
+    background: var(--cyan);
+    color: var(--bg);
+  }
+
+  .sound-toggle.muted { border-color: #555; color: #555; }
+
+  /* Neon text glow */
+  @keyframes neonFlicker {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+      text-shadow: 0 0 7px var(--pink), 0 0 20px var(--pink), 0 0 40px var(--pink);
+    }
+    20%, 24%, 55% {
+      text-shadow: none;
+    }
+  }
+
+  @keyframes neonPulse {
+    0%, 100% { text-shadow: 0 0 7px var(--cyan), 0 0 20px var(--cyan), 0 0 40px var(--cyan); }
+    50% { text-shadow: 0 0 4px var(--cyan), 0 0 10px var(--cyan); }
+  }
+
+  /* INSERT COIN title */
+  .hero {
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .insert-coin {
+    font-size: 10px;
+    color: var(--yellow);
+    animation: blink 1s step-end infinite;
+    margin-bottom: 20px;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  .hero-title {
+    font-size: 28px;
+    color: var(--pink);
+    text-shadow: 0 0 10px var(--pink), 0 0 30px var(--pink), 0 0 60px var(--pink);
+    margin-bottom: 16px;
+    animation: neonPulseTitle 2s ease-in-out infinite;
+  }
+
+  @keyframes neonPulseTitle {
+    0%, 100% { text-shadow: 0 0 10px var(--pink), 0 0 30px var(--pink), 0 0 60px var(--pink); }
+    50% { text-shadow: 0 0 5px var(--pink), 0 0 15px var(--pink), 0 0 30px var(--pink); }
+  }
+
+  .hero-subtitle {
+    font-size: 10px;
+    color: var(--cyan);
+    animation: neonPulse 2s ease-in-out infinite;
+  }
+
+  /* Player card */
+  .section-title {
+    font-size: 14px;
+    color: var(--green);
+    text-shadow: 0 0 8px var(--green);
+    margin-bottom: 24px;
+    text-align: center;
+    position: relative;
+  }
+
+  .section-title::before,
+  .section-title::after {
+    content: '>>>>';
+    color: var(--yellow);
+    font-size: 8px;
+    margin: 0 12px;
+    vertical-align: middle;
+  }
+
+  .player-card {
+    --border-color: var(--pink);
+    background: rgba(26, 0, 51, 0.9);
+    padding: 32px;
+    margin: 40px 0;
+    position: relative;
+  }
+
+  .player-card-header {
+    display: flex;
+    gap: 28px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .avatar-frame {
+    --border-color: var(--cyan);
+    width: 120px;
+    height: 120px;
+    background: var(--bg-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .player-info { flex: 1; min-width: 200px; }
+
+  .player-label {
+    font-size: 8px;
+    color: var(--yellow);
+    margin-bottom: 8px;
+  }
+
+  .player-name {
+    font-size: 18px;
+    color: var(--pink);
+    text-shadow: 0 0 10px var(--pink);
+    margin-bottom: 8px;
+  }
+
+  .player-class {
+    font-size: 9px;
+    color: var(--cyan);
+    margin-bottom: 16px;
+  }
+
+  .player-bio {
+    font-size: 8px;
+    color: #b8b8e0;
+    line-height: 2;
+  }
+
+  /* Game stats */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 16px;
+    margin: 40px 0;
+  }
+
+  .stat-box {
+    --border-color: var(--cyan);
+    background: rgba(26, 0, 51, 0.9);
+    padding: 20px 16px;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.3s;
+    will-change: transform;
+  }
+
+  .stat-box:hover {
+    transform: translateY(-4px);
+    --border-color: var(--green);
+  }
+
+  .stat-value {
+    font-size: 20px;
+    color: var(--green);
+    text-shadow: 0 0 10px var(--green);
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .stat-label {
+    font-size: 7px;
+    color: var(--cyan);
+    text-transform: uppercase;
+  }
+
+  /* RPG skill bars */
+  .skills-section {
+    margin: 60px 0;
+  }
+
+  .skill-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .skill-name {
+    font-size: 8px;
+    color: var(--cyan);
+    width: 140px;
+    flex-shrink: 0;
+    text-align: right;
+  }
+
+  .skill-bar-container {
+    flex: 1;
+    min-width: 150px;
+    height: 20px;
+    background: rgba(0, 245, 255, 0.1);
+    position: relative;
+    border: 2px solid var(--cyan);
+  }
+
+  .skill-bar-fill {
+    height: 100%;
+    position: relative;
+    transition: width 1.5s ease-out;
+    width: 0;
+    will-change: width;
+  }
+
+  .skill-bar-fill.animated { width: var(--fill); }
+
+  .skill-bar-fill::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 8px,
+      rgba(0,0,0,0.3) 8px,
+      rgba(0,0,0,0.3) 10px
+    );
+  }
+
+  .skill-level {
+    font-size: 8px;
+    color: var(--yellow);
+    width: 50px;
+    text-align: left;
+  }
+
+  .fill-pink { background: var(--pink); }
+  .fill-cyan { background: var(--cyan); }
+  .fill-green { background: var(--green); }
+  .fill-yellow { background: var(--yellow); }
+  .fill-orange { background: var(--orange); }
+
+  /* Power-ups */
+  .powerups {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 40px 0;
+  }
+
+  .powerup-item {
+    --border-color: var(--yellow);
+    background: rgba(26, 0, 51, 0.9);
+    padding: 20px;
+    text-align: center;
+    width: 120px;
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+    will-change: transform;
+  }
+
+  .powerup-item:hover {
+    --border-color: var(--green);
+    transform: scale(1.1);
+  }
+
+  .powerup-icon {
+    font-size: 28px;
+    margin-bottom: 10px;
+    display: block;
+    will-change: transform;
+    animation: float 2s ease-in-out infinite;
+  }
+
+  .powerup-item:nth-child(2) .powerup-icon { animation-delay: 0.3s; }
+  .powerup-item:nth-child(3) .powerup-icon { animation-delay: 0.6s; }
+  .powerup-item:nth-child(4) .powerup-icon { animation-delay: 0.9s; }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+
+  .powerup-label {
+    font-size: 7px;
+    color: var(--cyan);
+  }
+
+  /* High score table */
+  .highscore-section {
+    margin: 60px 0;
+  }
+
+  .highscore-table {
+    width: 100%;
+    border-collapse: collapse;
+    --border-color: var(--pink);
+    background: rgba(26, 0, 51, 0.9);
+  }
+
+  .highscore-table th,
+  .highscore-table td {
+    padding: 14px 16px;
+    text-align: left;
+    font-size: 8px;
+    border-bottom: 2px solid var(--bg-light);
+  }
+
+  .highscore-table th {
+    color: var(--yellow);
+    font-size: 8px;
+    border-bottom: 3px solid var(--pink);
+  }
+
+  .highscore-table td { color: #ccc; }
+  .highscore-table .rank { color: var(--green); }
+  .highscore-table .score { color: var(--pink); text-align: right; }
+  .highscore-table .achievement-name { color: var(--cyan); }
+
+  .highscore-table tr {
+    transition: background 0.2s;
+  }
+
+  .highscore-table tr:hover td {
+    background: rgba(0, 245, 255, 0.05);
+  }
+
+  /* Contact / Press Start */
+  .contact-section {
+    text-align: center;
+    margin: 60px 0;
+    padding: 40px 20px;
+  }
+
+  .press-start-btn {
+    display: inline-block;
+    background: none;
+    border: 4px solid var(--green);
+    color: var(--green);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 14px;
+    padding: 20px 40px;
+    cursor: pointer;
+    text-decoration: none;
+    animation: pressStartGlow 1.5s ease-in-out infinite;
+    transition: background 0.3s, color 0.3s, transform 0.3s;
+    position: relative;
+    will-change: transform;
+  }
+
+  .press-start-btn:hover {
+    background: var(--green);
+    color: var(--bg);
+    text-shadow: none;
+    transform: scale(1.05);
+  }
+
+  @keyframes pressStartGlow {
+    0%, 100% {
+      box-shadow: 0 0 10px var(--green), 0 0 20px var(--green), inset 0 0 10px rgba(57, 255, 20, 0.1);
+      text-shadow: 0 0 8px var(--green);
+    }
+    50% {
+      box-shadow: 0 0 5px var(--green), 0 0 10px var(--green), inset 0 0 5px rgba(57, 255, 20, 0.05);
+      text-shadow: 0 0 4px var(--green);
+    }
+  }
+
+  .contact-info {
+    margin-top: 24px;
+    font-size: 8px;
+    color: var(--cyan);
+  }
+
+  .contact-info a {
+    color: var(--pink);
+    text-decoration: none;
+  }
+
+  .contact-info a:hover {
+    text-shadow: 0 0 8px var(--pink);
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 30px 0;
+    border-top: 4px solid var(--pink);
+    margin-top: 40px;
+  }
+
+  .footer p {
+    font-size: 7px;
+    color: #666;
+    margin-bottom: 6px;
+  }
+
+  .footer .credits {
+    color: var(--cyan);
+  }
+
+  /* Coin animation */
+  .coin-container {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 16px;
+  }
+
+  .coin {
+    width: 12px;
+    height: 12px;
+    background: var(--yellow);
+    border-radius: 50%;
+    will-change: transform;
+    animation: coinSpin 0.6s ease-in-out infinite;
+    box-shadow: 0 0 6px var(--yellow);
+  }
+
+  .coin:nth-child(2) { animation-delay: 0.15s; }
+  .coin:nth-child(3) { animation-delay: 0.3s; }
+
+  @keyframes coinSpin {
+    0%, 100% { transform: scaleX(1); }
+    50% { transform: scaleX(0.2); }
+  }
+
+  /* Decorative corner markers */
+  .corner-decor {
+    position: fixed;
+    font-size: 7px;
+    color: var(--cyan);
+    opacity: 0.4;
+    z-index: 10;
+  }
+
+  .corner-decor.tl { top: 12px; left: 12px; }
+  .corner-decor.tr { top: 12px; right: 12px; }
+  .corner-decor.bl { bottom: 12px; left: 12px; }
+  .corner-decor.br { bottom: 12px; right: 12px; }
+
+  /* Scroll reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    will-change: opacity, transform;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── LANGUAGE SWITCHER ── */
+  .lang-switcher { position: fixed; top: 1.5rem; right: 7rem; z-index: 1001; display: flex; gap: 4px; }
+  .lang-btn { font-family: 'Press Start 2P', monospace; font-size: 0.5rem; font-weight: 500; padding: 4px 10px; border: 2px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.5); border-radius: 0; cursor: pointer; transition: all 0.2s; }
+  .lang-btn:hover, .lang-btn.active { background: rgba(0,245,255,0.15); color: var(--cyan); border-color: var(--cyan); text-shadow: 0 0 6px var(--cyan); }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .back-btn { font-size: 6px; padding: 6px 10px; }
+    .corner-decor.tl { top: 46px; }
+    .lang-switcher { top: auto; bottom: 1rem; right: 1rem; }
+  }
+
+  @media (max-width: 600px) {
+    .hero-title { font-size: 18px; }
+    .hero-subtitle { font-size: 8px; }
+    .player-card-header { flex-direction: column; align-items: center; text-align: center; }
+    .skill-name { text-align: left; width: 100%; }
+    .stat-box { padding: 14px 10px; }
+    .stat-value { font-size: 16px; }
+    .press-start-btn { font-size: 10px; padding: 16px 24px; }
+    .avatar-frame { width: 100px; height: 100px; }
+    .highscore-table th, .highscore-table td { padding: 10px 8px; font-size: 6px; }
+    .nav-links { gap: 12px; }
+    .back-btn { font-size: 6px; padding: 5px 8px; top: 10px; left: 10px; }
+    .konami-text { font-size: 14px; }
+  }
+
+  @media (min-width: 1440px) {
+    .wrapper { max-width: 960px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LANGUAGE SWITCHER -->
+<div class="lang-switcher" role="navigation" aria-label="Language selector">
+  <button class="lang-btn active" data-lang="en" onclick="setLanguage('en')">EN</button>
+  <button class="lang-btn" data-lang="ko" onclick="setLanguage('ko')">한국어</button>
+  <button class="lang-btn" data-lang="ja" onclick="setLanguage('ja')">日本語</button>
+  <button class="lang-btn" data-lang="zh" onclick="setLanguage('zh')">中文</button>
+</div>
+
+<!-- Loading Screen -->
+<div class="loading-screen" id="loadingScreen" role="status" aria-label="Loading game">
+  <p class="load-cartridge" data-i18n="loading">LOADING CARTRIDGE...</p>
+  <div class="load-bar-outer" aria-hidden="true">
+    <div class="load-bar-inner"></div>
+  </div>
+  <p class="load-insert-coin" id="loadCoinText" data-i18n="insert_coin_short">INSERT COIN</p>
+</div>
+
+<!-- Particle container for click explosions -->
+<div class="particle-container" id="particleContainer" aria-hidden="true"></div>
+
+<!-- Konami overlay -->
+<div class="konami-overlay" id="konamiOverlay" aria-hidden="true"></div>
+<div class="konami-text" id="konamiText" aria-hidden="true">+30 LIVES!</div>
+
+<!-- Back button -->
+<a href="../index.html" class="back-btn" aria-label="Back to character select screen">
+  <span aria-hidden="true">&larr;</span> <span data-i18n="back_select">BACK TO SELECT</span>
+</a>
+
+<!-- Corner decorations -->
+<div class="corner-decor tl" aria-hidden="true">P1</div>
+<div class="corner-decor tr" aria-hidden="true">HI-SCORE</div>
+<div class="corner-decor bl" aria-hidden="true">CREDIT 09</div>
+<div class="corner-decor br" aria-hidden="true">LV.99</div>
+
+<!-- Starfield -->
+<div class="starfield" id="starfield" aria-hidden="true"></div>
+
+<div class="wrapper">
+
+  <!-- Top bar -->
+  <header class="top-bar" role="banner">
+    <div class="logo" aria-hidden="true">ARCADE</div>
+    <nav aria-label="Main navigation">
+      <ul class="nav-links">
+        <li><a href="#player">PLAYER</a></li>
+        <li><a href="#skills">SKILLS</a></li>
+        <li><a href="#scores">SCORES</a></li>
+        <li><a href="#contact">CONTACT</a></li>
+      </ul>
+    </nav>
+    <button class="sound-toggle" id="soundToggle" aria-label="Toggle sound effects" aria-pressed="true">SND ON</button>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero" aria-label="Hero introduction">
+    <p class="insert-coin" aria-hidden="true" data-i18n="insert_coin">INSERT COIN TO CONTINUE</p>
+    <h1 class="hero-title" data-i18n="name">YOUR NAME</h1>
+    <p class="hero-subtitle" data-i18n="title">CREATIVE DEVELOPER & DESIGNER</p>
+    <div class="coin-container" aria-hidden="true">
+      <div class="coin"></div>
+      <div class="coin"></div>
+      <div class="coin"></div>
+    </div>
+  </section>
+
+  <!-- Divider -->
+  <div class="section-divider" aria-hidden="true">
+    <span class="divider-text" data-i18n="stage1">STAGE 1</span>
+    <span class="divider-line"></span>
+  </div>
+
+  <!-- Player Card -->
+  <section id="player" class="reveal" aria-label="Player profile">
+    <h2 class="section-title" data-i18n="player_section">PLAYER 1</h2>
+    <div class="player-card pixel-border">
+      <div class="player-card-header">
+        <div class="avatar-frame pixel-border" aria-label="Player avatar">
+          <svg width="80" height="80" viewBox="0 0 10 10" style="image-rendering: pixelated;" role="img" aria-label="Pixel art avatar">
+            <rect x="3" y="1" width="4" height="1" fill="#00F5FF"/>
+            <rect x="2" y="2" width="6" height="1" fill="#00F5FF"/>
+            <rect x="2" y="3" width="1" height="1" fill="#00F5FF"/>
+            <rect x="3" y="3" width="4" height="1" fill="#FFE600"/>
+            <rect x="7" y="3" width="1" height="1" fill="#00F5FF"/>
+            <rect x="2" y="4" width="1" height="1" fill="#FFE600"/>
+            <rect x="3" y="4" width="1" height="1" fill="#1a0033"/>
+            <rect x="4" y="4" width="2" height="1" fill="#FFE600"/>
+            <rect x="6" y="4" width="1" height="1" fill="#1a0033"/>
+            <rect x="7" y="4" width="1" height="1" fill="#FFE600"/>
+            <rect x="2" y="5" width="6" height="1" fill="#FFE600"/>
+            <rect x="3" y="6" width="1" height="1" fill="#FFE600"/>
+            <rect x="4" y="6" width="2" height="1" fill="#FF2D95"/>
+            <rect x="6" y="6" width="1" height="1" fill="#FFE600"/>
+            <rect x="3" y="7" width="4" height="1" fill="#FFE600"/>
+            <rect x="2" y="8" width="2" height="1" fill="#00F5FF"/>
+            <rect x="6" y="8" width="2" height="1" fill="#00F5FF"/>
+          </svg>
+        </div>
+        <div class="player-info">
+          <p class="player-label" data-i18n="player_ready">PLAYER 1 READY</p>
+          <h3 class="player-name" data-i18n="name">YOUR NAME</h3>
+          <p class="player-class" data-i18n="player_class">CLASS: CREATIVE DEV // RANK: S+</p>
+          <p class="player-bio" data-i18n="player_bio">
+            A passionate creative developer who transforms ideas into interactive digital
+            experiences. Specializing in front-end development and UI/UX design with a
+            love for pixel-perfect details and smooth animations. Always leveling up.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section class="reveal" aria-label="Player statistics">
+    <div class="stats-grid">
+      <div class="stat-box pixel-border">
+        <span class="stat-value" data-count="999">0</span>
+        <span class="stat-label" data-i18n="stat_projects">PROJECTS CLEARED</span>
+      </div>
+      <div class="stat-box pixel-border">
+        <span class="stat-value" data-count="50">0</span>
+        <span class="stat-label" data-i18n="stat_powerups">POWER UPS</span>
+      </div>
+      <div class="stat-box pixel-border">
+        <span class="stat-value" data-count="12">0</span>
+        <span class="stat-label" data-i18n="stat_bosses">BOSS BATTLES</span>
+      </div>
+      <div class="stat-box pixel-border">
+        <span class="stat-value" data-count="7">0</span>
+        <span class="stat-label" data-i18n="stat_years">YEARS EXP</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Divider -->
+  <div class="section-divider" aria-hidden="true">
+    <span class="divider-text" data-i18n="stage2">STAGE 2</span>
+    <span class="divider-line"></span>
+  </div>
+
+  <!-- Skills -->
+  <section id="skills" class="skills-section reveal" aria-label="Skill levels">
+    <h2 class="section-title" data-i18n="power_levels">POWER LEVELS</h2>
+
+    <div class="skill-row">
+      <span class="skill-name">HTML / CSS</span>
+      <div class="skill-bar-container" role="progressbar" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100" aria-label="HTML CSS skill level">
+        <div class="skill-bar-fill fill-pink" style="--fill: 95%"></div>
+      </div>
+      <span class="skill-level">LV 95</span>
+    </div>
+
+    <div class="skill-row">
+      <span class="skill-name">JAVASCRIPT</span>
+      <div class="skill-bar-container" role="progressbar" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100" aria-label="JavaScript skill level">
+        <div class="skill-bar-fill fill-cyan" style="--fill: 90%"></div>
+      </div>
+      <span class="skill-level">LV 90</span>
+    </div>
+
+    <div class="skill-row">
+      <span class="skill-name">REACT</span>
+      <div class="skill-bar-container" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100" aria-label="React skill level">
+        <div class="skill-bar-fill fill-green" style="--fill: 85%"></div>
+      </div>
+      <span class="skill-level">LV 85</span>
+    </div>
+
+    <div class="skill-row">
+      <span class="skill-name">NODE.JS</span>
+      <div class="skill-bar-container" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" aria-label="Node JS skill level">
+        <div class="skill-bar-fill fill-yellow" style="--fill: 80%"></div>
+      </div>
+      <span class="skill-level">LV 80</span>
+    </div>
+
+    <div class="skill-row">
+      <span class="skill-name">PYTHON</span>
+      <div class="skill-bar-container" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" aria-label="Python skill level">
+        <div class="skill-bar-fill fill-orange" style="--fill: 75%"></div>
+      </div>
+      <span class="skill-level">LV 75</span>
+    </div>
+
+    <div class="skill-row">
+      <span class="skill-name">UI/UX DESIGN</span>
+      <div class="skill-bar-container" role="progressbar" aria-valuenow="88" aria-valuemin="0" aria-valuemax="100" aria-label="UI UX Design skill level">
+        <div class="skill-bar-fill fill-pink" style="--fill: 88%"></div>
+      </div>
+      <span class="skill-level">LV 88</span>
+    </div>
+  </section>
+
+  <!-- Power-ups -->
+  <section class="reveal" aria-label="Power up abilities">
+    <h2 class="section-title" data-i18n="powerups_title">POWER-UPS</h2>
+    <div class="powerups">
+      <div class="powerup-item pixel-border" role="listitem">
+        <span class="powerup-icon" aria-hidden="true">&#9733;</span>
+        <span class="powerup-label" data-i18n="pu_creativity">CREATIVITY</span>
+      </div>
+      <div class="powerup-item pixel-border" role="listitem">
+        <span class="powerup-icon" aria-hidden="true">&#9889;</span>
+        <span class="powerup-label" data-i18n="pu_speed">SPEED DEV</span>
+      </div>
+      <div class="powerup-item pixel-border" role="listitem">
+        <span class="powerup-icon" aria-hidden="true">&#9830;</span>
+        <span class="powerup-label" data-i18n="pu_clean">CLEAN CODE</span>
+      </div>
+      <div class="powerup-item pixel-border" role="listitem">
+        <span class="powerup-icon" aria-hidden="true">&#9829;</span>
+        <span class="powerup-label" data-i18n="pu_team">TEAMWORK</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Divider -->
+  <div class="section-divider" aria-hidden="true">
+    <span class="divider-text" data-i18n="stage3">STAGE 3</span>
+    <span class="divider-line"></span>
+  </div>
+
+  <!-- High Scores -->
+  <section id="scores" class="highscore-section reveal" aria-label="High scores and achievements">
+    <h2 class="section-title" data-i18n="highscores_title">HIGH SCORES</h2>
+    <div class="pixel-border" style="--border-color: var(--pink);">
+      <table class="highscore-table" aria-label="Achievement high scores">
+        <thead>
+          <tr>
+            <th scope="col" data-i18n="th_rank">RANK</th>
+            <th scope="col" data-i18n="th_achievement">ACHIEVEMENT</th>
+            <th scope="col" class="score" data-i18n="th_score">SCORE</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="rank">1ST</td>
+            <td class="achievement-name" data-i18n="ach1">LAUNCHED PRODUCTION APP</td>
+            <td class="score">99,999</td>
+          </tr>
+          <tr>
+            <td class="rank">2ND</td>
+            <td class="achievement-name" data-i18n="ach2">OPEN SOURCE CONTRIBUTOR</td>
+            <td class="score">85,420</td>
+          </tr>
+          <tr>
+            <td class="rank">3RD</td>
+            <td class="achievement-name" data-i18n="ach3">HACKATHON WINNER</td>
+            <td class="score">78,300</td>
+          </tr>
+          <tr>
+            <td class="rank">4TH</td>
+            <td class="achievement-name" data-i18n="ach4">100% TEST COVERAGE</td>
+            <td class="score">65,000</td>
+          </tr>
+          <tr>
+            <td class="rank">5TH</td>
+            <td class="achievement-name" data-i18n="ach5">MENTORED 10+ DEVS</td>
+            <td class="score">50,750</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Divider -->
+  <div class="section-divider" aria-hidden="true">
+    <span class="divider-text" data-i18n="final_stage">FINAL STAGE</span>
+    <span class="divider-line"></span>
+  </div>
+
+  <!-- Contact -->
+  <section id="contact" class="contact-section reveal" aria-label="Contact information">
+    <h2 class="section-title" data-i18n="continue_title">CONTINUE?</h2>
+    <p style="font-size: 8px; color: var(--yellow); margin-bottom: 28px;" aria-hidden="true">10... 9... 8... 7...</p>
+    <a href="mailto:email@example.com" class="press-start-btn" aria-label="Send email to start a conversation" data-i18n="press_start">PRESS START</a>
+    <div class="contact-info">
+      <p style="margin-top: 20px;"><a href="mailto:email@example.com">email@example.com</a></p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer" role="contentinfo">
+    <p class="credits" data-i18n="game_over">GAME OVER - THANKS FOR PLAYING</p>
+    <!-- Equalizer -->
+    <div class="equalizer" aria-hidden="true">
+      <div class="eq-bar" style="--d:0.5s;--h1:3px;--h2:18px;"></div>
+      <div class="eq-bar" style="--d:0.7s;--h1:5px;--h2:26px;"></div>
+      <div class="eq-bar" style="--d:0.4s;--h1:2px;--h2:14px;"></div>
+      <div class="eq-bar" style="--d:0.65s;--h1:6px;--h2:22px;"></div>
+      <div class="eq-bar" style="--d:0.55s;--h1:3px;--h2:28px;"></div>
+      <div class="eq-bar" style="--d:0.8s;--h1:4px;--h2:16px;"></div>
+      <div class="eq-bar" style="--d:0.45s;--h1:5px;--h2:24px;"></div>
+      <div class="eq-bar" style="--d:0.6s;--h1:2px;--h2:20px;"></div>
+      <div class="eq-bar" style="--d:0.75s;--h1:4px;--h2:12px;"></div>
+      <div class="eq-bar" style="--d:0.5s;--h1:6px;--h2:26px;"></div>
+      <div class="eq-bar" style="--d:0.4s;--h1:3px;--h2:18px;"></div>
+      <div class="eq-bar" style="--d:0.7s;--h1:5px;--h2:22px;"></div>
+      <div class="eq-bar" style="--d:0.55s;--h1:2px;--h2:14px;"></div>
+      <div class="eq-bar" style="--d:0.65s;--h1:4px;--h2:28px;"></div>
+      <div class="eq-bar" style="--d:0.45s;--h1:3px;--h2:16px;"></div>
+      <div class="eq-bar" style="--d:0.8s;--h1:5px;--h2:20px;"></div>
+    </div>
+    <p>&copy; 2026 YOUR NAME. ALL RIGHTS RESERVED.</p>
+  </footer>
+
+</div>
+
+<script>
+  // ========== LOADING SCREEN ==========
+  (function() {
+    var screen = document.getElementById('loadingScreen');
+    var coinText = document.getElementById('loadCoinText');
+    // Show INSERT COIN after bar fills
+    setTimeout(function() { coinText.classList.add('show'); }, 2800);
+    // Dismiss on click or after timeout
+    function dismiss() {
+      screen.classList.add('done');
+      screen.removeEventListener('click', dismiss);
+    }
+    setTimeout(dismiss, 4200);
+    screen.addEventListener('click', function() {
+      if (coinText.classList.contains('show')) dismiss();
+    });
+  })();
+
+  // ========== STARFIELD ==========
+  (function() {
+    var starfield = document.getElementById('starfield');
+    for (var i = 0; i < 120; i++) {
+      var star = document.createElement('div');
+      star.className = 'star';
+      star.style.left = Math.random() * 100 + '%';
+      star.style.top = Math.random() * 100 + '%';
+      star.style.setProperty('--dur', (1 + Math.random() * 3) + 's');
+      star.style.animationDelay = Math.random() * 3 + 's';
+      var size = (1 + Math.random() * 2) + 'px';
+      star.style.width = size;
+      star.style.height = size;
+      starfield.appendChild(star);
+    }
+  })();
+
+  // ========== SOUND TOGGLE ==========
+  (function() {
+    var btn = document.getElementById('soundToggle');
+    var on = true;
+    btn.addEventListener('click', function() {
+      on = !on;
+      btn.textContent = on ? 'SND ON' : 'SND OFF';
+      btn.setAttribute('aria-pressed', on);
+      btn.classList.toggle('muted', !on);
+    });
+  })();
+
+  // ========== PIXEL PARTICLE EXPLOSION ON CLICKS ==========
+  (function() {
+    var container = document.getElementById('particleContainer');
+    var colors = ['#FF2D95', '#00F5FF', '#39FF14', '#FFE600', '#FF6B00'];
+
+    document.addEventListener('click', function(e) {
+      // Only trigger on interactive elements
+      var tag = e.target.tagName;
+      var isInteractive = tag === 'BUTTON' || tag === 'A' || e.target.closest('.powerup-item') || e.target.closest('.press-start-btn');
+      if (!isInteractive) return;
+
+      for (var i = 0; i < 12; i++) {
+        var p = document.createElement('div');
+        p.className = 'particle';
+        var angle = (Math.PI * 2 / 12) * i + (Math.random() * 0.5);
+        var dist = 40 + Math.random() * 60;
+        p.style.left = e.clientX + 'px';
+        p.style.top = e.clientY + 'px';
+        p.style.background = colors[Math.floor(Math.random() * colors.length)];
+        p.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+        p.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
+        container.appendChild(p);
+        (function(el) {
+          setTimeout(function() { el.remove(); }, 650);
+        })(p);
+      }
+    });
+  })();
+
+  // ========== KONAMI CODE ==========
+  (function() {
+    var code = [38,38,40,40,37,39,37,39,66,65]; // up up down down left right left right B A
+    var pos = 0;
+    var overlay = document.getElementById('konamiOverlay');
+    var text = document.getElementById('konamiText');
+    var symbols = ['&#9733;','&#9829;','&#9830;','&#9889;','&#9786;'];
+
+    document.addEventListener('keydown', function(e) {
+      if (e.keyCode === code[pos]) {
+        pos++;
+        if (pos === code.length) {
+          pos = 0;
+          triggerKonami();
+        }
+      } else {
+        pos = 0;
+      }
+    });
+
+    function triggerKonami() {
+      // Flash overlay
+      overlay.classList.add('active');
+      overlay.style.background = 'rgba(57,255,20,0.15)';
+      setTimeout(function() { overlay.classList.remove('active'); overlay.style.background = ''; }, 600);
+
+      // Show text
+      text.classList.add('active');
+      setTimeout(function() {
+        text.classList.add('fade');
+      }, 1500);
+      setTimeout(function() {
+        text.classList.remove('active', 'fade');
+      }, 2000);
+
+      // Rain down symbols
+      for (var i = 0; i < 30; i++) {
+        (function(idx) {
+          setTimeout(function() {
+            var el = document.createElement('div');
+            el.className = 'konami-rain';
+            el.innerHTML = symbols[Math.floor(Math.random() * symbols.length)];
+            el.style.left = Math.random() * 100 + 'vw';
+            el.style.top = '-30px';
+            el.style.color = ['#FF2D95','#00F5FF','#39FF14','#FFE600'][Math.floor(Math.random()*4)];
+            document.body.appendChild(el);
+            setTimeout(function() { el.remove(); }, 2200);
+          }, idx * 60);
+        })(i);
+      }
+    }
+  })();
+
+  // ========== COUNTER ANIMATION ==========
+  function animateCounters() {
+    document.querySelectorAll('.stat-value[data-count]').forEach(function(el) {
+      var target = parseInt(el.dataset.count, 10);
+      var current = 0;
+      var increment = Math.max(1, Math.floor(target / 40));
+      var timer = setInterval(function() {
+        current += increment;
+        if (current >= target) {
+          current = target;
+          clearInterval(timer);
+        }
+        el.textContent = current.toLocaleString();
+      }, 40);
+    });
+  }
+
+  // ========== SKILL BAR ANIMATION ==========
+  function animateSkillBars() {
+    document.querySelectorAll('.skill-bar-fill').forEach(function(bar) {
+      bar.classList.add('animated');
+    });
+  }
+
+  // ========== SCROLL REVEAL ==========
+  (function() {
+    var reveals = document.querySelectorAll('.reveal, .section-divider');
+    var countersAnimated = false;
+    var skillsAnimated = false;
+
+    function checkReveal() {
+      var wh = window.innerHeight;
+      reveals.forEach(function(el) {
+        var rect = el.getBoundingClientRect();
+        if (rect.top < wh - 80) {
+          el.classList.add('visible');
+
+          if (!countersAnimated && el.querySelector('.stat-value')) {
+            countersAnimated = true;
+            animateCounters();
+          }
+          if (!skillsAnimated && el.querySelector('.skill-bar-fill')) {
+            skillsAnimated = true;
+            setTimeout(animateSkillBars, 300);
+          }
+        }
+      });
+    }
+
+    window.addEventListener('scroll', checkReveal, { passive: true });
+    window.addEventListener('load', checkReveal);
+    checkReveal();
+  })();
+
+  // ========== I18N TRANSLATION SYSTEM ==========
+  var TRANSLATIONS = {
+    ko: {
+      loading: '카트리지 로딩중...',
+      insert_coin_short: '코인 투입',
+      insert_coin: '계속하려면 코인을 넣으세요',
+      back_select: '선택 화면으로',
+      name: '홍길동',
+      title: '크리에이티브 개발자 & 디자이너',
+      stage1: '스테이지 1',
+      stage2: '스테이지 2',
+      stage3: '스테이지 3',
+      final_stage: '최종 스테이지',
+      player_section: '플레이어 1',
+      player_ready: '플레이어 1 준비 완료',
+      player_class: '클래스: 크리에이티브 개발 // 랭크: S+',
+      player_bio: '아이디어를 인터랙티브한 디지털 경험으로 변환하는 열정적인 크리에이티브 개발자입니다. 프론트엔드 개발과 UI/UX 디자인을 전문으로 하며 픽셀 퍼펙트한 디테일과 부드러운 애니메이션을 사랑합니다. 항상 레벨업 중.',
+      stat_projects: '클리어한 프로젝트',
+      stat_powerups: '파워 업',
+      stat_bosses: '보스 배틀',
+      stat_years: '경험치 (년)',
+      power_levels: '파워 레벨',
+      powerups_title: '파워업 아이템',
+      pu_creativity: '창의력',
+      pu_speed: '고속 개발',
+      pu_clean: '클린 코드',
+      pu_team: '팀워크',
+      highscores_title: '최고 점수',
+      th_rank: '순위',
+      th_achievement: '업적',
+      th_score: '점수',
+      ach1: '프로덕션 앱 런칭',
+      ach2: '오픈소스 기여자',
+      ach3: '해커톤 우승',
+      ach4: '100% 테스트 커버리지',
+      ach5: '10명 이상 멘토링',
+      continue_title: '계속하시겠습니까?',
+      press_start: '시작하기',
+      game_over: '게임 오버 - 플레이 감사합니다'
+    },
+    en: {
+      loading: 'LOADING CARTRIDGE...',
+      insert_coin_short: 'INSERT COIN',
+      insert_coin: 'INSERT COIN TO CONTINUE',
+      back_select: 'BACK TO SELECT',
+      name: 'YOUR NAME',
+      title: 'CREATIVE DEVELOPER & DESIGNER',
+      stage1: 'STAGE 1',
+      stage2: 'STAGE 2',
+      stage3: 'STAGE 3',
+      final_stage: 'FINAL STAGE',
+      player_section: 'PLAYER 1',
+      player_ready: 'PLAYER 1 READY',
+      player_class: 'CLASS: CREATIVE DEV // RANK: S+',
+      player_bio: 'A passionate creative developer who transforms ideas into interactive digital experiences. Specializing in front-end development and UI/UX design with a love for pixel-perfect details and smooth animations. Always leveling up.',
+      stat_projects: 'PROJECTS CLEARED',
+      stat_powerups: 'POWER UPS',
+      stat_bosses: 'BOSS BATTLES',
+      stat_years: 'YEARS EXP',
+      power_levels: 'POWER LEVELS',
+      powerups_title: 'POWER-UPS',
+      pu_creativity: 'CREATIVITY',
+      pu_speed: 'SPEED DEV',
+      pu_clean: 'CLEAN CODE',
+      pu_team: 'TEAMWORK',
+      highscores_title: 'HIGH SCORES',
+      th_rank: 'RANK',
+      th_achievement: 'ACHIEVEMENT',
+      th_score: 'SCORE',
+      ach1: 'LAUNCHED PRODUCTION APP',
+      ach2: 'OPEN SOURCE CONTRIBUTOR',
+      ach3: 'HACKATHON WINNER',
+      ach4: '100% TEST COVERAGE',
+      ach5: 'MENTORED 10+ DEVS',
+      continue_title: 'CONTINUE?',
+      press_start: 'PRESS START',
+      game_over: 'GAME OVER - THANKS FOR PLAYING'
+    },
+    ja: {
+      loading: 'カートリッジ読込中...',
+      insert_coin_short: 'コイン投入',
+      insert_coin: 'コインを入れて続行',
+      back_select: 'セレクトに戻る',
+      name: 'あなたの名前',
+      title: 'クリエイティブデベロッパー & デザイナー',
+      stage1: 'ステージ 1',
+      stage2: 'ステージ 2',
+      stage3: 'ステージ 3',
+      final_stage: 'ファイナルステージ',
+      player_section: 'プレイヤー 1',
+      player_ready: 'プレイヤー 1 レディ',
+      player_class: 'クラス: クリエイティブDEV // ランク: S+',
+      player_bio: 'アイデアをインタラクティブなデジタル体験に変える情熱的なクリエイティブデベロッパー。フロントエンド開発とUI/UXデザインを専門とし、ピクセルパーフェクトなディテールとスムーズなアニメーションを愛する。常にレベルアップ中。',
+      stat_projects: 'クリアプロジェクト',
+      stat_powerups: 'パワーアップ',
+      stat_bosses: 'ボスバトル',
+      stat_years: '経験年数',
+      power_levels: 'パワーレベル',
+      powerups_title: 'パワーアップアイテム',
+      pu_creativity: '創造力',
+      pu_speed: '高速開発',
+      pu_clean: 'クリーンコード',
+      pu_team: 'チームワーク',
+      highscores_title: 'ハイスコア',
+      th_rank: 'ランク',
+      th_achievement: '実績',
+      th_score: 'スコア',
+      ach1: '本番アプリリリース',
+      ach2: 'オープンソース貢献者',
+      ach3: 'ハッカソン優勝',
+      ach4: '100%テストカバレッジ',
+      ach5: '10人以上のメンタリング',
+      continue_title: 'コンティニュー？',
+      press_start: 'スタート',
+      game_over: 'ゲームオーバー - プレイありがとう'
+    },
+    zh: {
+      loading: '加载卡带中...',
+      insert_coin_short: '投币',
+      insert_coin: '投币继续',
+      back_select: '返回选择',
+      name: '你的名字',
+      title: '创意开发者 & 设计师',
+      stage1: '第一关',
+      stage2: '第二关',
+      stage3: '第三关',
+      final_stage: '最终关卡',
+      player_section: '玩家 1',
+      player_ready: '玩家 1 就绪',
+      player_class: '职业: 创意开发 // 等级: S+',
+      player_bio: '一位充满热情的创意开发者，将创意转化为互动数字体验。专注于前端开发和UI/UX设计，热爱像素级完美细节和流畅动画。持续升级中。',
+      stat_projects: '已完成项目',
+      stat_powerups: '能力提升',
+      stat_bosses: 'BOSS战',
+      stat_years: '经验年限',
+      power_levels: '能力等级',
+      powerups_title: '能力增强',
+      pu_creativity: '创造力',
+      pu_speed: '极速开发',
+      pu_clean: '整洁代码',
+      pu_team: '团队协作',
+      highscores_title: '最高分',
+      th_rank: '排名',
+      th_achievement: '成就',
+      th_score: '分数',
+      ach1: '上线生产应用',
+      ach2: '开源贡献者',
+      ach3: '黑客马拉松冠军',
+      ach4: '100%测试覆盖率',
+      ach5: '指导10+开发者',
+      continue_title: '继续？',
+      press_start: '开始游戏',
+      game_over: '游戏结束 - 感谢游玩'
+    }
+  };
+
+  function setLanguage(lang) {
+    document.querySelectorAll('[data-i18n]').forEach(function(el) {
+      var key = el.getAttribute('data-i18n');
+      if (TRANSLATIONS[lang] && TRANSLATIONS[lang][key]) {
+        el.textContent = TRANSLATIONS[lang][key];
+      }
+    });
+    document.querySelectorAll('.lang-btn').forEach(function(btn) {
+      btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+    });
+    try { localStorage.setItem('preferred-lang', lang); } catch(e) {}
+    document.documentElement.lang = lang === 'ko' ? 'ko' : lang === 'ja' ? 'ja' : lang === 'zh' ? 'zh' : 'en';
+  }
+
+  (function() {
+    var params = new URLSearchParams(window.location.search);
+    var urlLang = params.get('lang');
+    var savedLang; try { savedLang = localStorage.getItem('preferred-lang'); } catch(e) {}
+    var lang = urlLang || savedLang || 'en';
+    if (lang !== 'en') setLanguage(lang);
+    else document.querySelectorAll('.lang-btn').forEach(function(btn) { btn.classList.toggle('active', btn.getAttribute('data-lang') === 'en'); });
+  })();
+</script>
+
+</body>
+</html>
