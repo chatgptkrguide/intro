@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio - OS Window Manager</title>
+<meta name="description" content="OS Window Manager portfolio — draggable windows on a desktop interface">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --desktop-bg: #2a2a2e;
+  --window-bg: #3a3a3f;
+  --window-title: #555555;
+  --taskbar-bg: #1e1e22;
+  --accent: #6366f1;
+  --accent-hover: #818cf8;
+  --text: #e4e4e7;
+  --text-dim: #a1a1aa;
+  --btn-red: #ff5f57;
+  --btn-yellow: #febc2e;
+  --btn-green: #28c840;
+  --border: #4a4a50;
+  --mono: 'Fira Code', monospace;
+  --sans: 'Inter', -apple-system, Helvetica, Arial, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  background: var(--desktop-bg);
+  color: var(--text);
+  font-family: var(--sans);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Desktop dot grid */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(circle, #444 0.8px, transparent 0.8px);
+  background-size: 32px 32px;
+  opacity: 0.3;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Desktop area */
+.desktop {
+  position: relative;
+  min-height: calc(100vh - 48px);
+  padding: 40px;
+  padding-bottom: 80px;
+  z-index: 1;
+}
+
+/* Gallery desktop icon */
+.desktop-icon {
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  color: var(--text);
+  z-index: 5;
+  padding: 8px;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.desktop-icon:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.desktop-icon svg {
+  width: 40px;
+  height: 40px;
+  fill: var(--accent);
+}
+
+.desktop-icon span {
+  font-size: 11px;
+  font-family: var(--mono);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+}
+
+/* Window styles */
+.os-window {
+  background: var(--window-bg);
+  border-radius: 8px 8px 4px 4px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  margin-bottom: 32px;
+  opacity: 0;
+  transform: translateY(40px) scale(0.97);
+  transition: opacity 0.5s ease, transform 0.5s ease, box-shadow 0.3s ease, z-index 0s;
+  position: relative;
+  z-index: 1;
+}
+
+.os-window.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.os-window.active {
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.6);
+  border-color: #666;
+  z-index: 10;
+}
+
+/* Title bar */
+.window-titlebar {
+  background: var(--window-title);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: default;
+  user-select: none;
+}
+
+.window-dots {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.window-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.window-dot.red { background: var(--btn-red); }
+.window-dot.yellow { background: var(--btn-yellow); }
+.window-dot.green { background: var(--btn-green); }
+
+.window-title {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--text-dim);
+  flex: 1;
+  text-align: center;
+}
+
+.window-body {
+  padding: 24px;
+}
+
+/* Cascade layout (desktop) */
+@media (min-width: 1024px) {
+  .desktop {
+    padding: 60px 80px;
+    padding-bottom: 100px;
+  }
+
+  .os-window {
+    max-width: 700px;
+  }
+
+  .os-window:nth-child(1) { margin-left: 0; margin-top: 0; }
+  .os-window:nth-child(2) { margin-left: 60px; }
+  .os-window:nth-child(3) { margin-left: 120px; }
+  .os-window:nth-child(4) { margin-left: 180px; }
+  .os-window:nth-child(5) { margin-left: 240px; }
+}
+
+@media (min-width: 1440px) {
+  .os-window {
+    max-width: 760px;
+  }
+}
+
+/* 768px: 2 col overlapping */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .desktop {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    padding: 40px;
+  }
+
+  .os-window {
+    max-width: 100%;
+  }
+
+  .os-window:nth-child(odd) {
+    transform-origin: left;
+  }
+
+  .os-window:nth-child(even) {
+    margin-top: 30px;
+    transform-origin: right;
+  }
+}
+
+/* 375px: stacked */
+@media (max-width: 767px) {
+  .desktop {
+    padding: 16px;
+    padding-bottom: 72px;
+  }
+
+  .os-window {
+    margin-bottom: 20px;
+    max-width: 100%;
+  }
+
+  .desktop-icon {
+    position: relative;
+    top: 0;
+    left: 0;
+    margin-bottom: 16px;
+  }
+}
+
+/* Hero window - about.exe */
+.hero-content {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.avatar-placeholder {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), #a78bfa);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: 600;
+  flex-shrink: 0;
+  color: #fff;
+}
+
+.hero-text h1 {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.hero-text p {
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--accent);
+}
+
+@media (max-width: 767px) {
+  .hero-content {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+/* About window - readme.md */
+.about-text {
+  margin-bottom: 20px;
+  line-height: 1.7;
+  color: var(--text-dim);
+}
+
+.terminal-stats {
+  font-family: var(--mono);
+  font-size: 13px;
+  background: #2a2a2e;
+  padding: 16px;
+  border-radius: 6px;
+  line-height: 1.9;
+}
+
+.terminal-stats .prompt {
+  color: var(--btn-green);
+}
+
+.terminal-stats .key {
+  color: var(--accent);
+}
+
+.terminal-stats .val {
+  color: var(--text);
+}
+
+/* Skills window - skills.sys */
+.skill-item {
+  margin-bottom: 16px;
+}
+
+.skill-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-family: var(--mono);
+  font-size: 13px;
+}
+
+.skill-name {
+  color: var(--text);
+}
+
+.skill-percent {
+  color: var(--text-dim);
+}
+
+.skill-bar-track {
+  background: #2a2a2e;
+  height: 20px;
+  border-radius: 3px;
+  overflow: hidden;
+  border: 1px solid #444;
+}
+
+.skill-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-hover));
+  transition: width 1s ease;
+  width: 0;
+  display: flex;
+  align-items: center;
+  padding-left: 8px;
+}
+
+.skill-bar-fill.animate {
+  width: var(--target-width);
+}
+
+.skill-bar-fill::after {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 6px;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0px,
+    transparent 4px,
+    rgba(255,255,255,0.1) 4px,
+    rgba(255,255,255,0.1) 8px
+  );
+}
+
+/* Projects window - projects/ */
+.project-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 480px) {
+  .project-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.project-item {
+  background: #2a2a2e;
+  border: 1px solid #444;
+  border-radius: 6px;
+  padding: 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  transition: border-color 0.2s, background 0.2s;
+  cursor: default;
+}
+
+.project-item:hover {
+  border-color: var(--accent);
+  background: #333338;
+}
+
+.project-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--accent);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 18px;
+}
+
+.project-info h3 {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.project-info p {
+  font-size: 12px;
+  color: var(--text-dim);
+  font-family: var(--mono);
+}
+
+/* Contact window - mail.app */
+.mail-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+  font-family: var(--mono);
+  font-size: 13px;
+  border-bottom: 1px solid #444;
+  padding-bottom: 16px;
+}
+
+.mail-field {
+  display: flex;
+  gap: 8px;
+}
+
+.mail-field label {
+  color: var(--text-dim);
+  min-width: 60px;
+}
+
+.mail-field input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 13px;
+  outline: none;
+}
+
+.mail-field input::placeholder {
+  color: #555;
+}
+
+.mail-body textarea {
+  width: 100%;
+  min-height: 120px;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 14px;
+  resize: vertical;
+  outline: none;
+  line-height: 1.7;
+}
+
+.mail-body textarea::placeholder {
+  color: #555;
+}
+
+.mail-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #444;
+}
+
+.btn-send {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 10px 28px;
+  border-radius: 6px;
+  font-family: var(--mono);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-send:hover {
+  background: var(--accent-hover);
+}
+
+/* Taskbar */
+.taskbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 48px;
+  background: var(--taskbar-bg);
+  border-top: 1px solid #333;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  z-index: 100;
+  gap: 4px;
+}
+
+.taskbar-start {
+  width: 36px;
+  height: 36px;
+  background: var(--accent);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+
+.taskbar-start:hover {
+  background: var(--accent-hover);
+}
+
+.taskbar-start svg {
+  width: 20px;
+  height: 20px;
+  fill: #fff;
+}
+
+.taskbar-divider {
+  width: 1px;
+  height: 28px;
+  background: #444;
+  margin: 0 6px;
+  flex-shrink: 0;
+}
+
+.taskbar-windows {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+  overflow-x: auto;
+}
+
+.taskbar-btn {
+  background: #2a2a2e;
+  border: 1px solid #444;
+  color: var(--text-dim);
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.taskbar-btn:hover,
+.taskbar-btn.active {
+  background: #3a3a3f;
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.taskbar-tray {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.lang-switcher {
+  font-family: var(--mono);
+  font-size: 11px;
+  background: transparent;
+  border: 1px solid #444;
+  color: var(--text-dim);
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  outline: none;
+}
+
+.lang-switcher option {
+  background: var(--taskbar-bg);
+  color: var(--text);
+}
+
+.taskbar-clock {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+@media (max-width: 767px) {
+  .taskbar-windows {
+    display: none;
+  }
+
+  .taskbar {
+    justify-content: space-between;
+  }
+}
+
+/* prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .os-window {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .skill-bar-fill {
+    transition: none;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Gallery Link as Desktop Icon -->
+<a href="../index.html" class="gallery-link desktop-icon" data-i18n="gallery_link">
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+  <span data-i18n="gallery_link_label">&larr; Gallery</span>
+</a>
+
+<div class="desktop">
+
+  <!-- Hero Window: about.exe -->
+  <div class="os-window" id="win-hero" data-window="hero">
+    <div class="window-titlebar">
+      <div class="window-dots">
+        <span class="window-dot red"></span>
+        <span class="window-dot yellow"></span>
+        <span class="window-dot green"></span>
+      </div>
+      <span class="window-title">about.exe</span>
+    </div>
+    <div class="window-body">
+      <div class="hero-content">
+        <div class="avatar-placeholder" data-i18n="avatar_initial">H</div>
+        <div class="hero-text">
+          <h1 data-i18n="name">Hong Gildong</h1>
+          <p data-i18n="title">Creative Developer & Designer</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- About Window: readme.md -->
+  <div class="os-window" id="win-about" data-window="about">
+    <div class="window-titlebar">
+      <div class="window-dots">
+        <span class="window-dot red"></span>
+        <span class="window-dot yellow"></span>
+        <span class="window-dot green"></span>
+      </div>
+      <span class="window-title">readme.md</span>
+    </div>
+    <div class="window-body">
+      <p class="about-text" data-i18n="about_text">A full-stack developer inspired by operating systems and system architecture. I build complex systems into intuitive interfaces.</p>
+      <div class="terminal-stats">
+        <div><span class="prompt">$</span> <span class="key">location</span>: <span class="val" data-i18n="stat_location">Seoul, Korea</span></div>
+        <div><span class="prompt">$</span> <span class="key">experience</span>: <span class="val" data-i18n="stat_experience">5+ years</span></div>
+        <div><span class="prompt">$</span> <span class="key">focus</span>: <span class="val" data-i18n="stat_focus">Systems & UI Engineering</span></div>
+        <div><span class="prompt">$</span> <span class="key">status</span>: <span class="val" data-i18n="stat_status">Open to opportunities</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Skills Window: skills.sys -->
+  <div class="os-window" id="win-skills" data-window="skills">
+    <div class="window-titlebar">
+      <div class="window-dots">
+        <span class="window-dot red"></span>
+        <span class="window-dot yellow"></span>
+        <span class="window-dot green"></span>
+      </div>
+      <span class="window-title">skills.sys</span>
+    </div>
+    <div class="window-body">
+      <div class="skill-item">
+        <div class="skill-header">
+          <span class="skill-name" data-i18n="skill_frontend">Frontend</span>
+          <span class="skill-percent">92%</span>
+        </div>
+        <div class="skill-bar-track">
+          <div class="skill-bar-fill" style="--target-width: 92%"></div>
+        </div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-header">
+          <span class="skill-name" data-i18n="skill_backend">Backend</span>
+          <span class="skill-percent">85%</span>
+        </div>
+        <div class="skill-bar-track">
+          <div class="skill-bar-fill" style="--target-width: 85%"></div>
+        </div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-header">
+          <span class="skill-name" data-i18n="skill_systems">Systems</span>
+          <span class="skill-percent">88%</span>
+        </div>
+        <div class="skill-bar-track">
+          <div class="skill-bar-fill" style="--target-width: 88%"></div>
+        </div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-header">
+          <span class="skill-name" data-i18n="skill_design">UI/UX Design</span>
+          <span class="skill-percent">78%</span>
+        </div>
+        <div class="skill-bar-track">
+          <div class="skill-bar-fill" style="--target-width: 78%"></div>
+        </div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-header">
+          <span class="skill-name" data-i18n="skill_devops">DevOps</span>
+          <span class="skill-percent">75%</span>
+        </div>
+        <div class="skill-bar-track">
+          <div class="skill-bar-fill" style="--target-width: 75%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Projects Window: projects/ -->
+  <div class="os-window" id="win-projects" data-window="projects">
+    <div class="window-titlebar">
+      <div class="window-dots">
+        <span class="window-dot red"></span>
+        <span class="window-dot yellow"></span>
+        <span class="window-dot green"></span>
+      </div>
+      <span class="window-title">projects/</span>
+    </div>
+    <div class="window-body">
+      <div class="project-grid">
+        <div class="project-item">
+          <div class="project-icon">&#9776;</div>
+          <div class="project-info">
+            <h3 data-i18n="project1_name">OS App Suite</h3>
+            <p data-i18n="project1_desc">Cross-platform desktop apps</p>
+          </div>
+        </div>
+        <div class="project-item">
+          <div class="project-icon">&#9002;</div>
+          <div class="project-info">
+            <h3 data-i18n="project2_name">Cloud Terminal</h3>
+            <p data-i18n="project2_desc">Browser-based terminal emulator</p>
+          </div>
+        </div>
+        <div class="project-item">
+          <div class="project-icon">&#9881;</div>
+          <div class="project-info">
+            <h3 data-i18n="project3_name">System Monitor</h3>
+            <p data-i18n="project3_desc">Real-time system dashboard</p>
+          </div>
+        </div>
+        <div class="project-item">
+          <div class="project-icon">&#9998;</div>
+          <div class="project-info">
+            <h3 data-i18n="project4_name">Dev Toolkit</h3>
+            <p data-i18n="project4_desc">Developer productivity tools</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contact Window: mail.app -->
+  <div class="os-window" id="win-contact" data-window="contact">
+    <div class="window-titlebar">
+      <div class="window-dots">
+        <span class="window-dot red"></span>
+        <span class="window-dot yellow"></span>
+        <span class="window-dot green"></span>
+      </div>
+      <span class="window-title">mail.app</span>
+    </div>
+    <div class="window-body">
+      <form class="mail-form" onsubmit="return false;">
+        <div class="mail-header">
+          <div class="mail-field">
+            <label data-i18n="mail_to">To:</label>
+            <input type="text" value="hello@portfolio.dev" readonly>
+          </div>
+          <div class="mail-field">
+            <label data-i18n="mail_from">From:</label>
+            <input type="email" data-i18n-placeholder="mail_from_placeholder" placeholder="your@email.com">
+          </div>
+          <div class="mail-field">
+            <label data-i18n="mail_subject">Subject:</label>
+            <input type="text" data-i18n-placeholder="mail_subject_placeholder" placeholder="Hello!">
+          </div>
+        </div>
+        <div class="mail-body">
+          <textarea data-i18n-placeholder="mail_body_placeholder" placeholder="Write your message here..."></textarea>
+        </div>
+        <div class="mail-actions">
+          <button type="submit" class="btn-send" data-i18n="mail_send">Send</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>
+
+<!-- Taskbar -->
+<div class="taskbar">
+  <div class="taskbar-start" title="Start">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z"/></svg>
+  </div>
+  <div class="taskbar-divider"></div>
+  <div class="taskbar-windows">
+    <button class="taskbar-btn" data-target="win-hero">about.exe</button>
+    <button class="taskbar-btn" data-target="win-about">readme.md</button>
+    <button class="taskbar-btn" data-target="win-skills">skills.sys</button>
+    <button class="taskbar-btn" data-target="win-projects">projects/</button>
+    <button class="taskbar-btn" data-target="win-contact">mail.app</button>
+  </div>
+  <div class="taskbar-tray">
+    <select class="lang-switcher" id="langSwitcher" aria-label="Language">
+      <option value="en">EN</option>
+      <option value="ko">KO</option>
+      <option value="ja">JA</option>
+      <option value="zh">ZH</option>
+    </select>
+    <span class="taskbar-clock" id="clock">00:00</span>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  /* ===== TRANSLATIONS ===== */
+  const TRANSLATIONS = {
+    en: {
+      gallery_link: '\u2190 Gallery',
+      gallery_link_label: '\u2190 Gallery',
+      name: 'Hong Gildong',
+      avatar_initial: 'H',
+      title: 'Creative Developer & Designer',
+      about_text: 'A full-stack developer inspired by operating systems and system architecture. I build complex systems into intuitive interfaces.',
+      stat_location: 'Seoul, Korea',
+      stat_experience: '5+ years',
+      stat_focus: 'Systems & UI Engineering',
+      stat_status: 'Open to opportunities',
+      skill_frontend: 'Frontend',
+      skill_backend: 'Backend',
+      skill_systems: 'Systems',
+      skill_design: 'UI/UX Design',
+      skill_devops: 'DevOps',
+      project1_name: 'OS App Suite',
+      project1_desc: 'Cross-platform desktop applications',
+      project2_name: 'Cloud Terminal',
+      project2_desc: 'Browser-based terminal emulator',
+      project3_name: 'System Monitor',
+      project3_desc: 'Real-time system dashboard',
+      project4_name: 'Dev Toolkit',
+      project4_desc: 'Developer productivity tools',
+      mail_to: 'To:',
+      mail_from: 'From:',
+      mail_subject: 'Subject:',
+      mail_from_placeholder: 'your@email.com',
+      mail_subject_placeholder: 'Hello!',
+      mail_body_placeholder: 'Write your message here...',
+      mail_send: 'Send'
+    },
+    ko: {
+      gallery_link: '\u2190 \uac24\ub7ec\ub9ac',
+      gallery_link_label: '\u2190 \uac24\ub7ec\ub9ac',
+      name: '\ud64d\uae38\ub3d9',
+      avatar_initial: '\ud64d',
+      title: '\ud06c\ub9ac\uc5d0\uc774\ud2f0\ube0c \uac1c\ubc1c\uc790 & \ub514\uc790\uc774\ub108',
+      about_text: '\uc6b4\uc601\uccb4\uc81c\uc640 \uc2dc\uc2a4\ud15c \uc544\ud0a4\ud14d\ucc98\uc5d0 \uc601\uac10\uc744 \ubc1b\uc740 \ud480\uc2a4\ud0dd \uac1c\ubc1c\uc790\uc785\ub2c8\ub2e4. \ubcf5\uc7a1\ud55c \uc2dc\uc2a4\ud15c\uc744 \uc9c1\uad00\uc801\uc778 \uc778\ud130\ud398\uc774\uc2a4\ub85c \uad6c\ud604\ud569\ub2c8\ub2e4.',
+      stat_location: '\uc11c\uc6b8, \ud55c\uad6d',
+      stat_experience: '5\ub144 \uc774\uc0c1',
+      stat_focus: '\uc2dc\uc2a4\ud15c & UI \uc5d4\uc9c0\ub2c8\uc5b4\ub9c1',
+      stat_status: '\uad6c\uc9c1 \uc911',
+      skill_frontend: '\ud504\ub860\ud2b8\uc5d4\ub4dc',
+      skill_backend: '\ubc31\uc5d4\ub4dc',
+      skill_systems: '\uc2dc\uc2a4\ud15c',
+      skill_design: 'UI/UX \ub514\uc790\uc778',
+      skill_devops: '\ub370\ube0c\uc635\uc2a4',
+      project1_name: 'OS \uc571 \uc2a4\uc704\ud2b8',
+      project1_desc: '\ud06c\ub85c\uc2a4 \ud50c\ub7ab\ud3fc \ub370\uc2a4\ud06c\ud1b1 \uc571',
+      project2_name: '\ud074\ub77c\uc6b0\ub4dc \ud130\ubbf8\ub110',
+      project2_desc: '\ube0c\ub77c\uc6b0\uc800 \uae30\ubc18 \ud130\ubbf8\ub110 \uc5d0\ubbac\ub808\uc774\ud130',
+      project3_name: '\uc2dc\uc2a4\ud15c \ubaa8\ub2c8\ud130',
+      project3_desc: '\uc2e4\uc2dc\uac04 \uc2dc\uc2a4\ud15c \ub300\uc2dc\ubcf4\ub4dc',
+      project4_name: '\uac1c\ubc1c \ub3c4\uad6c\ud0b7',
+      project4_desc: '\uac1c\ubc1c\uc790 \uc0dd\uc0b0\uc131 \ub3c4\uad6c',
+      mail_to: '\ubc1b\ub294 \uc0ac\ub78c:',
+      mail_from: '\ubcf4\ub0b4\ub294 \uc0ac\ub78c:',
+      mail_subject: '\uc81c\ubaa9:',
+      mail_from_placeholder: 'your@email.com',
+      mail_subject_placeholder: '\uc548\ub155\ud558\uc138\uc694!',
+      mail_body_placeholder: '\uba54\uc2dc\uc9c0\ub97c \uc791\uc131\ud574 \uc8fc\uc138\uc694...',
+      mail_send: '\ubcf4\ub0b4\uae30'
+    },
+    ja: {
+      gallery_link: '\u2190 \u30ae\u30e3\u30e9\u30ea\u30fc',
+      gallery_link_label: '\u2190 \u30ae\u30e3\u30e9\u30ea\u30fc',
+      name: '\u30db\u30f3 \u30ae\u30eb\u30c9\u30f3',
+      avatar_initial: 'H',
+      title: '\u30af\u30ea\u30a8\u30a4\u30c6\u30a3\u30d6\u30c7\u30d9\u30ed\u30c3\u30d1\u30fc & \u30c7\u30b6\u30a4\u30ca\u30fc',
+      about_text: 'OS\u3068\u30b7\u30b9\u30c6\u30e0\u30a2\u30fc\u30ad\u30c6\u30af\u30c1\u30e3\u306b\u30a4\u30f3\u30b9\u30d1\u30a4\u30a2\u3055\u308c\u305f\u30d5\u30eb\u30b9\u30bf\u30c3\u30af\u958b\u767a\u8005\u3067\u3059\u3002\u8907\u96d1\u306a\u30b7\u30b9\u30c6\u30e0\u3092\u76f4\u611f\u7684\u306a\u30a4\u30f3\u30bf\u30fc\u30d5\u30a7\u30fc\u30b9\u306b\u69cb\u7bc9\u3057\u307e\u3059\u3002',
+      stat_location: '\u30bd\u30a6\u30eb, \u97d3\u56fd',
+      stat_experience: '5\u5e74\u4ee5\u4e0a',
+      stat_focus: '\u30b7\u30b9\u30c6\u30e0 & UI\u30a8\u30f3\u30b8\u30cb\u30a2\u30ea\u30f3\u30b0',
+      stat_status: '\u6a5f\u4f1a\u3092\u63a2\u3057\u3066\u3044\u307e\u3059',
+      skill_frontend: '\u30d5\u30ed\u30f3\u30c8\u30a8\u30f3\u30c9',
+      skill_backend: '\u30d0\u30c3\u30af\u30a8\u30f3\u30c9',
+      skill_systems: '\u30b7\u30b9\u30c6\u30e0',
+      skill_design: 'UI/UX\u30c7\u30b6\u30a4\u30f3',
+      skill_devops: 'DevOps',
+      project1_name: 'OS\u30a2\u30d7\u30ea\u30b9\u30a4\u30fc\u30c8',
+      project1_desc: '\u30af\u30ed\u30b9\u30d7\u30e9\u30c3\u30c8\u30d5\u30a9\u30fc\u30e0\u30c7\u30b9\u30af\u30c8\u30c3\u30d7\u30a2\u30d7\u30ea',
+      project2_name: '\u30af\u30e9\u30a6\u30c9\u30bf\u30fc\u30df\u30ca\u30eb',
+      project2_desc: '\u30d6\u30e9\u30a6\u30b6\u30d9\u30fc\u30b9\u306e\u30bf\u30fc\u30df\u30ca\u30eb\u30a8\u30df\u30e5\u30ec\u30fc\u30bf',
+      project3_name: '\u30b7\u30b9\u30c6\u30e0\u30e2\u30cb\u30bf\u30fc',
+      project3_desc: '\u30ea\u30a2\u30eb\u30bf\u30a4\u30e0\u30b7\u30b9\u30c6\u30e0\u30c0\u30c3\u30b7\u30e5\u30dc\u30fc\u30c9',
+      project4_name: '\u958b\u767a\u30c4\u30fc\u30eb\u30ad\u30c3\u30c8',
+      project4_desc: '\u958b\u767a\u8005\u751f\u7523\u6027\u30c4\u30fc\u30eb',
+      mail_to: '\u5b9b\u5148:',
+      mail_from: '\u5dee\u51fa\u4eba:',
+      mail_subject: '\u4ef6\u540d:',
+      mail_from_placeholder: 'your@email.com',
+      mail_subject_placeholder: '\u3053\u3093\u306b\u3061\u306f\uff01',
+      mail_body_placeholder: '\u30e1\u30c3\u30bb\u30fc\u30b8\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044...',
+      mail_send: '\u9001\u4fe1'
+    },
+    zh: {
+      gallery_link: '\u2190 \u753b\u5eca',
+      gallery_link_label: '\u2190 \u753b\u5eca',
+      name: '\u6d2a\u5409\u7ae5',
+      avatar_initial: '\u6d2a',
+      title: '\u521b\u610f\u5f00\u53d1\u8005 & \u8bbe\u8ba1\u5e08',
+      about_text: '\u4e00\u4f4d\u53d7\u64cd\u4f5c\u7cfb\u7edf\u548c\u7cfb\u7edf\u67b6\u6784\u542f\u53d1\u7684\u5168\u6808\u5f00\u53d1\u8005\u3002\u5c06\u590d\u6742\u7cfb\u7edf\u6784\u5efa\u4e3a\u76f4\u89c2\u7684\u754c\u9762\u3002',
+      stat_location: '\u9996\u5c14\uff0c\u97e9\u56fd',
+      stat_experience: '5\u5e74\u4ee5\u4e0a',
+      stat_focus: '\u7cfb\u7edf & UI\u5de5\u7a0b',
+      stat_status: '\u5f00\u653e\u673a\u4f1a',
+      skill_frontend: '\u524d\u7aef',
+      skill_backend: '\u540e\u7aef',
+      skill_systems: '\u7cfb\u7edf',
+      skill_design: 'UI/UX\u8bbe\u8ba1',
+      skill_devops: 'DevOps',
+      project1_name: 'OS\u5e94\u7528\u5957\u4ef6',
+      project1_desc: '\u8de8\u5e73\u53f0\u684c\u9762\u5e94\u7528',
+      project2_name: '\u4e91\u7ec8\u7aef',
+      project2_desc: '\u57fa\u4e8e\u6d4f\u89c8\u5668\u7684\u7ec8\u7aef\u6a21\u62df\u5668',
+      project3_name: '\u7cfb\u7edf\u76d1\u63a7\u5668',
+      project3_desc: '\u5b9e\u65f6\u7cfb\u7edf\u4eea\u8868\u76d8',
+      project4_name: '\u5f00\u53d1\u5de5\u5177\u5305',
+      project4_desc: '\u5f00\u53d1\u8005\u751f\u4ea7\u529b\u5de5\u5177',
+      mail_to: '\u6536\u4ef6\u4eba:',
+      mail_from: '\u53d1\u4ef6\u4eba:',
+      mail_subject: '\u4e3b\u9898:',
+      mail_from_placeholder: 'your@email.com',
+      mail_subject_placeholder: '\u4f60\u597d\uff01',
+      mail_body_placeholder: '\u8bf7\u8f93\u5165\u60a8\u7684\u6d88\u606f...',
+      mail_send: '\u53d1\u9001'
+    }
+  };
+
+  let currentLang = 'en';
+
+  /* ===== i18n ===== */
+  function applyTranslations(lang) {
+    currentLang = lang;
+    var t = TRANSLATIONS[lang];
+    if (!t) return;
+
+    document.querySelectorAll('[data-i18n]').forEach(function(el) {
+      var key = el.getAttribute('data-i18n');
+      if (t[key] !== undefined) {
+        el.textContent = t[key];
+      }
+    });
+
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) {
+      var key = el.getAttribute('data-i18n-placeholder');
+      if (t[key] !== undefined) {
+        el.placeholder = t[key];
+      }
+    });
+
+    document.documentElement.lang = lang;
+  }
+
+  /* ===== Language Switcher ===== */
+  var langSwitcher = document.getElementById('langSwitcher');
+  langSwitcher.addEventListener('change', function() {
+    applyTranslations(this.value);
+  });
+
+  /* ===== Clock ===== */
+  var clockEl = document.getElementById('clock');
+
+  function updateClock() {
+    var now = new Date();
+    var h = String(now.getHours()).padStart(2, '0');
+    var m = String(now.getMinutes()).padStart(2, '0');
+    clockEl.textContent = h + ':' + m;
+  }
+
+  updateClock();
+  setInterval(updateClock, 10000);
+
+  /* ===== IntersectionObserver ===== */
+  var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var windows = document.querySelectorAll('.os-window');
+
+  if (prefersReduced) {
+    windows.forEach(function(w) {
+      w.classList.add('visible');
+    });
+    document.querySelectorAll('.skill-bar-fill').forEach(function(bar) {
+      bar.classList.add('animate');
+    });
+  } else {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          /* Animate skill bars when skills window appears */
+          if (entry.target.id === 'win-skills') {
+            setTimeout(function() {
+              entry.target.querySelectorAll('.skill-bar-fill').forEach(function(bar) {
+                bar.classList.add('animate');
+              });
+            }, 300);
+          }
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+
+    windows.forEach(function(w) {
+      observer.observe(w);
+    });
+  }
+
+  /* ===== Taskbar Window Buttons ===== */
+  document.querySelectorAll('.taskbar-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var targetId = this.getAttribute('data-target');
+      var targetWin = document.getElementById(targetId);
+      if (targetWin) {
+        targetWin.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        /* Set active state */
+        windows.forEach(function(w) { w.classList.remove('active'); });
+        targetWin.classList.add('visible');
+        targetWin.classList.add('active');
+        /* Highlight taskbar btn */
+        document.querySelectorAll('.taskbar-btn').forEach(function(b) { b.classList.remove('active'); });
+        this.classList.add('active');
+      }
+    });
+  });
+
+  /* ===== Click to focus window ===== */
+  windows.forEach(function(w) {
+    w.addEventListener('mousedown', function() {
+      windows.forEach(function(win) { win.classList.remove('active'); });
+      w.classList.add('active');
+    });
+  });
+
+  /* ===== Draggable Windows (desktop only) ===== */
+  if (window.innerWidth >= 1024 && !prefersReduced) {
+    windows.forEach(function(win) {
+      var titlebar = win.querySelector('.window-titlebar');
+      var isDragging = false;
+      var offsetX = 0;
+      var offsetY = 0;
+
+      titlebar.style.cursor = 'grab';
+
+      titlebar.addEventListener('mousedown', function(e) {
+        if (e.target.classList.contains('window-dot')) return;
+        isDragging = true;
+        titlebar.style.cursor = 'grabbing';
+
+        /* Switch to absolute positioning on first drag */
+        if (win.style.position !== 'absolute') {
+          var rect = win.getBoundingClientRect();
+          win.style.position = 'absolute';
+          win.style.left = (rect.left + window.scrollX) + 'px';
+          win.style.top = (rect.top + window.scrollY) + 'px';
+          win.style.margin = '0';
+          win.style.width = rect.width + 'px';
+        }
+
+        offsetX = e.clientX - win.getBoundingClientRect().left;
+        offsetY = e.clientY - win.getBoundingClientRect().top;
+
+        /* Bring to front */
+        windows.forEach(function(w2) { w2.classList.remove('active'); });
+        win.classList.add('active');
+
+        e.preventDefault();
+      });
+
+      document.addEventListener('mousemove', function(e) {
+        if (!isDragging) return;
+        var newX = e.clientX - offsetX + window.scrollX;
+        var newY = e.clientY - offsetY + window.scrollY;
+        win.style.left = newX + 'px';
+        win.style.top = newY + 'px';
+      });
+
+      document.addEventListener('mouseup', function() {
+        if (isDragging) {
+          isDragging = false;
+          titlebar.style.cursor = 'grab';
+        }
+      });
+    });
+  }
+
+  /* ===== Init ===== */
+  applyTranslations('en');
+})();
+</script>
+</body>
+</html>

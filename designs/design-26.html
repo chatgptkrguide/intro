@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio - Sticker Collage Pop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --hot-pink: #FF2E63;
+  --electric-blue: #08D9D6;
+  --lime: #CCFF00;
+  --orange: #FF6600;
+  --purple: #9B59B6;
+  --yellow: #FFD93D;
+  --bg: #FFFFFF;
+  --text: #1a1a2e;
+  --text-light: #555;
+  --sticker-shadow: 2px 4px 8px rgba(0, 0, 0, 0.15);
+  --holo-gradient: linear-gradient(135deg, #ff6b6b, #ffd93d, #6bcb77, #4d96ff, #9b59b6, #ff6b6b);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Scattered background decorations */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(circle at 10% 20%, var(--yellow) 1px, transparent 1px),
+    radial-gradient(circle at 85% 15%, var(--hot-pink) 1.5px, transparent 1.5px),
+    radial-gradient(circle at 70% 40%, var(--electric-blue) 1px, transparent 1px),
+    radial-gradient(circle at 20% 60%, var(--lime) 1.5px, transparent 1.5px),
+    radial-gradient(circle at 90% 70%, var(--purple) 1px, transparent 1px),
+    radial-gradient(circle at 40% 85%, var(--orange) 1px, transparent 1px),
+    radial-gradient(circle at 5% 90%, var(--yellow) 1.5px, transparent 1.5px),
+    radial-gradient(circle at 60% 10%, var(--hot-pink) 1px, transparent 1px),
+    radial-gradient(circle at 95% 50%, var(--lime) 1px, transparent 1px),
+    radial-gradient(circle at 30% 35%, var(--electric-blue) 1.5px, transparent 1.5px);
+  opacity: 0.5;
+}
+
+/* Sparkle decoration using clip-path */
+.sparkle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: var(--yellow);
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  pointer-events: none;
+  z-index: 1;
+  animation: twinkle 2s ease-in-out infinite;
+}
+
+.sparkle:nth-child(2n) {
+  animation-delay: 0.5s;
+  background: var(--hot-pink);
+}
+
+.sparkle:nth-child(3n) {
+  animation-delay: 1s;
+  background: var(--electric-blue);
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.4; transform: scale(0.8) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.1) rotate(20deg); }
+}
+
+@keyframes holoShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes stickerSlap {
+  0% { opacity: 0; transform: scale(0.3) rotate(-15deg); }
+  50% { transform: scale(1.1) rotate(3deg); }
+  70% { transform: scale(0.95) rotate(-1deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sparkle {
+    animation: none;
+    opacity: 0.5;
+  }
+
+  .sticker-card {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .holo-border {
+    animation: none !important;
+  }
+}
+
+/* Gallery link */
+.gallery-link {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text);
+  text-decoration: none;
+  background: var(--bg);
+  padding: 10px 18px;
+  border-radius: 50px;
+  box-shadow: var(--sticker-shadow);
+  border: 2px solid var(--hot-pink);
+  transition: all 0.3s ease;
+}
+
+.gallery-link:hover {
+  background: var(--hot-pink);
+  color: #fff;
+  transform: scale(1.05);
+}
+
+/* Language switcher */
+.lang-switcher {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  gap: 8px;
+}
+
+.lang-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #ddd;
+  background: var(--bg);
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--sticker-shadow);
+  transition: all 0.3s ease;
+  color: var(--text);
+}
+
+.lang-btn:hover {
+  transform: scale(1.15) rotate(-5deg);
+}
+
+.lang-btn.active {
+  background: var(--hot-pink);
+  color: #fff;
+  border-color: var(--hot-pink);
+  transform: scale(1.1);
+}
+
+/* Main container */
+.collage-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 80px 20px 40px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Grid layout */
+.sticker-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 30px;
+  align-items: start;
+}
+
+@media (min-width: 768px) {
+  .sticker-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .hero-sticker {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 1440px) {
+  .sticker-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .hero-sticker {
+    grid-column: 1 / -1;
+  }
+
+  .about-sticker {
+    grid-column: span 2;
+  }
+}
+
+/* Sticker card base */
+.sticker-card {
+  position: relative;
+  padding: 30px;
+  box-shadow: var(--sticker-shadow);
+  opacity: 0;
+  transform: scale(0.3) rotate(-15deg);
+}
+
+.sticker-card.visible {
+  animation: stickerSlap 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sticker-card {
+    opacity: 1;
+    transform: none;
+  }
+
+  .sticker-card.visible {
+    animation: none;
+  }
+}
+
+/* Holographic border */
+.holo-border {
+  position: relative;
+  background: var(--bg);
+  border-radius: 20px;
+}
+
+.holo-border::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 22px;
+  background: var(--holo-gradient);
+  background-size: 300% 300%;
+  animation: holoShift 4s ease infinite;
+  z-index: -1;
+}
+
+/* Peeling effect */
+.peeling::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, transparent 50%, #f0f0f0 50%, #e0e0e0 100%);
+  border-radius: 0 0 20px 0;
+  box-shadow: -2px -2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* ===== HERO SECTION ===== */
+.hero-sticker {
+  text-align: center;
+  padding: 50px 30px;
+  border-radius: 30px;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.hero-sticker::before {
+  border-radius: 32px;
+}
+
+.hero-decorations {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.hero-sparkle {
+  position: absolute;
+  font-size: 1.5rem;
+}
+
+.hero-sparkle:nth-child(1) { top: 10%; left: 5%; }
+.hero-sparkle:nth-child(2) { top: 15%; right: 8%; }
+.hero-sparkle:nth-child(3) { bottom: 15%; left: 10%; }
+.hero-sparkle:nth-child(4) { bottom: 10%; right: 5%; }
+.hero-sparkle:nth-child(5) { top: 40%; left: 2%; }
+.hero-sparkle:nth-child(6) { top: 35%; right: 3%; }
+
+.hero-name {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 3.5rem;
+  font-weight: 800;
+  background: var(--holo-gradient);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: holoShift 4s ease infinite;
+  margin-bottom: 10px;
+}
+
+.hero-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--text-light);
+  margin-bottom: 20px;
+}
+
+.hero-emoji-row {
+  font-size: 2rem;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+/* ===== ABOUT SECTION ===== */
+.about-sticker {
+  border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+  background: #f8f4ff;
+  padding: 40px 35px;
+  position: relative;
+}
+
+.about-label {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--purple);
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.about-text {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--text-light);
+  margin-bottom: 20px;
+}
+
+.stat-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.stat-badge {
+  background: var(--bg);
+  padding: 10px 18px;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  box-shadow: var(--sticker-shadow);
+  border: 2px solid var(--electric-blue);
+  color: var(--text);
+}
+
+.stat-badge span {
+  color: var(--hot-pink);
+  font-weight: 700;
+}
+
+.about-emoji {
+  position: absolute;
+  font-size: 1.2rem;
+  pointer-events: none;
+}
+
+.about-emoji:nth-child(1) { top: 8%; right: 15%; }
+.about-emoji:nth-child(2) { bottom: 12%; left: 8%; }
+.about-emoji:nth-child(3) { top: 50%; right: 5%; }
+
+/* ===== SKILLS SECTION ===== */
+.skills-sticker {
+  border-radius: 20px;
+  background: var(--bg);
+  padding: 30px;
+}
+
+.skills-label {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--orange);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.skill-stickers {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+.skill-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 10px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-align: center;
+  box-shadow: var(--sticker-shadow);
+  transition: transform 0.3s ease;
+  color: #fff;
+}
+
+.skill-item:hover {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.skill-icon {
+  font-size: 1.5rem;
+  margin-bottom: 6px;
+}
+
+.skill-item:nth-child(1) {
+  background: var(--electric-blue);
+  border-radius: 50%;
+  aspect-ratio: 1;
+}
+
+.skill-item:nth-child(2) {
+  background: var(--hot-pink);
+  border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+}
+
+.skill-item:nth-child(3) {
+  background: var(--orange);
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  padding: 30px 15px;
+}
+
+.skill-item:nth-child(4) {
+  background: var(--purple);
+  border-radius: 70% 30% 30% 70% / 60% 40% 60% 40%;
+}
+
+.skill-item:nth-child(5) {
+  background: #333;
+  border-radius: 20px;
+  transform: rotate(-3deg);
+}
+
+.skill-item:nth-child(5):hover {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.skill-item:nth-child(6) {
+  background: linear-gradient(135deg, var(--hot-pink), var(--purple));
+  border-radius: 50% 20% 50% 20%;
+}
+
+/* ===== PROJECTS SECTION ===== */
+.projects-label {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--text);
+  text-align: center;
+  margin-bottom: 10px;
+  grid-column: 1 / -1;
+}
+
+.project-card {
+  border-radius: 20px;
+  background: var(--bg);
+  padding: 25px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.project-card:hover {
+  transform: translateY(-5px) rotate(1deg);
+}
+
+.project-card:hover .project-holo-sheen {
+  opacity: 0.15;
+}
+
+.project-holo-sheen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--holo-gradient);
+  background-size: 300% 300%;
+  animation: holoShift 4s ease infinite;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.project-color-bar {
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+}
+
+.project-card:nth-child(2) .project-color-bar { background: var(--hot-pink); }
+.project-card:nth-child(3) .project-color-bar { background: var(--electric-blue); }
+.project-card:nth-child(4) .project-color-bar { background: var(--lime); }
+.project-card:nth-child(5) .project-color-bar { background: var(--orange); }
+
+.project-name {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.project-desc {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.project-tag {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 50px;
+  background: #f0f0f0;
+  color: var(--text);
+}
+
+/* Project overlap on larger screens */
+@media (min-width: 768px) {
+  .project-card:nth-child(odd) {
+    transform: rotate(-1deg);
+  }
+
+  .project-card:nth-child(even) {
+    transform: rotate(1.5deg);
+  }
+
+  .project-card:hover {
+    transform: translateY(-5px) rotate(0deg) !important;
+  }
+}
+
+/* ===== CONTACT SECTION ===== */
+.contact-sticker {
+  grid-column: 1 / -1;
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+  background: var(--bg);
+  padding: 40px 30px;
+  position: relative;
+  border-radius: 30px;
+  border: 3px solid var(--electric-blue);
+}
+
+/* Speech bubble tail */
+.contact-sticker::after {
+  content: '';
+  position: absolute;
+  bottom: -20px;
+  left: 40px;
+  width: 0;
+  height: 0;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-top: 22px solid var(--electric-blue);
+}
+
+.contact-sticker .tail-inner {
+  position: absolute;
+  bottom: -15px;
+  left: 43px;
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 18px solid var(--bg);
+  z-index: 1;
+}
+
+.contact-label {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--electric-blue);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-input {
+  padding: 14px 20px;
+  border: 2px solid #eee;
+  border-radius: 50px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.3s ease;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.form-input:focus {
+  border-color: var(--electric-blue);
+}
+
+.form-textarea {
+  border-radius: 20px;
+  min-height: 120px;
+  resize: vertical;
+}
+
+.form-submit {
+  padding: 14px 30px;
+  border: none;
+  border-radius: 50px;
+  background: var(--holo-gradient);
+  background-size: 300% 300%;
+  animation: holoShift 4s ease infinite;
+  color: #fff;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--sticker-shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  align-self: flex-start;
+}
+
+.form-submit:hover {
+  transform: scale(1.05);
+  box-shadow: 4px 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 60px 20px 30px;
+  font-size: 0.85rem;
+  color: var(--text-light);
+  position: relative;
+  z-index: 2;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 767px) {
+  .hero-name {
+    font-size: 2.2rem;
+  }
+
+  .hero-title {
+    font-size: 1rem;
+  }
+
+  .about-sticker {
+    border-radius: 30px;
+  }
+
+  .skill-stickers {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .contact-sticker {
+    padding: 30px 20px;
+  }
+
+  .gallery-link {
+    font-size: 0.8rem;
+    padding: 8px 14px;
+  }
+
+  .lang-btn {
+    width: 34px;
+    height: 34px;
+    font-size: 0.65rem;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1439px) {
+  .hero-name {
+    font-size: 3rem;
+  }
+}
+</style>
+</head>
+<body>
+
+<a href="../index.html" class="gallery-link" data-i18n="gallery_link">&#8592; Gallery</a>
+
+<div class="lang-switcher">
+  <button class="lang-btn active" data-lang="en">EN</button>
+  <button class="lang-btn" data-lang="ko">KO</button>
+  <button class="lang-btn" data-lang="ja">JA</button>
+  <button class="lang-btn" data-lang="zh">ZH</button>
+</div>
+
+<!-- Sparkle decorations -->
+<div class="sparkle" style="top:8%;left:12%;width:16px;height:16px;"></div>
+<div class="sparkle" style="top:25%;right:10%;width:22px;height:22px;"></div>
+<div class="sparkle" style="top:50%;left:5%;width:14px;height:14px;"></div>
+<div class="sparkle" style="top:70%;right:15%;width:18px;height:18px;"></div>
+<div class="sparkle" style="top:85%;left:20%;width:12px;height:12px;"></div>
+<div class="sparkle" style="top:15%;left:50%;width:20px;height:20px;"></div>
+
+<div class="collage-container">
+  <div class="sticker-grid">
+
+    <!-- HERO -->
+    <div class="sticker-card hero-sticker holo-border">
+      <div class="hero-decorations">
+        <span class="hero-sparkle">&#10024;</span>
+        <span class="hero-sparkle">&#127775;</span>
+        <span class="hero-sparkle">&#128171;</span>
+        <span class="hero-sparkle">&#10024;</span>
+        <span class="hero-sparkle">&#127775;</span>
+        <span class="hero-sparkle">&#128171;</span>
+      </div>
+      <h1 class="hero-name" data-i18n="name">Hong Gildong</h1>
+      <p class="hero-title" data-i18n="title">Creative Developer &amp; Designer</p>
+      <div class="hero-emoji-row">
+        <span>&#127912;</span>
+        <span>&#128187;</span>
+        <span>&#10024;</span>
+        <span>&#128640;</span>
+        <span>&#127775;</span>
+      </div>
+    </div>
+
+    <!-- ABOUT -->
+    <div class="sticker-card about-sticker">
+      <span class="about-emoji">&#10024;</span>
+      <span class="about-emoji">&#127775;</span>
+      <span class="about-emoji">&#128171;</span>
+      <h2 class="about-label">
+        <span>&#9729;&#65039;</span>
+        <span data-i18n="about_label">About</span>
+      </h2>
+      <p class="about-text" data-i18n="about_text">A creative developer with Gen-Z sensibility. I bring joy to the digital world through bright and energetic designs.</p>
+      <div class="stat-badges">
+        <div class="stat-badge"><span data-i18n="stat_projects">50+</span> <span data-i18n="stat_projects_label">Projects</span></div>
+        <div class="stat-badge"><span data-i18n="stat_clients">30+</span> <span data-i18n="stat_clients_label">Clients</span></div>
+        <div class="stat-badge"><span data-i18n="stat_years">5+</span> <span data-i18n="stat_years_label">Years</span></div>
+      </div>
+    </div>
+
+    <!-- SKILLS -->
+    <div class="sticker-card skills-sticker holo-border">
+      <h2 class="skills-label" data-i18n="skills_label">&#128293; Skills</h2>
+      <div class="skill-stickers">
+        <div class="skill-item">
+          <span class="skill-icon">&#9883;</span>
+          <span>React</span>
+        </div>
+        <div class="skill-item">
+          <span class="skill-icon">&#128302;</span>
+          <span>TypeScript</span>
+        </div>
+        <div class="skill-item">
+          <span class="skill-icon">&#9889;</span>
+          <span>Node.js</span>
+        </div>
+        <div class="skill-item">
+          <span class="skill-icon">&#128013;</span>
+          <span>Python</span>
+        </div>
+        <div class="skill-item">
+          <span class="skill-icon">&#127912;</span>
+          <span>Figma</span>
+        </div>
+        <div class="skill-item">
+          <span class="skill-icon">&#128444;&#65039;</span>
+          <span>UI/UX</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECTS LABEL -->
+    <h2 class="projects-label sticker-card" style="background:none;box-shadow:none;padding:10px;" data-i18n="projects_label">&#128640; Projects</h2>
+
+    <!-- PROJECT 1 -->
+    <div class="sticker-card project-card peeling holo-border">
+      <div class="project-holo-sheen"></div>
+      <div class="project-color-bar"></div>
+      <h3 class="project-name" data-i18n="project1_name">Social Feed</h3>
+      <p class="project-desc" data-i18n="project1_desc">A real-time social media feed with dynamic content curation and interactive reactions.</p>
+      <div class="project-tags">
+        <span class="project-tag">React</span>
+        <span class="project-tag">Firebase</span>
+        <span class="project-tag">PWA</span>
+      </div>
+    </div>
+
+    <!-- PROJECT 2 -->
+    <div class="sticker-card project-card peeling holo-border">
+      <div class="project-holo-sheen"></div>
+      <div class="project-color-bar"></div>
+      <h3 class="project-name" data-i18n="project2_name">Music Mixer</h3>
+      <p class="project-desc" data-i18n="project2_desc">Web-based music creation tool with beat sequencing and sound layering.</p>
+      <div class="project-tags">
+        <span class="project-tag">Web Audio</span>
+        <span class="project-tag">TypeScript</span>
+        <span class="project-tag">Canvas</span>
+      </div>
+    </div>
+
+    <!-- PROJECT 3 -->
+    <div class="sticker-card project-card peeling holo-border">
+      <div class="project-holo-sheen"></div>
+      <div class="project-color-bar"></div>
+      <h3 class="project-name" data-i18n="project3_name">AR Filter</h3>
+      <p class="project-desc" data-i18n="project3_desc">Augmented reality filters for social platforms with face tracking and 3D effects.</p>
+      <div class="project-tags">
+        <span class="project-tag">Three.js</span>
+        <span class="project-tag">WebXR</span>
+        <span class="project-tag">ML</span>
+      </div>
+    </div>
+
+    <!-- PROJECT 4 -->
+    <div class="sticker-card project-card peeling holo-border">
+      <div class="project-holo-sheen"></div>
+      <div class="project-color-bar"></div>
+      <h3 class="project-name" data-i18n="project4_name">Mood Board</h3>
+      <p class="project-desc" data-i18n="project4_desc">Collaborative mood board tool with drag-and-drop and real-time editing.</p>
+      <div class="project-tags">
+        <span class="project-tag">Next.js</span>
+        <span class="project-tag">Supabase</span>
+        <span class="project-tag">DnD</span>
+      </div>
+    </div>
+
+    <!-- CONTACT -->
+    <div class="sticker-card contact-sticker">
+      <div class="tail-inner"></div>
+      <h2 class="contact-label" data-i18n="contact_label">&#128172; Contact</h2>
+      <form class="contact-form" onsubmit="event.preventDefault();">
+        <input type="text" class="form-input" data-i18n-placeholder="form_name" placeholder="Name">
+        <input type="email" class="form-input" data-i18n-placeholder="form_email" placeholder="Email">
+        <textarea class="form-input form-textarea" data-i18n-placeholder="form_message" placeholder="Message"></textarea>
+        <button type="submit" class="form-submit" data-i18n="form_send">Send &#10024;</button>
+      </form>
+    </div>
+
+  </div>
+</div>
+
+<footer class="footer">
+  <p data-i18n="footer">&copy; 2025 Hong Gildong. Sticker Collage Pop.</p>
+</footer>
+
+<script>
+/* ===== TRANSLATIONS ===== */
+var TRANSLATIONS = {
+  en: {
+    gallery_link: '\u2190 Gallery',
+    name: 'Hong Gildong',
+    title: 'Creative Developer & Designer',
+    about_label: 'About',
+    about_text: 'A creative developer with Gen-Z sensibility. I bring joy to the digital world through bright and energetic designs.',
+    stat_projects: '50+',
+    stat_projects_label: 'Projects',
+    stat_clients: '30+',
+    stat_clients_label: 'Clients',
+    stat_years: '5+',
+    stat_years_label: 'Years',
+    skills_label: '\uD83D\uDD25 Skills',
+    projects_label: '\uD83D\uDE80 Projects',
+    project1_name: 'Social Feed',
+    project1_desc: 'A real-time social media feed with dynamic content curation and interactive reactions.',
+    project2_name: 'Music Mixer',
+    project2_desc: 'Web-based music creation tool with beat sequencing and sound layering.',
+    project3_name: 'AR Filter',
+    project3_desc: 'Augmented reality filters for social platforms with face tracking and 3D effects.',
+    project4_name: 'Mood Board',
+    project4_desc: 'Collaborative mood board tool with drag-and-drop and real-time editing.',
+    contact_label: '\uD83D\uDCAC Contact',
+    form_name: 'Name',
+    form_email: 'Email',
+    form_message: 'Message',
+    form_send: 'Send \u2728',
+    footer: '\u00A9 2025 Hong Gildong. Sticker Collage Pop.'
+  },
+  ko: {
+    gallery_link: '\u2190 \uAC24\uB7EC\uB9AC',
+    name: '\uD64D\uAE38\uB3D9',
+    title: '\uD06C\uB9AC\uC5D0\uC774\uD2F0\uBE0C \uAC1C\uBC1C\uC790 & \uB514\uC790\uC774\uB108',
+    about_label: '\uC18C\uAC1C',
+    about_text: 'Gen-Z \uAC10\uC131\uC758 \uD06C\uB9AC\uC5D0\uC774\uD2F0\uBE0C \uAC1C\uBC1C\uC790\uC785\uB2C8\uB2E4. \uBC1D\uACE0 \uC5D0\uB108\uC9C0 \uB118\uCE58\uB294 \uB514\uC790\uC778\uC73C\uB85C \uB514\uC9C0\uD138 \uC138\uACC4\uC5D0 \uC990\uAC70\uC6C0\uC744 \uB354\uD569\uB2C8\uB2E4.',
+    stat_projects: '50+',
+    stat_projects_label: '\uD504\uB85C\uC81D\uD2B8',
+    stat_clients: '30+',
+    stat_clients_label: '\uD074\uB77C\uC774\uC5B8\uD2B8',
+    stat_years: '5+',
+    stat_years_label: '\uB144',
+    skills_label: '\uD83D\uDD25 \uC2A4\uD0AC',
+    projects_label: '\uD83D\uDE80 \uD504\uB85C\uC81D\uD2B8',
+    project1_name: '\uC18C\uC15C \uD53C\uB4DC',
+    project1_desc: '\uB2E4\uC774\uB098\uBBF9 \uCF58\uD150\uCE20 \uD050\uB808\uC774\uC158\uACFC \uC778\uD130\uB799\uD2F0\uBE0C \uB9AC\uC561\uC158\uC744 \uAC16\uCD98 \uC2E4\uC2DC\uAC04 \uC18C\uC15C \uBBF8\uB514\uC5B4 \uD53C\uB4DC.',
+    project2_name: '\uBBA4\uC9C1 \uBBF9\uC11C',
+    project2_desc: '\uBE44\uD2B8 \uC2DC\uD000\uC2F1\uACFC \uC0AC\uC6B4\uB4DC \uB808\uC774\uC5B4\uB9C1 \uAE30\uB2A5\uC744 \uAC16\uCD98 \uC6F9 \uAE30\uBC18 \uC74C\uC545 \uC81C\uC791 \uB3C4\uAD6C.',
+    project3_name: 'AR \uD544\uD130',
+    project3_desc: '\uC5BC\uAD74 \uCD94\uC801\uACFC 3D \uD6A8\uACFC\uB97C \uD65C\uC6A9\uD55C \uC18C\uC15C \uD50C\uB7AB\uD3FC\uC6A9 \uC99D\uAC15\uD604\uC2E4 \uD544\uD130.',
+    project4_name: '\uBB34\uB4DC \uBCF4\uB4DC',
+    project4_desc: '\uB4DC\uB798\uADF8 \uC564 \uB4DC\uB86D\uACFC \uC2E4\uC2DC\uAC04 \uD3B8\uC9D1 \uAE30\uB2A5\uC744 \uAC16\uCD98 \uD611\uC5C5 \uBB34\uB4DC \uBCF4\uB4DC \uB3C4\uAD6C.',
+    contact_label: '\uD83D\uDCAC \uC5F0\uB77D\uCC98',
+    form_name: '\uC774\uB984',
+    form_email: '\uC774\uBA54\uC77C',
+    form_message: '\uBA54\uC2DC\uC9C0',
+    form_send: '\uBCF4\uB0B4\uAE30 \u2728',
+    footer: '\u00A9 2025 \uD64D\uAE38\uB3D9. Sticker Collage Pop.'
+  },
+  ja: {
+    gallery_link: '\u2190 \u30AE\u30E3\u30E9\u30EA\u30FC',
+    name: '\u30DB\u30F3 \u30AE\u30EB\u30C9\u30F3',
+    title: '\u30AF\u30EA\u30A8\u30A4\u30C6\u30A3\u30D6\u30C7\u30D9\u30ED\u30C3\u30D1\u30FC & \u30C7\u30B6\u30A4\u30CA\u30FC',
+    about_label: '\u7D39\u4ECB',
+    about_text: 'Gen-Z\u611F\u899A\u306E\u30AF\u30EA\u30A8\u30A4\u30C6\u30A3\u30D6\u30C7\u30D9\u30ED\u30C3\u30D1\u30FC\u3067\u3059\u3002\u660E\u308B\u304F\u30A8\u30CD\u30EB\u30AE\u30C3\u30B7\u30E5\u306A\u30C7\u30B6\u30A4\u30F3\u3067\u30C7\u30B8\u30BF\u30EB\u4E16\u754C\u306B\u697D\u3057\u3055\u3092\u52A0\u3048\u307E\u3059\u3002',
+    stat_projects: '50+',
+    stat_projects_label: '\u30D7\u30ED\u30B8\u30A7\u30AF\u30C8',
+    stat_clients: '30+',
+    stat_clients_label: '\u30AF\u30E9\u30A4\u30A2\u30F3\u30C8',
+    stat_years: '5+',
+    stat_years_label: '\u5E74',
+    skills_label: '\uD83D\uDD25 \u30B9\u30AD\u30EB',
+    projects_label: '\uD83D\uDE80 \u30D7\u30ED\u30B8\u30A7\u30AF\u30C8',
+    project1_name: '\u30BD\u30FC\u30B7\u30E3\u30EB\u30D5\u30A3\u30FC\u30C9',
+    project1_desc: '\u30C0\u30A4\u30CA\u30DF\u30C3\u30AF\u30B3\u30F3\u30C6\u30F3\u30C4\u30AD\u30E5\u30EC\u30FC\u30B7\u30E7\u30F3\u3068\u30A4\u30F3\u30BF\u30E9\u30AF\u30C6\u30A3\u30D6\u30EA\u30A2\u30AF\u30B7\u30E7\u30F3\u3092\u5099\u3048\u305F\u30EA\u30A2\u30EB\u30BF\u30A4\u30E0\u30BD\u30FC\u30B7\u30E3\u30EB\u30E1\u30C7\u30A3\u30A2\u30D5\u30A3\u30FC\u30C9\u3002',
+    project2_name: '\u30DF\u30E5\u30FC\u30B8\u30C3\u30AF\u30DF\u30AD\u30B5\u30FC',
+    project2_desc: '\u30D3\u30FC\u30C8\u30B7\u30FC\u30B1\u30F3\u30B7\u30F3\u30B0\u3068\u30B5\u30A6\u30F3\u30C9\u30EC\u30A4\u30E4\u30EA\u30F3\u30B0\u6A5F\u80FD\u3092\u5099\u3048\u305F\u30A6\u30A7\u30D6\u30D9\u30FC\u30B9\u306E\u97F3\u697D\u5236\u4F5C\u30C4\u30FC\u30EB\u3002',
+    project3_name: 'AR\u30D5\u30A3\u30EB\u30BF\u30FC',
+    project3_desc: '\u9854\u8FFD\u8DE1\u30683D\u52B9\u679C\u3092\u6D3B\u7528\u3057\u305F\u30BD\u30FC\u30B7\u30E3\u30EB\u30D7\u30E9\u30C3\u30C8\u30D5\u30A9\u30FC\u30E0\u5411\u3051\u62E1\u5F35\u73FE\u5B9F\u30D5\u30A3\u30EB\u30BF\u30FC\u3002',
+    project4_name: '\u30E0\u30FC\u30C9\u30DC\u30FC\u30C9',
+    project4_desc: '\u30C9\u30E9\u30C3\u30B0\u30A2\u30F3\u30C9\u30C9\u30ED\u30C3\u30D7\u3068\u30EA\u30A2\u30EB\u30BF\u30A4\u30E0\u7DE8\u96C6\u6A5F\u80FD\u3092\u5099\u3048\u305F\u30B3\u30E9\u30DC\u30EC\u30FC\u30B7\u30E7\u30F3\u30E0\u30FC\u30C9\u30DC\u30FC\u30C9\u30C4\u30FC\u30EB\u3002',
+    contact_label: '\uD83D\uDCAC \u304A\u554F\u3044\u5408\u308F\u305B',
+    form_name: '\u304A\u540D\u524D',
+    form_email: '\u30E1\u30FC\u30EB',
+    form_message: '\u30E1\u30C3\u30BB\u30FC\u30B8',
+    form_send: '\u9001\u4FE1 \u2728',
+    footer: '\u00A9 2025 \u30DB\u30F3 \u30AE\u30EB\u30C9\u30F3. Sticker Collage Pop.'
+  },
+  zh: {
+    gallery_link: '\u2190 \u753B\u5ECA',
+    name: '\u6D2A\u5409\u7AE5',
+    title: '\u521B\u610F\u5F00\u53D1\u8005 & \u8BBE\u8BA1\u5E08',
+    about_label: '\u5173\u4E8E',
+    about_text: '\u6211\u662F\u4E00\u4F4D\u5177\u6709Gen-Z\u611F\u89C9\u7684\u521B\u610F\u5F00\u53D1\u8005\u3002\u901A\u8FC7\u660E\u4EAE\u800C\u5145\u6EE1\u6D3B\u529B\u7684\u8BBE\u8BA1\u4E3A\u6570\u5B57\u4E16\u754C\u589E\u6DFB\u4E50\u8DA3\u3002',
+    stat_projects: '50+',
+    stat_projects_label: '\u9879\u76EE',
+    stat_clients: '30+',
+    stat_clients_label: '\u5BA2\u6237',
+    stat_years: '5+',
+    stat_years_label: '\u5E74',
+    skills_label: '\uD83D\uDD25 \u6280\u80FD',
+    projects_label: '\uD83D\uDE80 \u9879\u76EE',
+    project1_name: '\u793E\u4EA4\u52A8\u6001',
+    project1_desc: '\u5177\u6709\u52A8\u6001\u5185\u5BB9\u7B56\u5C55\u548C\u4E92\u52A8\u53CD\u5E94\u7684\u5B9E\u65F6\u793E\u4EA4\u5A92\u4F53\u52A8\u6001\u3002',
+    project2_name: '\u97F3\u4E50\u6DF7\u97F3\u5668',
+    project2_desc: '\u5177\u6709\u8282\u62CD\u5E8F\u5217\u548C\u97F3\u9891\u5206\u5C42\u529F\u80FD\u7684\u7F51\u9875\u97F3\u4E50\u521B\u4F5C\u5DE5\u5177\u3002',
+    project3_name: 'AR\u6EE4\u955C',
+    project3_desc: '\u5229\u7528\u9762\u90E8\u8FFD\u8E2A\u548C3D\u6548\u679C\u7684\u793E\u4EA4\u5E73\u53F0\u589E\u5F3A\u73B0\u5B9E\u6EE4\u955C\u3002',
+    project4_name: '\u60C5\u7EEA\u677F',
+    project4_desc: '\u5177\u6709\u62D6\u653E\u548C\u5B9E\u65F6\u7F16\u8F91\u529F\u80FD\u7684\u534F\u4F5C\u60C5\u7EEA\u677F\u5DE5\u5177\u3002',
+    contact_label: '\uD83D\uDCAC \u8054\u7CFB',
+    form_name: '\u59D3\u540D',
+    form_email: '\u90AE\u7BB1',
+    form_message: '\u6D88\u606F',
+    form_send: '\u53D1\u9001 \u2728',
+    footer: '\u00A9 2025 \u6D2A\u5409\u7AE5. Sticker Collage Pop.'
+  }
+};
+
+/* ===== i18n ===== */
+var currentLang = 'en';
+
+function setLanguage(lang) {
+  currentLang = lang;
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    if (TRANSLATIONS[lang] && TRANSLATIONS[lang][key]) {
+      el.textContent = TRANSLATIONS[lang][key];
+    }
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n-placeholder');
+    if (TRANSLATIONS[lang] && TRANSLATIONS[lang][key]) {
+      el.placeholder = TRANSLATIONS[lang][key];
+    }
+  });
+  document.querySelectorAll('.lang-btn').forEach(function(btn) {
+    btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+  });
+}
+
+document.querySelectorAll('.lang-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    setLanguage(this.getAttribute('data-lang'));
+  });
+});
+
+/* ===== IntersectionObserver: sticker slap animation ===== */
+var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+if (prefersReducedMotion) {
+  document.querySelectorAll('.sticker-card').forEach(function(card) {
+    card.style.opacity = '1';
+    card.style.transform = 'none';
+  });
+} else {
+  var stickerObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry, index) {
+      if (entry.isIntersecting) {
+        var delay = Array.prototype.indexOf.call(
+          document.querySelectorAll('.sticker-card'),
+          entry.target
+        ) * 100;
+        setTimeout(function() {
+          entry.target.classList.add('visible');
+        }, delay);
+        stickerObserver.unobserve(entry.target);
+      }
+    });
+  }, {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  });
+
+  document.querySelectorAll('.sticker-card').forEach(function(card) {
+    stickerObserver.observe(card);
+  });
+}
+</script>
+</body>
+</html>

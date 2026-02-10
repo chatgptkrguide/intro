@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio - Gradient Mesh Minimal</title>
+<meta name="description" content="Ultra-clean minimalist portfolio with gradient mesh accents">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #FAFAFA;
+  --card-bg: #FFFFFF;
+  --text-primary: #111111;
+  --text-secondary: #666666;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.1);
+  --radius: 16px;
+  --heading: 'Instrument Sans', 'Inter', -apple-system, Helvetica, sans-serif;
+  --body: 'Inter', -apple-system, Helvetica, Arial, sans-serif;
+  --purple: #a78bfa;
+  --blue: #60a5fa;
+  --green: #34d399;
+  --max-width: 1200px;
+  --section-gap: 120px;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--body);
+  font-weight: 300;
+  overflow-x: hidden;
+  line-height: 1.7;
+}
+
+/* Gallery Link */
+.gallery-link {
+  position: fixed;
+  top: 2rem;
+  left: 2.5rem;
+  z-index: 100;
+  font-family: var(--body);
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.gallery-link:hover {
+  color: var(--text-primary);
+}
+
+/* Language Switcher */
+.lang-switcher {
+  position: fixed;
+  top: 2rem;
+  right: 2.5rem;
+  z-index: 100;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.lang-btn {
+  background: none;
+  border: none;
+  font-family: var(--body);
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  transition: color 0.3s ease;
+}
+
+.lang-btn:hover,
+.lang-btn.active {
+  color: var(--text-primary);
+}
+
+/* Main Container */
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 80px;
+}
+
+/* Gradient Mesh Blobs */
+.blob {
+  position: absolute;
+  border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+  filter: blur(60px);
+  opacity: 0.3;
+  pointer-events: none;
+  z-index: 0;
+  will-change: border-radius;
+}
+
+.blob-1 {
+  width: 400px;
+  height: 400px;
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  animation: blobMorph1 12s ease-in-out infinite;
+}
+
+.blob-2 {
+  width: 350px;
+  height: 350px;
+  background: linear-gradient(135deg, var(--blue), var(--green));
+  animation: blobMorph2 14s ease-in-out infinite;
+}
+
+.blob-3 {
+  width: 300px;
+  height: 300px;
+  background: linear-gradient(135deg, var(--green), var(--purple));
+  animation: blobMorph3 10s ease-in-out infinite;
+}
+
+.blob-4 {
+  width: 500px;
+  height: 500px;
+  background: linear-gradient(135deg, var(--purple), var(--green));
+  animation: blobMorph1 16s ease-in-out infinite reverse;
+}
+
+.blob-5 {
+  width: 320px;
+  height: 320px;
+  background: linear-gradient(135deg, var(--blue), var(--purple));
+  animation: blobMorph2 11s ease-in-out infinite;
+}
+
+@keyframes blobMorph1 {
+  0%, 100% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+  25% { border-radius: 58% 42% 40% 60% / 50% 62% 38% 50%; }
+  50% { border-radius: 50% 50% 33% 67% / 55% 27% 73% 45%; }
+  75% { border-radius: 33% 67% 58% 42% / 63% 38% 62% 37%; }
+}
+
+@keyframes blobMorph2 {
+  0%, 100% { border-radius: 40% 60% 60% 40% / 60% 40% 60% 40%; }
+  25% { border-radius: 60% 40% 30% 70% / 40% 50% 50% 60%; }
+  50% { border-radius: 30% 70% 50% 50% / 70% 30% 50% 50%; }
+  75% { border-radius: 50% 50% 70% 30% / 30% 70% 40% 60%; }
+}
+
+@keyframes blobMorph3 {
+  0%, 100% { border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%; }
+  33% { border-radius: 65% 35% 45% 55% / 35% 65% 55% 45%; }
+  66% { border-radius: 35% 65% 55% 45% / 65% 35% 45% 55%; }
+}
+
+/* Sections */
+section {
+  position: relative;
+  padding: var(--section-gap) 0;
+}
+
+/* Fade animation */
+.fade-up {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Hero */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.hero-inner {
+  position: relative;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 2rem;
+}
+
+.hero-text {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-text h1 {
+  font-family: var(--heading);
+  font-size: 4.5rem;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  margin-bottom: 1.5rem;
+}
+
+.hero-text p {
+  font-size: 1.25rem;
+  font-weight: 300;
+  color: var(--text-secondary);
+  max-width: 480px;
+  line-height: 1.8;
+}
+
+.hero-blob-area {
+  position: relative;
+  height: 500px;
+}
+
+.hero-blob-area .blob {
+  position: absolute;
+}
+
+.hero-blob-area .blob-1 {
+  top: 10%;
+  right: 0;
+}
+
+.hero-blob-area .blob-2 {
+  bottom: 10%;
+  right: 20%;
+}
+
+/* About */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+}
+
+.about-text h2 {
+  font-family: var(--heading);
+  font-size: 2.5rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-bottom: 1.5rem;
+}
+
+.about-text p {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  margin-bottom: 2rem;
+  max-width: 480px;
+}
+
+.about-stats {
+  display: flex;
+  gap: 2rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 400;
+}
+
+.about-stats span {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.about-blob-area {
+  position: relative;
+  height: 400px;
+}
+
+.about-blob-area .blob-3 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Skills */
+.skills-section h2 {
+  font-family: var(--heading);
+  font-size: 2.5rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-bottom: 3rem;
+}
+
+.skills-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.skill-pill {
+  position: relative;
+  padding: 0.75rem 1.75rem;
+  background: var(--card-bg);
+  border-radius: 100px;
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: var(--text-primary);
+  box-shadow: var(--shadow);
+  cursor: default;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+}
+
+.skill-pill::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%) scaleX(0);
+  width: 60%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--purple), var(--blue), var(--green));
+  border-radius: 2px;
+  transition: transform 0.3s ease;
+}
+
+.skill-pill:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+.skill-pill:hover::after {
+  transform: translateX(-50%) scaleX(1);
+}
+
+/* Projects */
+.projects-section h2 {
+  font-family: var(--heading);
+  font-size: 2.5rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-bottom: 3rem;
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.project-card {
+  position: relative;
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 2.5rem;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  min-height: 240px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.project-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+}
+
+.project-card .card-blob {
+  position: absolute;
+  top: -60px;
+  right: -60px;
+  width: 200px;
+  height: 200px;
+  border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+  filter: blur(40px);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+
+.project-card:hover .card-blob {
+  opacity: 0.25;
+}
+
+.project-card:nth-child(1) .card-blob {
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+}
+
+.project-card:nth-child(2) .card-blob {
+  background: linear-gradient(135deg, var(--blue), var(--green));
+}
+
+.project-card:nth-child(3) .card-blob {
+  background: linear-gradient(135deg, var(--green), var(--purple));
+}
+
+.project-card:nth-child(4) .card-blob {
+  background: linear-gradient(135deg, var(--purple), var(--green));
+}
+
+.project-card .glass-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius);
+}
+
+.project-card:hover .glass-overlay {
+  opacity: 1;
+}
+
+.glass-overlay span {
+  font-family: var(--heading);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  letter-spacing: 0.05em;
+}
+
+.project-card h3 {
+  font-family: var(--heading);
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.project-card p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* Contact */
+.contact-section {
+  text-align: center;
+}
+
+.contact-section h2 {
+  font-family: var(--heading);
+  font-size: 2.5rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-bottom: 1rem;
+}
+
+.contact-section > p {
+  color: var(--text-secondary);
+  margin-bottom: 3rem;
+  font-size: 1.05rem;
+}
+
+.contact-wrapper {
+  position: relative;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.contact-wrapper .blob-5 {
+  position: absolute;
+  top: -80px;
+  right: -160px;
+}
+
+.contact-form {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 12px;
+  background: var(--card-bg);
+  font-family: var(--body);
+  font-size: 0.95rem;
+  font-weight: 300;
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.contact-form input::placeholder,
+.contact-form textarea::placeholder {
+  color: #aaa;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+  border-color: var(--purple);
+  box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.1);
+}
+
+.contact-form textarea {
+  resize: vertical;
+  min-height: 140px;
+}
+
+.contact-form button {
+  padding: 1rem 2rem;
+  background: var(--text-primary);
+  color: var(--bg);
+  border: none;
+  border-radius: 12px;
+  font-family: var(--body);
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.contact-form button:hover {
+  opacity: 0.85;
+  transform: translateY(-2px);
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 3rem 0;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .fade-up {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .blob {
+    animation: none !important;
+  }
+
+  .skill-pill,
+  .project-card,
+  .contact-form button,
+  .contact-form input,
+  .contact-form textarea {
+    transition: none;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1.5rem;
+  }
+
+  :root {
+    --section-gap: 80px;
+  }
+
+  .gallery-link {
+    top: 1.25rem;
+    left: 1.5rem;
+  }
+
+  .lang-switcher {
+    top: 1.25rem;
+    right: 1.5rem;
+  }
+
+  .hero-text h1 {
+    font-size: 2.75rem;
+  }
+
+  .hero-inner {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-blob-area {
+    display: none;
+  }
+
+  .about-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .about-blob-area {
+    height: 200px;
+  }
+
+  .about-stats {
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .projects-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .about-text h2,
+  .skills-section h2,
+  .projects-section h2,
+  .contact-section h2 {
+    font-size: 2rem;
+  }
+
+  .contact-wrapper .blob-5 {
+    display: none;
+  }
+}
+
+@media (max-width: 375px) {
+  .hero-text h1 {
+    font-size: 2.25rem;
+  }
+
+  .container {
+    padding: 0 1.25rem;
+  }
+
+  .skill-pill {
+    padding: 0.6rem 1.25rem;
+    font-size: 0.85rem;
+  }
+}
+</style>
+</head>
+<body>
+
+<a href="../index.html" class="gallery-link" data-i18n="gallery_link">&larr; Gallery</a>
+
+<div class="lang-switcher">
+  <button class="lang-btn active" data-lang="en">EN</button>
+  <button class="lang-btn" data-lang="ko">KO</button>
+  <button class="lang-btn" data-lang="ja">JA</button>
+  <button class="lang-btn" data-lang="zh">ZH</button>
+</div>
+
+<main>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-inner">
+        <div class="hero-text fade-up">
+          <h1 data-i18n="name">Gildong Hong</h1>
+          <p data-i18n="title">Creative Developer & Designer</p>
+        </div>
+        <div class="hero-blob-area">
+          <div class="blob blob-1"></div>
+          <div class="blob blob-2"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section class="about-section">
+    <div class="container">
+      <div class="about-grid fade-up">
+        <div class="about-text">
+          <h2 data-i18n="about_title">About</h2>
+          <p data-i18n="about_text">A creative developer pursuing a minimal and refined design philosophy. I craft elegant digital experiences with gradient mesh aesthetics and clean typography.</p>
+          <div class="about-stats">
+            <div><span>5+</span> <span data-i18n="stat_years">years</span></div>
+            <div><span>50+</span> <span data-i18n="stat_projects">projects</span></div>
+            <div><span>30+</span> <span data-i18n="stat_clients">clients</span></div>
+          </div>
+        </div>
+        <div class="about-blob-area">
+          <div class="blob blob-3"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills -->
+  <section class="skills-section">
+    <div class="container">
+      <h2 class="fade-up" data-i18n="skills_title">Skills</h2>
+      <div class="skills-grid fade-up">
+        <div class="skill-pill">React</div>
+        <div class="skill-pill">TypeScript</div>
+        <div class="skill-pill">Node.js</div>
+        <div class="skill-pill">Python</div>
+        <div class="skill-pill">Figma</div>
+        <div class="skill-pill">UI/UX</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects -->
+  <section class="projects-section">
+    <div class="container">
+      <h2 class="fade-up" data-i18n="projects_title">Projects</h2>
+      <div class="projects-grid fade-up">
+        <div class="project-card">
+          <div class="card-blob"></div>
+          <div class="glass-overlay"><span data-i18n="view_project">View Project</span></div>
+          <h3 data-i18n="project1_name">Design System</h3>
+          <p data-i18n="project1_desc">Scalable component library with consistent design tokens.</p>
+        </div>
+        <div class="project-card">
+          <div class="card-blob"></div>
+          <div class="glass-overlay"><span data-i18n="view_project">View Project</span></div>
+          <h3 data-i18n="project2_name">Portfolio Builder</h3>
+          <p data-i18n="project2_desc">Drag-and-drop portfolio creation platform.</p>
+        </div>
+        <div class="project-card">
+          <div class="card-blob"></div>
+          <div class="glass-overlay"><span data-i18n="view_project">View Project</span></div>
+          <h3 data-i18n="project3_name">UI Library</h3>
+          <p data-i18n="project3_desc">Open-source React component library with accessibility.</p>
+        </div>
+        <div class="project-card">
+          <div class="card-blob"></div>
+          <div class="glass-overlay"><span data-i18n="view_project">View Project</span></div>
+          <h3 data-i18n="project4_name">Brand Studio</h3>
+          <p data-i18n="project4_desc">AI-powered brand identity generation tool.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section class="contact-section">
+    <div class="container">
+      <h2 class="fade-up" data-i18n="contact_title">Contact</h2>
+      <p class="fade-up" data-i18n="contact_text">Let's create something beautiful together.</p>
+      <div class="contact-wrapper fade-up">
+        <div class="blob blob-5"></div>
+        <form class="contact-form" onsubmit="return false;">
+          <input type="text" data-i18n-placeholder="form_name" placeholder="Name" required>
+          <input type="email" data-i18n-placeholder="form_email" placeholder="Email" required>
+          <textarea data-i18n-placeholder="form_message" placeholder="Message" required></textarea>
+          <button type="submit" data-i18n="form_submit">Send Message</button>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container">
+    <p>&copy; 2025 Gildong Hong. All rights reserved.</p>
+  </div>
+</footer>
+
+<script>
+const TRANSLATIONS = {
+  en: {
+    gallery_link: "\u2190 Gallery",
+    name: "Gildong Hong",
+    title: "Creative Developer & Designer",
+    about_title: "About",
+    about_text: "A creative developer pursuing a minimal and refined design philosophy. I craft elegant digital experiences with gradient mesh aesthetics and clean typography.",
+    stat_years: "years",
+    stat_projects: "projects",
+    stat_clients: "clients",
+    skills_title: "Skills",
+    projects_title: "Projects",
+    project1_name: "Design System",
+    project1_desc: "Scalable component library with consistent design tokens.",
+    project2_name: "Portfolio Builder",
+    project2_desc: "Drag-and-drop portfolio creation platform.",
+    project3_name: "UI Library",
+    project3_desc: "Open-source React component library with accessibility.",
+    project4_name: "Brand Studio",
+    project4_desc: "AI-powered brand identity generation tool.",
+    view_project: "View Project",
+    contact_title: "Contact",
+    contact_text: "Let's create something beautiful together.",
+    form_name: "Name",
+    form_email: "Email",
+    form_message: "Message",
+    form_submit: "Send Message"
+  },
+  ko: {
+    gallery_link: "\u2190 \uac24\ub7ec\ub9ac",
+    name: "\ud64d\uae38\ub3d9",
+    title: "\ud06c\ub9ac\uc5d0\uc774\ud2f0\ube0c \uac1c\ubc1c\uc790 & \ub514\uc790\uc774\ub108",
+    about_title: "\uc18c\uac1c",
+    about_text: "\ubbf8\ub2c8\ub9d0\ud558\uace0 \uc138\ub828\ub41c \ub514\uc790\uc778 \ucca0\ud559\uc744 \ucd94\uad6c\ud558\ub294 \ud06c\ub9ac\uc5d0\uc774\ud2f0\ube0c \uac1c\ubc1c\uc790\uc785\ub2c8\ub2e4. \uadf8\ub798\ub514\uc5b8\ud2b8 \uba54\uc2dc\uc640 \uae54\ub054\ud55c \ud0c0\uc774\ud3ec\uadf8\ub798\ud53c\ub85c \uc6b0\uc544\ud55c \ub514\uc9c0\ud138 \uacbd\ud5d8\uc744 \ub9cc\ub4ed\ub2c8\ub2e4.",
+    stat_years: "\ub144",
+    stat_projects: "\ud504\ub85c\uc81d\ud2b8",
+    stat_clients: "\ud074\ub77c\uc774\uc5b8\ud2b8",
+    skills_title: "\uae30\uc220",
+    projects_title: "\ud504\ub85c\uc81d\ud2b8",
+    project1_name: "\ub514\uc790\uc778 \uc2dc\uc2a4\ud15c",
+    project1_desc: "\uc77c\uad00\ub41c \ub514\uc790\uc778 \ud1a0\ud070\uc744 \uac16\ucda4 \ud655\uc7a5 \uac00\ub2a5\ud55c \ucef4\ud3ec\ub10c\ud2b8 \ub77c\uc774\ube0c\ub7ec\ub9ac.",
+    project2_name: "\ud3ec\ud2b8\ud3f4\ub9ac\uc624 \ube4c\ub354",
+    project2_desc: "\ub4dc\ub798\uadf8 \uc564 \ub4dc\ub86d \ud3ec\ud2b8\ud3f4\ub9ac\uc624 \uc81c\uc791 \ud50c\ub7ab\ud3fc.",
+    project3_name: "UI \ub77c\uc774\ube0c\ub7ec\ub9ac",
+    project3_desc: "\uc811\uadfc\uc131\uc744 \uac16\ucda4 \uc624\ud508\uc18c\uc2a4 React \ucef4\ud3ec\ub10c\ud2b8 \ub77c\uc774\ube0c\ub7ec\ub9ac.",
+    project4_name: "\ube0c\ub79c\ub4dc \uc2a4\ud29c\ub514\uc624",
+    project4_desc: "AI \uae30\ubc18 \ube0c\ub79c\ub4dc \uc544\uc774\ub374\ud2f0\ud2f0 \uc0dd\uc131 \ub3c4\uad6c.",
+    view_project: "\ud504\ub85c\uc81d\ud2b8 \ubcf4\uae30",
+    contact_title: "\uc5f0\ub77d\ud558\uae30",
+    contact_text: "\ud568\uaed8 \uc544\ub984\ub2e4\uc6b4 \uac83\uc744 \ub9cc\ub4e4\uc5b4 \ubcf4\uc138\uc694.",
+    form_name: "\uc774\ub984",
+    form_email: "\uc774\uba54\uc77c",
+    form_message: "\uba54\uc2dc\uc9c0",
+    form_submit: "\uba54\uc2dc\uc9c0 \ubcf4\ub0b4\uae30"
+  },
+  ja: {
+    gallery_link: "\u2190 \u30ae\u30e3\u30e9\u30ea\u30fc",
+    name: "\u30db\u30f3 \u30ae\u30eb\u30c9\u30f3",
+    title: "\u30af\u30ea\u30a8\u30a4\u30c6\u30a3\u30d6\u30c7\u30d9\u30ed\u30c3\u30d1\u30fc & \u30c7\u30b6\u30a4\u30ca\u30fc",
+    about_title: "\u7d39\u4ecb",
+    about_text: "\u30df\u30cb\u30de\u30eb\u3067\u6d17\u7df4\u3055\u308c\u305f\u30c7\u30b6\u30a4\u30f3\u54f2\u5b66\u3092\u8ffd\u6c42\u3059\u308b\u30af\u30ea\u30a8\u30a4\u30c6\u30a3\u30d6\u30c7\u30d9\u30ed\u30c3\u30d1\u30fc\u3067\u3059\u3002\u30b0\u30e9\u30c7\u30fc\u30b7\u30e7\u30f3\u30e1\u30c3\u30b7\u30e5\u3068\u30af\u30ea\u30fc\u30f3\u306a\u30bf\u30a4\u30dd\u30b0\u30e9\u30d5\u30a3\u3067\u512a\u96c5\u306a\u30c7\u30b8\u30bf\u30eb\u4f53\u9a13\u3092\u5275\u308a\u51fa\u3057\u307e\u3059\u3002",
+    stat_years: "\u5e74",
+    stat_projects: "\u30d7\u30ed\u30b8\u30a7\u30af\u30c8",
+    stat_clients: "\u30af\u30e9\u30a4\u30a2\u30f3\u30c8",
+    skills_title: "\u30b9\u30ad\u30eb",
+    projects_title: "\u30d7\u30ed\u30b8\u30a7\u30af\u30c8",
+    project1_name: "\u30c7\u30b6\u30a4\u30f3\u30b7\u30b9\u30c6\u30e0",
+    project1_desc: "\u4e00\u8cab\u3057\u305f\u30c7\u30b6\u30a4\u30f3\u30c8\u30fc\u30af\u30f3\u3092\u6301\u3064\u62e1\u5f35\u53ef\u80fd\u306a\u30b3\u30f3\u30dd\u30fc\u30cd\u30f3\u30c8\u30e9\u30a4\u30d6\u30e9\u30ea\u3002",
+    project2_name: "\u30dd\u30fc\u30c8\u30d5\u30a9\u30ea\u30aa\u30d3\u30eb\u30c0\u30fc",
+    project2_desc: "\u30c9\u30e9\u30c3\u30b0\uff06\u30c9\u30ed\u30c3\u30d7\u30dd\u30fc\u30c8\u30d5\u30a9\u30ea\u30aa\u4f5c\u6210\u30d7\u30e9\u30c3\u30c8\u30d5\u30a9\u30fc\u30e0\u3002",
+    project3_name: "UI\u30e9\u30a4\u30d6\u30e9\u30ea",
+    project3_desc: "\u30a2\u30af\u30bb\u30b7\u30d3\u30ea\u30c6\u30a3\u5bfe\u5fdc\u306e\u30aa\u30fc\u30d7\u30f3\u30bd\u30fc\u30b9React\u30b3\u30f3\u30dd\u30fc\u30cd\u30f3\u30c8\u30e9\u30a4\u30d6\u30e9\u30ea\u3002",
+    project4_name: "\u30d6\u30e9\u30f3\u30c9\u30b9\u30bf\u30b8\u30aa",
+    project4_desc: "AI\u642d\u8f09\u30d6\u30e9\u30f3\u30c9\u30a2\u30a4\u30c7\u30f3\u30c6\u30a3\u30c6\u30a3\u751f\u6210\u30c4\u30fc\u30eb\u3002",
+    view_project: "\u30d7\u30ed\u30b8\u30a7\u30af\u30c8\u3092\u898b\u308b",
+    contact_title: "\u304a\u554f\u3044\u5408\u308f\u305b",
+    contact_text: "\u4e00\u7dd2\u306b\u7f8e\u3057\u3044\u3082\u306e\u3092\u4f5c\u308a\u307e\u3057\u3087\u3046\u3002",
+    form_name: "\u304a\u540d\u524d",
+    form_email: "\u30e1\u30fc\u30eb",
+    form_message: "\u30e1\u30c3\u30bb\u30fc\u30b8",
+    form_submit: "\u30e1\u30c3\u30bb\u30fc\u30b8\u3092\u9001\u4fe1"
+  },
+  zh: {
+    gallery_link: "\u2190 \u753b\u5eca",
+    name: "\u6d2a\u5409\u7ae5",
+    title: "\u521b\u610f\u5f00\u53d1\u8005 & \u8bbe\u8ba1\u5e08",
+    about_title: "\u5173\u4e8e",
+    about_text: "\u4e00\u4f4d\u8ffd\u6c42\u6781\u7b80\u7cbe\u81f4\u8bbe\u8ba1\u54f2\u5b66\u7684\u521b\u610f\u5f00\u53d1\u8005\u3002\u901a\u8fc7\u6e10\u53d8\u7f51\u683c\u548c\u5e72\u51c0\u7684\u6392\u7248\u6253\u9020\u4f18\u96c5\u7684\u6570\u5b57\u4f53\u9a8c\u3002",
+    stat_years: "\u5e74",
+    stat_projects: "\u9879\u76ee",
+    stat_clients: "\u5ba2\u6237",
+    skills_title: "\u6280\u80fd",
+    projects_title: "\u9879\u76ee",
+    project1_name: "\u8bbe\u8ba1\u7cfb\u7edf",
+    project1_desc: "\u5177\u6709\u4e00\u81f4\u8bbe\u8ba1\u4ee4\u724c\u7684\u53ef\u6269\u5c55\u7ec4\u4ef6\u5e93\u3002",
+    project2_name: "\u4f5c\u54c1\u96c6\u751f\u6210\u5668",
+    project2_desc: "\u62d6\u653e\u5f0f\u4f5c\u54c1\u96c6\u521b\u5efa\u5e73\u53f0\u3002",
+    project3_name: "UI\u7ec4\u4ef6\u5e93",
+    project3_desc: "\u652f\u6301\u65e0\u969c\u788d\u8bbf\u95ee\u7684\u5f00\u6e90React\u7ec4\u4ef6\u5e93\u3002",
+    project4_name: "\u54c1\u724c\u5de5\u4f5c\u5ba4",
+    project4_desc: "AI\u9a71\u52a8\u7684\u54c1\u724c\u8eab\u4efd\u751f\u6210\u5de5\u5177\u3002",
+    view_project: "\u67e5\u770b\u9879\u76ee",
+    contact_title: "\u8054\u7cfb\u6211",
+    contact_text: "\u8ba9\u6211\u4eec\u4e00\u8d77\u521b\u9020\u7f8e\u4e3d\u7684\u4e8b\u7269\u3002",
+    form_name: "\u59d3\u540d",
+    form_email: "\u90ae\u7bb1",
+    form_message: "\u6d88\u606f",
+    form_submit: "\u53d1\u9001\u6d88\u606f"
+  }
+};
+
+let currentLang = 'en';
+
+function setLanguage(lang) {
+  currentLang = lang;
+  const t = TRANSLATIONS[lang];
+  if (!t) return;
+
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    if (t[key]) el.textContent = t[key];
+  });
+
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n-placeholder');
+    if (t[key]) el.placeholder = t[key];
+  });
+
+  document.querySelectorAll('.lang-btn').forEach(function(btn) {
+    btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+  });
+
+  document.documentElement.lang = lang;
+}
+
+document.querySelectorAll('.lang-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    setLanguage(this.getAttribute('data-lang'));
+  });
+});
+
+// IntersectionObserver for fade-up
+var observer = new IntersectionObserver(function(entries) {
+  entries.forEach(function(entry) {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, {
+  threshold: 0.15,
+  rootMargin: '0px 0px -40px 0px'
+});
+
+document.querySelectorAll('.fade-up').forEach(function(el) {
+  observer.observe(el);
+});
+</script>
+</body>
+</html>

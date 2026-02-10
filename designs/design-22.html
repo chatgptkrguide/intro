@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio - Duotone Halftone</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --cream: #FFF8E8;
+  --coral: #E8524A;
+  --deep-blue: #1B3A5C;
+  --text: #2a2a2a;
+  --text-light: #5a5a5a;
+  --halftone-size: 8px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Space Mono', monospace;
+  background: var(--cream);
+  color: var(--text);
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* Navigation */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 32px;
+  background: rgba(255, 248, 232, 0.9);
+  backdrop-filter: blur(8px);
+  border-bottom: 2px solid var(--deep-blue);
+  transition: padding 0.3s;
+}
+
+.nav.scrolled {
+  padding: 12px 32px;
+  box-shadow: 4px 4px 0 var(--coral);
+}
+
+.gallery-link {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--deep-blue);
+  text-decoration: none;
+  border: 2px solid var(--deep-blue);
+  padding: 6px 16px;
+  border-radius: 4px;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.gallery-link:hover {
+  background: var(--deep-blue);
+  color: var(--cream);
+  box-shadow: 3px 3px 0 var(--coral);
+}
+
+.lang-switcher {
+  display: flex;
+  gap: 6px;
+}
+
+.lang-btn {
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border: 2px solid var(--deep-blue);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--deep-blue);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.lang-btn:hover {
+  background: var(--deep-blue);
+  color: var(--cream);
+}
+
+.lang-btn.active {
+  background: var(--coral);
+  color: var(--cream);
+  border-color: var(--coral);
+}
+
+/* Masonry layout */
+.masonry {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 100px 24px 60px;
+  column-count: 3;
+  column-gap: 24px;
+}
+
+/* Cards */
+.card {
+  break-inside: avoid;
+  margin-bottom: 24px;
+  background: var(--cream);
+  border: 2px solid var(--deep-blue);
+  border-radius: 4px;
+  padding: 28px;
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease, box-shadow 0.3s;
+}
+
+.card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.card:hover {
+  box-shadow: 6px 6px 0 var(--coral), -2px -2px 0 var(--deep-blue);
+}
+
+/* Card rotations */
+.card:nth-child(4n+1) {
+  transform: rotate(-2deg) translateY(30px);
+}
+
+.card:nth-child(4n+2) {
+  transform: rotate(1deg) translateY(30px);
+}
+
+.card:nth-child(4n+3) {
+  transform: rotate(-1deg) translateY(30px);
+}
+
+.card:nth-child(4n+4) {
+  transform: rotate(2deg) translateY(30px);
+}
+
+.card.visible:nth-child(4n+1) {
+  transform: rotate(-2deg) translateY(0);
+}
+
+.card.visible:nth-child(4n+2) {
+  transform: rotate(1deg) translateY(0);
+}
+
+.card.visible:nth-child(4n+3) {
+  transform: rotate(-1deg) translateY(0);
+}
+
+.card.visible:nth-child(4n+4) {
+  transform: rotate(2deg) translateY(0);
+}
+
+/* Halftone dot pattern overlay */
+.halftone-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle, var(--deep-blue) 1px, transparent 1px);
+  background-size: var(--halftone-size) var(--halftone-size);
+  opacity: 0.04;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.halftone-coral {
+  background: radial-gradient(circle, var(--coral) 1px, transparent 1px);
+  background-size: var(--halftone-size) var(--halftone-size);
+}
+
+/* Registration marks */
+.reg-mark {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  opacity: 0.15;
+}
+
+.reg-mark::before,
+.reg-mark::after {
+  content: '';
+  position: absolute;
+}
+
+.reg-mark::before {
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--deep-blue);
+}
+
+.reg-mark::after {
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--deep-blue);
+}
+
+.reg-mark-tl {
+  top: 8px;
+  left: 8px;
+}
+
+.reg-mark-br {
+  bottom: 8px;
+  right: 8px;
+}
+
+/* Hero card */
+.card-hero {
+  padding: 48px 32px;
+  background: var(--deep-blue);
+  color: var(--cream);
+  text-align: center;
+  position: relative;
+}
+
+.card-hero .halftone-bg {
+  background: radial-gradient(circle, var(--coral) 1.5px, transparent 1.5px);
+  background-size: 10px 10px;
+  opacity: 0.12;
+}
+
+.hero-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 48px;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 1;
+  text-shadow: 3px 3px 0 var(--coral);
+}
+
+.hero-title {
+  font-family: 'Space Mono', monospace;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  position: relative;
+  z-index: 1;
+  color: rgba(255, 248, 232, 0.8);
+}
+
+.hero-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--coral);
+}
+
+.hero-dot:nth-child(2) {
+  background: var(--cream);
+}
+
+.hero-dot:nth-child(3) {
+  background: var(--coral);
+  opacity: 0.5;
+}
+
+/* Overprint effect */
+.overprint {
+  position: relative;
+}
+
+.overprint::before {
+  content: attr(data-text);
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  color: var(--coral);
+  opacity: 0.3;
+  mix-blend-mode: multiply;
+  z-index: 0;
+}
+
+/* Section labels */
+.section-label {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--coral);
+  margin-bottom: 16px;
+  padding: 4px 12px;
+  border: 2px solid var(--coral);
+  border-radius: 4px;
+  display: inline-block;
+}
+
+/* About card */
+.about-text {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text-light);
+  position: relative;
+  z-index: 1;
+}
+
+.about-stats {
+  display: flex;
+  gap: 16px;
+  margin-top: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.stat-item {
+  text-align: center;
+  flex: 1;
+  padding: 12px 8px;
+  border: 1px solid rgba(27, 58, 92, 0.15);
+  border-radius: 4px;
+  position: relative;
+}
+
+.stat-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--deep-blue);
+  display: block;
+  position: relative;
+}
+
+.stat-num::after {
+  content: attr(data-num);
+  position: absolute;
+  top: 2px;
+  left: calc(50% + 2px);
+  transform: translateX(-50%);
+  color: var(--coral);
+  opacity: 0.2;
+  mix-blend-mode: multiply;
+}
+
+.stat-desc {
+  font-size: 11px;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 4px;
+}
+
+/* Skill cards */
+.card-skill {
+  padding: 24px;
+  position: relative;
+}
+
+.card-skill .halftone-bg {
+  opacity: 0.06;
+}
+
+.card-skill:nth-child(odd) .halftone-bg {
+  background: radial-gradient(circle, var(--coral) 1px, transparent 1px);
+  background-size: 6px 6px;
+}
+
+.card-skill:nth-child(even) .halftone-bg {
+  background: radial-gradient(circle, var(--deep-blue) 1px, transparent 1px);
+  background-size: 10px 10px;
+}
+
+.skill-icon {
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--deep-blue);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 16px;
+  color: var(--deep-blue);
+  position: relative;
+  z-index: 1;
+}
+
+.skill-icon::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  right: -3px;
+  bottom: -3px;
+  border: 2px solid var(--coral);
+  border-radius: 4px;
+  z-index: -1;
+}
+
+.skill-name {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--deep-blue);
+  margin-bottom: 4px;
+  position: relative;
+  z-index: 1;
+}
+
+.skill-tech {
+  font-size: 12px;
+  color: var(--text-light);
+  position: relative;
+  z-index: 1;
+}
+
+.skill-bar {
+  margin-top: 12px;
+  height: 6px;
+  background: rgba(27, 58, 92, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+.skill-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  width: 0;
+  transition: width 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.skill-bar-fill.coral {
+  background: var(--coral);
+}
+
+.skill-bar-fill.blue {
+  background: var(--deep-blue);
+}
+
+.skill-bar-fill.mix {
+  background: linear-gradient(90deg, var(--coral), var(--deep-blue));
+}
+
+/* Project cards */
+.card-project {
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.project-visual {
+  height: 140px;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 2px solid var(--deep-blue);
+}
+
+.project-visual-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transition: filter 0.4s;
+}
+
+.card-project:hover .project-visual-inner {
+  filter: saturate(1.5) contrast(1.1);
+}
+
+/* Halftone image treatment with SVG patterns */
+.project-halftone {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.7;
+  transition: opacity 0.4s;
+}
+
+.card-project:hover .project-halftone {
+  opacity: 0.2;
+}
+
+.project-body {
+  padding: 20px 24px;
+  position: relative;
+}
+
+.project-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--deep-blue);
+  margin-bottom: 6px;
+  position: relative;
+  z-index: 1;
+}
+
+.project-desc {
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--text-light);
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  position: relative;
+  z-index: 1;
+}
+
+.project-tag {
+  padding: 3px 10px;
+  border: 1px solid var(--deep-blue);
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--deep-blue);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.project-tag:nth-child(odd) {
+  border-color: var(--coral);
+  color: var(--coral);
+}
+
+/* Contact card */
+.card-contact {
+  background: var(--deep-blue);
+  color: var(--cream);
+  padding: 36px 28px;
+  text-align: center;
+}
+
+.card-contact .halftone-bg {
+  background: radial-gradient(circle, var(--coral) 1px, transparent 1px);
+  background-size: 12px 12px;
+  opacity: 0.06;
+}
+
+.contact-heading {
+  font-family: 'Syne', sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  position: relative;
+  z-index: 1;
+  text-shadow: 2px 2px 0 var(--coral);
+}
+
+.contact-sub {
+  font-size: 12px;
+  color: rgba(255, 248, 232, 0.7);
+  margin-bottom: 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.contact-form {
+  text-align: left;
+  position: relative;
+  z-index: 1;
+}
+
+.form-group {
+  margin-bottom: 14px;
+}
+
+.form-group label {
+  display: block;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--cream);
+  margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border: 2px solid rgba(255, 248, 232, 0.3);
+  border-radius: 4px;
+  font-family: 'Space Mono', monospace;
+  font-size: 13px;
+  color: var(--cream);
+  background: rgba(255, 248, 232, 0.05);
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  resize: vertical;
+  position: relative;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: var(--coral);
+  box-shadow: 3px 3px 0 var(--coral);
+}
+
+.form-group textarea {
+  min-height: 80px;
+}
+
+/* Registration offset effect on form elements */
+.form-group input,
+.form-group textarea {
+  box-shadow: 2px 2px 0 rgba(232, 82, 74, 0.2), -1px -1px 0 rgba(27, 58, 92, 0.3);
+}
+
+.form-submit {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  border: 2px solid var(--cream);
+  border-radius: 4px;
+  background: var(--coral);
+  color: var(--cream);
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  margin-top: 8px;
+}
+
+.form-submit::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  right: -3px;
+  bottom: -3px;
+  border: 2px solid rgba(255, 248, 232, 0.3);
+  border-radius: 4px;
+  z-index: -1;
+}
+
+.form-submit:hover {
+  background: var(--cream);
+  color: var(--deep-blue);
+  border-color: var(--deep-blue);
+  box-shadow: 4px 4px 0 var(--coral);
+}
+
+.contact-links {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.contact-link {
+  padding: 8px 20px;
+  border: 2px solid var(--cream);
+  border-radius: 4px;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  text-decoration: none;
+  color: var(--cream);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.2s;
+}
+
+.contact-link:hover {
+  background: var(--cream);
+  color: var(--deep-blue);
+  box-shadow: 3px 3px 0 var(--coral);
+}
+
+/* Decorative halftone strip */
+.halftone-strip {
+  break-inside: avoid;
+  margin-bottom: 24px;
+  height: 24px;
+  background: radial-gradient(circle, var(--coral) 2px, transparent 2px);
+  background-size: 8px 8px;
+  border-radius: 4px;
+  opacity: 0.15;
+}
+
+.halftone-strip.blue {
+  background: radial-gradient(circle, var(--deep-blue) 2px, transparent 2px);
+  background-size: 6px 6px;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 40px 20px;
+  border-top: 2px solid var(--deep-blue);
+  font-size: 12px;
+  color: var(--text-light);
+  position: relative;
+}
+
+.footer-reg-marks {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 16px;
+  opacity: 0.2;
+}
+
+.footer-reg {
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--deep-blue);
+  border-radius: 50%;
+  position: relative;
+}
+
+.footer-reg::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -4px;
+  right: -4px;
+  height: 1px;
+  background: var(--deep-blue);
+}
+
+.footer-reg::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -4px;
+  bottom: -4px;
+  width: 1px;
+  background: var(--deep-blue);
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 12px;
+}
+
+.footer-links a {
+  color: var(--text-light);
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: color 0.3s;
+}
+
+.footer-links a:hover {
+  color: var(--coral);
+}
+
+/* Project visual backgrounds */
+.pv-1 {
+  background: linear-gradient(135deg, var(--coral), var(--deep-blue));
+}
+
+.pv-2 {
+  background: linear-gradient(45deg, var(--deep-blue), var(--coral));
+}
+
+.pv-3 {
+  background: linear-gradient(180deg, var(--coral) 0%, var(--deep-blue) 100%);
+}
+
+.pv-4 {
+  background: linear-gradient(-45deg, var(--deep-blue) 0%, var(--coral) 100%);
+}
+
+/* SVG patterns in project visuals */
+.pv-1 svg, .pv-2 svg, .pv-3 svg, .pv-4 svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .card {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .skill-bar-fill {
+    transition: none !important;
+  }
+}
+
+/* Responsive 768px - 2 columns */
+@media (max-width: 768px) {
+  .masonry {
+    column-count: 2;
+    padding: 90px 16px 40px;
+  }
+
+  .hero-name {
+    font-size: 36px;
+  }
+
+  .nav {
+    padding: 16px 20px;
+  }
+
+  .nav.scrolled {
+    padding: 10px 20px;
+  }
+
+  .card {
+    padding: 22px;
+  }
+
+  .card-hero {
+    padding: 36px 24px;
+  }
+
+  .contact-heading {
+    font-size: 24px;
+  }
+
+  .about-stats {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .stat-num {
+    font-size: 26px;
+  }
+}
+
+/* Responsive 375px - 1 column */
+@media (max-width: 375px) {
+  .masonry {
+    column-count: 1;
+    padding: 85px 12px 30px;
+  }
+
+  .hero-name {
+    font-size: 28px;
+  }
+
+  .hero-title {
+    font-size: 12px;
+  }
+
+  .lang-btn {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+
+  .card {
+    padding: 18px;
+  }
+
+  .contact-links {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .section-label {
+    font-size: 10px;
+  }
+}
+
+/* Large screens 1440px+ - full 3 column masonry */
+@media (min-width: 1440px) {
+  .masonry {
+    max-width: 1200px;
+    column-count: 3;
+  }
+
+  .hero-name {
+    font-size: 56px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="nav" id="mainNav">
+  <a href="../index.html" class="gallery-link" data-i18n="gallery_link">&#8592; Gallery</a>
+  <div class="lang-switcher">
+    <button class="lang-btn active" data-lang="en" onclick="setLanguage('en')">EN</button>
+    <button class="lang-btn" data-lang="ko" onclick="setLanguage('ko')">&#54620;&#44397;&#50612;</button>
+    <button class="lang-btn" data-lang="ja" onclick="setLanguage('ja')">&#26085;&#26412;&#35486;</button>
+    <button class="lang-btn" data-lang="zh" onclick="setLanguage('zh')">&#20013;&#25991;</button>
+  </div>
+</nav>
+
+<div class="masonry">
+
+  <!-- Hero Card -->
+  <div class="card card-hero">
+    <div class="halftone-bg"></div>
+    <div class="reg-mark reg-mark-tl"></div>
+    <div class="reg-mark reg-mark-br"></div>
+    <h1 class="hero-name" data-i18n="name">Your Name</h1>
+    <p class="hero-title" data-i18n="title">Creative Developer &amp; Designer</p>
+    <div class="hero-dots">
+      <div class="hero-dot"></div>
+      <div class="hero-dot"></div>
+      <div class="hero-dot"></div>
+    </div>
+  </div>
+
+  <!-- About Card -->
+  <div class="card">
+    <div class="halftone-bg"></div>
+    <span class="section-label" data-i18n="about_label">About</span>
+    <p class="about-text" data-i18n="about_text">A creative developer inspired by risograph printing and duotone graphics. I explore infinite possibilities within limited color palettes.</p>
+    <div class="about-stats">
+      <div class="stat-item">
+        <span class="stat-num" data-num="5+">5+</span>
+        <span class="stat-desc" data-i18n="about_years">Years Exp</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" data-num="40+">40+</span>
+        <span class="stat-desc" data-i18n="about_projects">Projects</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" data-num="20+">20+</span>
+        <span class="stat-desc" data-i18n="about_clients">Clients</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Skill Cards -->
+  <div class="card card-skill">
+    <div class="halftone-bg"></div>
+    <span class="section-label" data-i18n="skills_label">Skills</span>
+    <div class="skill-icon">Fe</div>
+    <div class="skill-name">Frontend</div>
+    <div class="skill-tech">React / Vue / TypeScript</div>
+    <div class="skill-bar"><div class="skill-bar-fill coral" data-width="92"></div></div>
+  </div>
+
+  <div class="card card-skill">
+    <div class="halftone-bg halftone-coral"></div>
+    <div class="skill-icon">Ds</div>
+    <div class="skill-name">Design</div>
+    <div class="skill-tech">Figma / Illustration</div>
+    <div class="skill-bar"><div class="skill-bar-fill blue" data-width="88"></div></div>
+  </div>
+
+  <div class="card card-skill">
+    <div class="halftone-bg"></div>
+    <div class="skill-icon">Be</div>
+    <div class="skill-name">Backend</div>
+    <div class="skill-tech">Node.js / Python</div>
+    <div class="skill-bar"><div class="skill-bar-fill mix" data-width="80"></div></div>
+  </div>
+
+  <!-- Halftone decorative strip -->
+  <div class="halftone-strip"></div>
+
+  <div class="card card-skill">
+    <div class="halftone-bg halftone-coral"></div>
+    <div class="skill-icon">Pr</div>
+    <div class="skill-name">Print</div>
+    <div class="skill-tech">Risograph / Screen Print</div>
+    <div class="skill-bar"><div class="skill-bar-fill coral" data-width="95"></div></div>
+  </div>
+
+  <div class="card card-skill">
+    <div class="halftone-bg"></div>
+    <div class="skill-icon">Mo</div>
+    <div class="skill-name">Motion</div>
+    <div class="skill-tech">After Effects / CSS</div>
+    <div class="skill-bar"><div class="skill-bar-fill blue" data-width="78"></div></div>
+  </div>
+
+  <div class="card card-skill">
+    <div class="halftone-bg halftone-coral"></div>
+    <div class="skill-icon">3D</div>
+    <div class="skill-name">Creative</div>
+    <div class="skill-tech">WebGL / Canvas</div>
+    <div class="skill-bar"><div class="skill-bar-fill mix" data-width="72"></div></div>
+  </div>
+
+  <!-- Project Cards -->
+  <div class="card card-project">
+    <div class="project-visual">
+      <div class="project-visual-inner pv-1">
+        <svg viewBox="0 0 400 140" preserveAspectRatio="xMidYMid slice">
+          <rect width="400" height="140" fill="url(#pg1)"/>
+          <defs>
+            <linearGradient id="pg1" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#E8524A;stop-opacity:0.8"/>
+              <stop offset="100%" style="stop-color:#1B3A5C;stop-opacity:0.9"/>
+            </linearGradient>
+          </defs>
+          <rect x="40" y="20" width="80" height="100" rx="4" fill="none" stroke="#FFF8E8" stroke-width="1.5" opacity="0.3"/>
+          <rect x="50" y="30" width="60" height="16" rx="2" fill="#FFF8E8" opacity="0.15"/>
+          <rect x="50" y="52" width="60" height="8" rx="1" fill="#FFF8E8" opacity="0.1"/>
+          <rect x="50" y="64" width="40" height="8" rx="1" fill="#FFF8E8" opacity="0.1"/>
+          <circle cx="280" cy="70" r="40" fill="none" stroke="#FFF8E8" stroke-width="1" opacity="0.2"/>
+          <circle cx="280" cy="70" r="25" fill="#FFF8E8" opacity="0.05"/>
+          <line x1="160" y1="30" x2="160" y2="110" stroke="#FFF8E8" stroke-width="0.5" opacity="0.15"/>
+          <rect x="180" y="40" width="60" height="60" rx="2" fill="none" stroke="#FFF8E8" stroke-width="1" opacity="0.15"/>
+        </svg>
+      </div>
+      <div class="project-halftone" style="background: radial-gradient(circle, rgba(27,58,92,0.8) 1.5px, transparent 1.5px); background-size: 6px 6px;"></div>
+    </div>
+    <div class="project-body">
+      <div class="halftone-bg"></div>
+      <h3 class="project-title" data-i18n="project1_title">E-Zine Publisher</h3>
+      <p class="project-desc" data-i18n="project1_desc">A digital zine creation platform with risograph-style filters and duotone export options for indie publishers.</p>
+      <div class="project-tags">
+        <span class="project-tag">React</span>
+        <span class="project-tag">Canvas</span>
+        <span class="project-tag">WebGL</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="halftone-strip blue"></div>
+
+  <div class="card card-project">
+    <div class="project-visual">
+      <div class="project-visual-inner pv-2">
+        <svg viewBox="0 0 400 140" preserveAspectRatio="xMidYMid slice">
+          <rect width="400" height="140" fill="url(#pg2)"/>
+          <defs>
+            <linearGradient id="pg2" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#1B3A5C;stop-opacity:0.9"/>
+              <stop offset="100%" style="stop-color:#E8524A;stop-opacity:0.7"/>
+            </linearGradient>
+          </defs>
+          <circle cx="200" cy="70" r="50" fill="none" stroke="#FFF8E8" stroke-width="1" opacity="0.25"/>
+          <circle cx="200" cy="70" r="35" fill="none" stroke="#FFF8E8" stroke-width="1" opacity="0.15"/>
+          <circle cx="200" cy="70" r="20" fill="none" stroke="#FFF8E8" stroke-width="1.5" opacity="0.2"/>
+          <path d="M100 110 L120 50 L140 90 L160 40 L180 80 L200 30 L220 80 L240 40 L260 90 L280 50 L300 110" fill="none" stroke="#FFF8E8" stroke-width="1" opacity="0.2"/>
+          <rect x="60" y="20" width="40" height="5" rx="2" fill="#FFF8E8" opacity="0.15"/>
+          <rect x="300" y="20" width="40" height="5" rx="2" fill="#FFF8E8" opacity="0.15"/>
+        </svg>
+      </div>
+      <div class="project-halftone" style="background: radial-gradient(circle, rgba(232,82,74,0.7) 1.5px, transparent 1.5px); background-size: 5px 5px;"></div>
+    </div>
+    <div class="project-body">
+      <div class="halftone-bg halftone-coral"></div>
+      <h3 class="project-title" data-i18n="project2_title">Record Sleeve</h3>
+      <p class="project-desc" data-i18n="project2_desc">Album artwork generator using halftone algorithms and limited color palettes inspired by vintage record sleeve designs.</p>
+      <div class="project-tags">
+        <span class="project-tag">Node.js</span>
+        <span class="project-tag">Sharp</span>
+        <span class="project-tag">SVG</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-project">
+    <div class="project-visual">
+      <div class="project-visual-inner pv-3">
+        <svg viewBox="0 0 400 140" preserveAspectRatio="xMidYMid slice">
+          <rect width="400" height="140" fill="url(#pg3)"/>
+          <defs>
+            <linearGradient id="pg3" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" style="stop-color:#E8524A;stop-opacity:0.7"/>
+              <stop offset="100%" style="stop-color:#1B3A5C;stop-opacity:0.9"/>
+            </linearGradient>
+          </defs>
+          <text x="200" y="80" font-family="Syne, sans-serif" font-size="48" font-weight="800" fill="#FFF8E8" opacity="0.1" text-anchor="middle">PRINT</text>
+          <rect x="40" y="20" width="320" height="100" rx="4" fill="none" stroke="#FFF8E8" stroke-width="1" opacity="0.12"/>
+          <line x1="40" y1="45" x2="360" y2="45" stroke="#FFF8E8" stroke-width="0.5" opacity="0.1"/>
+          <line x1="40" y1="95" x2="360" y2="95" stroke="#FFF8E8" stroke-width="0.5" opacity="0.1"/>
+          <circle cx="60" cy="110" r="4" fill="#FFF8E8" opacity="0.15"/>
+          <circle cx="340" cy="110" r="4" fill="#FFF8E8" opacity="0.15"/>
+        </svg>
+      </div>
+      <div class="project-halftone" style="background: radial-gradient(circle, rgba(27,58,92,0.6) 2px, transparent 2px); background-size: 8px 8px;"></div>
+    </div>
+    <div class="project-body">
+      <div class="halftone-bg"></div>
+      <h3 class="project-title" data-i18n="project3_title">Print Festival</h3>
+      <p class="project-desc" data-i18n="project3_desc">Interactive event platform for independent print festivals with live scheduling, artist profiles, and virtual gallery tours.</p>
+      <div class="project-tags">
+        <span class="project-tag">Next.js</span>
+        <span class="project-tag">Three.js</span>
+        <span class="project-tag">CMS</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-project">
+    <div class="project-visual">
+      <div class="project-visual-inner pv-4">
+        <svg viewBox="0 0 400 140" preserveAspectRatio="xMidYMid slice">
+          <rect width="400" height="140" fill="url(#pg4)"/>
+          <defs>
+            <linearGradient id="pg4" x1="100%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" style="stop-color:#1B3A5C;stop-opacity:0.85"/>
+              <stop offset="100%" style="stop-color:#E8524A;stop-opacity:0.75"/>
+            </linearGradient>
+          </defs>
+          <rect x="80" y="20" width="100" height="100" rx="4" fill="none" stroke="#FFF8E8" stroke-width="1.5" opacity="0.2"/>
+          <rect x="220" y="20" width="100" height="100" rx="4" fill="none" stroke="#FFF8E8" stroke-width="1.5" opacity="0.2"/>
+          <rect x="90" y="30" width="80" height="10" rx="2" fill="#FFF8E8" opacity="0.12"/>
+          <rect x="90" y="50" width="80" height="50" rx="2" fill="#FFF8E8" opacity="0.06"/>
+          <rect x="230" y="30" width="80" height="10" rx="2" fill="#FFF8E8" opacity="0.12"/>
+          <rect x="230" y="50" width="80" height="50" rx="2" fill="#FFF8E8" opacity="0.06"/>
+        </svg>
+      </div>
+      <div class="project-halftone" style="background: radial-gradient(circle, rgba(232,82,74,0.6) 1px, transparent 1px); background-size: 7px 7px;"></div>
+    </div>
+    <div class="project-body">
+      <div class="halftone-bg halftone-coral"></div>
+      <h3 class="project-title" data-i18n="project4_title">Poster Series</h3>
+      <p class="project-desc" data-i18n="project4_desc">Generative poster design tool creating unique compositions through algorithmic layouts and duotone color mapping.</p>
+      <div class="project-tags">
+        <span class="project-tag">Python</span>
+        <span class="project-tag">p5.js</span>
+        <span class="project-tag">Print</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contact Card -->
+  <div class="card card-contact">
+    <div class="halftone-bg"></div>
+    <div class="reg-mark reg-mark-tl"></div>
+    <div class="reg-mark reg-mark-br"></div>
+    <h3 class="contact-heading" data-i18n="contact_heading">Let's Work Together</h3>
+    <p class="contact-sub" data-i18n="contact_sub">Available for freelance projects and collaborations</p>
+
+    <div class="contact-form">
+      <div class="form-group">
+        <label data-i18n="form_name">Name</label>
+        <input type="text" placeholder="Your name" data-i18n-placeholder="form_name_ph">
+      </div>
+      <div class="form-group">
+        <label data-i18n="form_email">Email</label>
+        <input type="email" placeholder="your@email.com">
+      </div>
+      <div class="form-group">
+        <label data-i18n="form_message">Message</label>
+        <textarea placeholder="Tell me about your project..." data-i18n-placeholder="form_message_ph"></textarea>
+      </div>
+      <button class="form-submit" data-i18n="form_send">Send Message</button>
+    </div>
+
+    <div class="contact-links">
+      <a href="mailto:hello@example.com" class="contact-link" data-i18n="contact_email">Email</a>
+      <a href="#" class="contact-link">GitHub</a>
+      <a href="#" class="contact-link">LinkedIn</a>
+    </div>
+  </div>
+
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-reg-marks">
+    <div class="footer-reg"></div>
+    <div class="footer-reg"></div>
+    <div class="footer-reg"></div>
+  </div>
+  <div class="footer-links">
+    <a href="#about" data-i18n="footer_about">About</a>
+    <a href="#skills" data-i18n="footer_skills">Skills</a>
+    <a href="#projects" data-i18n="footer_projects">Projects</a>
+    <a href="#contact" data-i18n="footer_contact">Contact</a>
+  </div>
+  <p>Printed with care &middot; 2025</p>
+</footer>
+
+<script>
+/* ===== TRANSLATIONS ===== */
+var TRANSLATIONS = {
+  ko: {
+    name: '\uD64D\uAE38\uB3D9',
+    title: '\uD06C\uB9AC\uC5D0\uC774\uD2F0\uBE0C \uAC1C\uBC1C\uC790 & \uB514\uC790\uC774\uB108',
+    about_label: '\uC18C\uAC1C',
+    about_text: '\uB9AC\uC18C\uADF8\uB798\uD504 \uC778\uC1C4\uC640 \uB4C0\uC624\uD1A4 \uADF8\uB798\uD53D\uC5D0 \uC601\uAC10\uC744 \uBC1B\uC740 \uD06C\uB9AC\uC5D0\uC774\uD2F0\uBE0C \uAC1C\uBC1C\uC790\uC785\uB2C8\uB2E4. \uC81C\uD55C\uB41C \uC0C9\uC0C1 \uD314\uB808\uD2B8\uC5D0\uC11C \uBB34\uD55C\uD55C \uAC00\uB2A5\uC131\uC744 \uD0D0\uAD6C\uD569\uB2C8\uB2E4.',
+    about_years: '\uACBD\uB825',
+    about_projects: '\uD504\uB85C\uC81D\uD2B8',
+    about_clients: '\uD074\uB77C\uC774\uC5B8\uD2B8',
+    skills_label: '\uC804\uBB38 \uBD84\uC57C',
+    projects_label: '\uD504\uB85C\uC81D\uD2B8',
+    project1_title: '\uC774\uC9C4 \uD37C\uBE14\uB9AC\uC154',
+    project1_desc: '\uB9AC\uC18C\uADF8\uB798\uD504 \uC2A4\uD0C0\uC77C \uD544\uD130\uC640 \uB4C0\uC624\uD1A4 \uB0B4\uBCF4\uB0B4\uAE30 \uC635\uC158\uC744 \uAC16\uCDA4 \uB514\uC9C0\uD138 \uC9C4 \uC81C\uC791 \uD50C\uB7AB\uD3FC\uC785\uB2C8\uB2E4.',
+    project2_title: '\uB808\uCF54\uB4DC \uC2AC\uB9AC\uBE0C',
+    project2_desc: '\uBE48\uD2F0\uC9C0 \uB808\uCF54\uB4DC \uC2AC\uB9AC\uBE0C \uB514\uC790\uC778\uC5D0\uC11C \uC601\uAC10\uC744 \uBC1B\uC740 \uD558\uD504\uD1A4 \uC54C\uACE0\uB9AC\uC998\uACFC \uC81C\uD55C\uB41C \uC0C9\uC0C1 \uD314\uB808\uD2B8\uB97C \uC0AC\uC6A9\uD55C \uC568\uBC94 \uC544\uD2B8\uC6CC\uD06C \uC0DD\uC131\uAE30\uC785\uB2C8\uB2E4.',
+    project3_title: '\uD504\uB9B0\uD2B8 \uD398\uC2A4\uD2F0\uBC8C',
+    project3_desc: '\uB77C\uC774\uBE0C \uC2A4\uCF00\uC904\uB9C1, \uC544\uD2F0\uC2A4\uD2B8 \uD504\uB85C\uD544, \uBC84\uCD94\uC5BC \uAC24\uB7EC\uB9AC \uD22C\uC5B4\uB97C \uAC16\uCDA4 \uB3C5\uB9BD \uC778\uC1C4 \uD398\uC2A4\uD2F0\uBC8C\uC744 \uC704\uD55C \uC778\uD130\uB799\uD2F0\uBE0C \uC774\uBCA4\uD2B8 \uD50C\uB7AB\uD3FC\uC785\uB2C8\uB2E4.',
+    project4_title: '\uD3EC\uC2A4\uD130 \uC2DC\uB9AC\uC988',
+    project4_desc: '\uC54C\uACE0\uB9AC\uC998 \uB808\uC774\uC544\uC6C3\uACFC \uB4C0\uC624\uD1A4 \uCEEC\uB7EC \uB9E4\uD551\uC744 \uD1B5\uD574 \uACE0\uC720\uD55C \uAD6C\uC131\uC744 \uB9CC\uB4DC\uB294 \uC81C\uB108\uB808\uC774\uD2F0\uBE0C \uD3EC\uC2A4\uD130 \uB514\uC790\uC778 \uB3C4\uAD6C\uC785\uB2C8\uB2E4.',
+    contact_label: '\uC5F0\uB77D\uD558\uAE30',
+    contact_heading: '\uD568\uAED8 \uC77C\uD574\uC694',
+    contact_sub: '\uD504\uB9AC\uB79C\uC11C \uD504\uB85C\uC81D\uD2B8 \uBC0F \uD611\uC5C5 \uAC00\uB2A5',
+    contact_email: '\uC774\uBA54\uC77C',
+    form_name: '\uC774\uB984',
+    form_name_ph: '\uC774\uB984\uC744 \uC785\uB825\uD558\uC138\uC694',
+    form_email: '\uC774\uBA54\uC77C',
+    form_message: '\uBA54\uC2DC\uC9C0',
+    form_message_ph: '\uD504\uB85C\uC81D\uD2B8\uC5D0 \uB300\uD574 \uC54C\uB824\uC8FC\uC138\uC694...',
+    form_send: '\uBA54\uC2DC\uC9C0 \uBCF4\uB0B4\uAE30',
+    footer_about: '\uC18C\uAC1C',
+    footer_skills: '\uC804\uBB38\uC131',
+    footer_projects: '\uD504\uB85C\uC81D\uD2B8',
+    footer_contact: '\uC5F0\uB77D',
+    gallery_link: '\u2190 \uAC24\uB7EC\uB9AC'
+  },
+  en: {
+    name: 'Your Name',
+    title: 'Creative Developer & Designer',
+    about_label: 'About',
+    about_text: 'A creative developer inspired by risograph printing and duotone graphics. I explore infinite possibilities within limited color palettes.',
+    about_years: 'Years Exp',
+    about_projects: 'Projects',
+    about_clients: 'Clients',
+    skills_label: 'Skills',
+    projects_label: 'Projects',
+    project1_title: 'E-Zine Publisher',
+    project1_desc: 'A digital zine creation platform with risograph-style filters and duotone export options for indie publishers.',
+    project2_title: 'Record Sleeve',
+    project2_desc: 'Album artwork generator using halftone algorithms and limited color palettes inspired by vintage record sleeve designs.',
+    project3_title: 'Print Festival',
+    project3_desc: 'Interactive event platform for independent print festivals with live scheduling, artist profiles, and virtual gallery tours.',
+    project4_title: 'Poster Series',
+    project4_desc: 'Generative poster design tool creating unique compositions through algorithmic layouts and duotone color mapping.',
+    contact_label: 'Contact',
+    contact_heading: "Let's Work Together",
+    contact_sub: 'Available for freelance projects and collaborations',
+    contact_email: 'Email',
+    form_name: 'Name',
+    form_name_ph: 'Your name',
+    form_email: 'Email',
+    form_message: 'Message',
+    form_message_ph: 'Tell me about your project...',
+    form_send: 'Send Message',
+    footer_about: 'About',
+    footer_skills: 'Skills',
+    footer_projects: 'Projects',
+    footer_contact: 'Contact',
+    gallery_link: '\u2190 Gallery'
+  },
+  ja: {
+    name: '\u3042\u306A\u305F\u306E\u540D\u524D',
+    title: '\u30AF\u30EA\u30A8\u30A4\u30C6\u30A3\u30D6\u30C7\u30D9\u30ED\u30C3\u30D1\u30FC & \u30C7\u30B6\u30A4\u30CA\u30FC',
+    about_label: '\u7D39\u4ECB',
+    about_text: '\u30EA\u30BD\u30B0\u30E9\u30D5\u5370\u5237\u3068\u30C7\u30E5\u30AA\u30C8\u30FC\u30F3\u30B0\u30E9\u30D5\u30A3\u30C3\u30AF\u306B\u30A4\u30F3\u30B9\u30D1\u30A4\u30A2\u3055\u308C\u305F\u30AF\u30EA\u30A8\u30A4\u30C6\u30A3\u30D6\u30C7\u30D9\u30ED\u30C3\u30D1\u30FC\u3067\u3059\u3002\u9650\u3089\u308C\u305F\u30AB\u30E9\u30FC\u30D1\u30EC\u30C3\u30C8\u306E\u4E2D\u3067\u7121\u9650\u306E\u53EF\u80FD\u6027\u3092\u63A2\u6C42\u3057\u307E\u3059\u3002',
+    about_years: '\u5E74\u306E\u7D4C\u9A13',
+    about_projects: '\u30D7\u30ED\u30B8\u30A7\u30AF\u30C8',
+    about_clients: '\u30AF\u30E9\u30A4\u30A2\u30F3\u30C8',
+    skills_label: '\u30B9\u30AD\u30EB',
+    projects_label: '\u30D7\u30ED\u30B8\u30A7\u30AF\u30C8',
+    project1_title: 'E-Zine\u30D1\u30D6\u30EA\u30C3\u30B7\u30E3\u30FC',
+    project1_desc: '\u30EA\u30BD\u30B0\u30E9\u30D5\u30B9\u30BF\u30A4\u30EB\u306E\u30D5\u30A3\u30EB\u30BF\u30FC\u3068\u30C7\u30E5\u30AA\u30C8\u30FC\u30F3\u30A8\u30AF\u30B9\u30DD\u30FC\u30C8\u30AA\u30D7\u30B7\u30E7\u30F3\u3092\u5099\u3048\u305F\u30C7\u30B8\u30BF\u30EB\u30B8\u30F3\u5236\u4F5C\u30D7\u30E9\u30C3\u30C8\u30D5\u30A9\u30FC\u30E0\u3002',
+    project2_title: '\u30EC\u30B3\u30FC\u30C9\u30B9\u30EA\u30FC\u30D6',
+    project2_desc: '\u30D3\u30F3\u30C6\u30FC\u30B8\u30EC\u30B3\u30FC\u30C9\u30B9\u30EA\u30FC\u30D6\u30C7\u30B6\u30A4\u30F3\u306B\u30A4\u30F3\u30B9\u30D1\u30A4\u30A2\u3055\u308C\u305F\u30CF\u30FC\u30D5\u30C8\u30FC\u30F3\u30A2\u30EB\u30B4\u30EA\u30BA\u30E0\u3068\u9650\u5B9A\u30AB\u30E9\u30FC\u30D1\u30EC\u30C3\u30C8\u3092\u4F7F\u7528\u3057\u305F\u30A2\u30EB\u30D0\u30E0\u30A2\u30FC\u30C8\u30EF\u30FC\u30AF\u30B8\u30A7\u30CD\u30EC\u30FC\u30BF\u30FC\u3002',
+    project3_title: '\u30D7\u30EA\u30F3\u30C8\u30D5\u30A7\u30B9\u30C6\u30A3\u30D0\u30EB',
+    project3_desc: '\u30E9\u30A4\u30D6\u30B9\u30B1\u30B8\u30E5\u30FC\u30EA\u30F3\u30B0\u3001\u30A2\u30FC\u30C6\u30A3\u30B9\u30C8\u30D7\u30ED\u30D5\u30A3\u30FC\u30EB\u3001\u30D0\u30FC\u30C1\u30E3\u30EB\u30AE\u30E3\u30E9\u30EA\u30FC\u30C4\u30A2\u30FC\u3092\u5099\u3048\u305F\u72EC\u7ACB\u5370\u5237\u30D5\u30A7\u30B9\u30C6\u30A3\u30D0\u30EB\u5411\u3051\u30A4\u30F3\u30BF\u30E9\u30AF\u30C6\u30A3\u30D6\u30A4\u30D9\u30F3\u30C8\u30D7\u30E9\u30C3\u30C8\u30D5\u30A9\u30FC\u30E0\u3002',
+    project4_title: '\u30DD\u30B9\u30BF\u30FC\u30B7\u30EA\u30FC\u30BA',
+    project4_desc: '\u30A2\u30EB\u30B4\u30EA\u30BA\u30E0\u30EC\u30A4\u30A2\u30A6\u30C8\u3068\u30C7\u30E5\u30AA\u30C8\u30FC\u30F3\u30AB\u30E9\u30FC\u30DE\u30C3\u30D4\u30F3\u30B0\u3067\u30E6\u30CB\u30FC\u30AF\u306A\u69CB\u6210\u3092\u751F\u307F\u51FA\u3059\u30B8\u30A7\u30CD\u30E9\u30C6\u30A3\u30D6\u30DD\u30B9\u30BF\u30FC\u30C7\u30B6\u30A4\u30F3\u30C4\u30FC\u30EB\u3002',
+    contact_label: '\u304A\u554F\u3044\u5408\u308F\u305B',
+    contact_heading: '\u4E00\u7DD2\u306B\u50CD\u304D\u307E\u3057\u3087\u3046',
+    contact_sub: '\u30D5\u30EA\u30FC\u30E9\u30F3\u30B9\u30D7\u30ED\u30B8\u30A7\u30AF\u30C8\u5BFE\u5FDC\u53EF\u80FD',
+    contact_email: '\u30E1\u30FC\u30EB',
+    form_name: '\u540D\u524D',
+    form_name_ph: '\u304A\u540D\u524D',
+    form_email: '\u30E1\u30FC\u30EB',
+    form_message: '\u30E1\u30C3\u30BB\u30FC\u30B8',
+    form_message_ph: '\u30D7\u30ED\u30B8\u30A7\u30AF\u30C8\u306B\u3064\u3044\u3066\u6559\u3048\u3066\u304F\u3060\u3055\u3044...',
+    form_send: '\u30E1\u30C3\u30BB\u30FC\u30B8\u3092\u9001\u4FE1',
+    footer_about: '\u7D39\u4ECB',
+    footer_skills: '\u30B9\u30AD\u30EB',
+    footer_projects: '\u30D7\u30ED\u30B8\u30A7\u30AF\u30C8',
+    footer_contact: '\u9023\u7D61',
+    gallery_link: '\u2190 \u30AE\u30E3\u30E9\u30EA\u30FC'
+  },
+  zh: {
+    name: '\u4F60\u7684\u540D\u5B57',
+    title: '\u521B\u610F\u5F00\u53D1\u8005 & \u8BBE\u8BA1\u5E08',
+    about_label: '\u5173\u4E8E',
+    about_text: '\u4E00\u4F4D\u53D7\u5370\u5237\u673A\u5370\u5237\u548C\u53CC\u8272\u8C03\u56FE\u5F62\u542F\u53D1\u7684\u521B\u610F\u5F00\u53D1\u8005\u3002\u5728\u6709\u9650\u7684\u8272\u5F69\u8C03\u8272\u677F\u4E2D\u63A2\u7D22\u65E0\u9650\u53EF\u80FD\u3002',
+    about_years: '\u5E74\u7ECF\u9A8C',
+    about_projects: '\u5B8C\u6210\u9879\u76EE',
+    about_clients: '\u6EE1\u610F\u5BA2\u6237',
+    skills_label: '\u6280\u80FD',
+    projects_label: '\u9879\u76EE',
+    project1_title: '\u7535\u5B50\u6742\u5FD7\u51FA\u7248\u5546',
+    project1_desc: '\u4E00\u4E2A\u5177\u6709\u5370\u5237\u98CE\u683C\u6EE4\u955C\u548C\u53CC\u8272\u8C03\u5BFC\u51FA\u9009\u9879\u7684\u6570\u5B57\u6742\u5FD7\u521B\u4F5C\u5E73\u53F0\u3002',
+    project2_title: '\u5531\u7247\u5C01\u5957',
+    project2_desc: '\u4F7F\u7528\u534A\u8272\u8C03\u7B97\u6CD5\u548C\u53D7\u590D\u53E4\u5531\u7247\u5C01\u5957\u8BBE\u8BA1\u542F\u53D1\u7684\u6709\u9650\u8272\u5F69\u8C03\u8272\u677F\u7684\u4E13\u8F91\u5C01\u9762\u751F\u6210\u5668\u3002',
+    project3_title: '\u5370\u5237\u8282',
+    project3_desc: '\u4E3A\u72EC\u7ACB\u5370\u5237\u8282\u63D0\u4F9B\u7684\u4E92\u52A8\u6D3B\u52A8\u5E73\u53F0\uFF0C\u5177\u6709\u5B9E\u65F6\u65E5\u7A0B\u5B89\u6392\u3001\u827A\u672F\u5BB6\u8D44\u6599\u548C\u865A\u62DF\u753B\u5ECA\u5BFC\u89C8\u3002',
+    project4_title: '\u6D77\u62A5\u7CFB\u5217',
+    project4_desc: '\u901A\u8FC7\u7B97\u6CD5\u5E03\u5C40\u548C\u53CC\u8272\u8C03\u989C\u8272\u6620\u5C04\u521B\u5EFA\u72EC\u7279\u69CB\u56FE\u7684\u751F\u6210\u5F0F\u6D77\u62A5\u8BBE\u8BA1\u5DE5\u5177\u3002',
+    contact_label: '\u8054\u7CFB\u6211',
+    contact_heading: '\u4E00\u8D77\u5408\u4F5C\u5427',
+    contact_sub: '\u53EF\u63A5\u53D7\u81EA\u7531\u804C\u4E1A\u9879\u76EE\u548C\u5408\u4F5C',
+    contact_email: '\u90AE\u7BB1',
+    form_name: '\u59D3\u540D',
+    form_name_ph: '\u60A8\u7684\u540D\u5B57',
+    form_email: '\u90AE\u7BB1',
+    form_message: '\u6D88\u606F',
+    form_message_ph: '\u8BF7\u544A\u8BC9\u6211\u60A8\u7684\u9879\u76EE...',
+    form_send: '\u53D1\u9001\u6D88\u606F',
+    footer_about: '\u5173\u4E8E',
+    footer_skills: '\u6280\u80FD',
+    footer_projects: '\u9879\u76EE',
+    footer_contact: '\u8054\u7CFB',
+    gallery_link: '\u2190 \u753B\u5ECA'
+  }
+};
+
+/* ===== LANGUAGE SWITCHER ===== */
+function setLanguage(lang) {
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    if (TRANSLATIONS[lang] && TRANSLATIONS[lang][key]) {
+      el.textContent = TRANSLATIONS[lang][key];
+    }
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n-placeholder');
+    if (TRANSLATIONS[lang] && TRANSLATIONS[lang][key]) {
+      el.placeholder = TRANSLATIONS[lang][key];
+    }
+  });
+  document.querySelectorAll('.lang-btn').forEach(function(btn) {
+    btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+  });
+  try { localStorage.setItem('preferred-lang', lang); } catch(e) {}
+  document.documentElement.lang = lang === 'ko' ? 'ko' : lang === 'ja' ? 'ja' : lang === 'zh' ? 'zh' : 'en';
+}
+
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  var lang = params.get('lang') || (function() { try { return localStorage.getItem('preferred-lang'); } catch(e) { return null; } })() || 'en';
+  if (lang !== 'en') setLanguage(lang);
+  else document.querySelectorAll('.lang-btn').forEach(function(btn) {
+    btn.classList.toggle('active', btn.getAttribute('data-lang') === 'en');
+  });
+})();
+
+/* ===== NAVBAR SCROLL ===== */
+window.addEventListener('scroll', function() {
+  var nav = document.getElementById('mainNav');
+  if (window.scrollY > 50) {
+    nav.classList.add('scrolled');
+  } else {
+    nav.classList.remove('scrolled');
+  }
+}, { passive: true });
+
+/* ===== INTERSECTION OBSERVER ===== */
+var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+var cardObserver = new IntersectionObserver(function(entries) {
+  entries.forEach(function(entry) {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      /* Animate skill bars */
+      var bars = entry.target.querySelectorAll('.skill-bar-fill');
+      bars.forEach(function(bar) {
+        setTimeout(function() {
+          bar.style.width = bar.getAttribute('data-width') + '%';
+        }, 300);
+      });
+      cardObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('.card').forEach(function(card, i) {
+  if (reducedMotion) {
+    card.classList.add('visible');
+    var bars = card.querySelectorAll('.skill-bar-fill');
+    bars.forEach(function(bar) {
+      bar.style.width = bar.getAttribute('data-width') + '%';
+    });
+  } else {
+    card.style.transitionDelay = (i % 3) * 0.1 + 's';
+    cardObserver.observe(card);
+  }
+});
+
+/* ===== SMOOTH SCROLL FOR FOOTER LINKS ===== */
+document.querySelectorAll('.footer-links a').forEach(function(link) {
+  link.addEventListener('click', function(e) {
+    var href = this.getAttribute('href');
+    if (href && href.startsWith('#')) {
+      e.preventDefault();
+      var target = document.querySelector(href);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  });
+});
+</script>
+</body>
+</html>

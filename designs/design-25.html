@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio - Data Analytics</title>
+<meta name="description" content="Data Analytics portfolio with dashboard-style layout">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #0c1222;
+  --card-bg: #141c30;
+  --card-border: #1e2a45;
+  --green: #22c55e;
+  --blue: #3b82f6;
+  --orange: #f59e0b;
+  --text-primary: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Inter', -apple-system, Helvetica, Arial, sans-serif;
+  --gap: 16px;
+  --radius: 12px;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--sans);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* Gallery Link */
+.gallery-link {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-family: var(--mono);
+  z-index: 100;
+  transition: color 0.3s;
+}
+
+.gallery-link:hover {
+  color: var(--green);
+}
+
+/* Language Switcher */
+.lang-switcher {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  gap: 4px;
+  z-index: 100;
+}
+
+.lang-btn {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  color: var(--text-secondary);
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  padding: 6px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.lang-btn:hover,
+.lang-btn.active {
+  background: var(--blue);
+  color: #fff;
+  border-color: var(--blue);
+}
+
+/* Dashboard Layout */
+.dashboard {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 80px var(--gap) var(--gap);
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--gap);
+}
+
+/* Panel base */
+.panel {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 24px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.panel.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.panel-title {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.panel-badge {
+  font-family: var(--mono);
+  font-size: 0.625rem;
+  padding: 3px 8px;
+  border-radius: 10px;
+  text-transform: uppercase;
+}
+
+.badge-active {
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--green);
+}
+
+.badge-complete {
+  background: rgba(59, 130, 246, 0.15);
+  color: var(--blue);
+}
+
+/* Hero Panel */
+.hero-panel {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 32px;
+}
+
+.hero-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--green);
+  border-radius: 50%;
+  display: inline-block;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
+  50% { opacity: 0.8; box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
+}
+
+.hero-name {
+  font-family: var(--mono);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.hero-title {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.hero-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--green);
+}
+
+.hero-sparkline {
+  width: 120px;
+  height: 40px;
+}
+
+.hero-sparkline path {
+  stroke: var(--blue);
+  stroke-width: 2;
+  fill: none;
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+  transition: stroke-dashoffset 1.5s ease;
+}
+
+.hero-panel.visible .hero-sparkline path {
+  stroke-dashoffset: 0;
+}
+
+/* KPI Cards */
+.kpi-card {
+  grid-column: span 4;
+  text-align: center;
+}
+
+.kpi-value {
+  font-family: var(--mono);
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.kpi-label {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.kpi-sparkline {
+  width: 80px;
+  height: 24px;
+  margin: 8px auto 0;
+}
+
+.kpi-sparkline path {
+  stroke: var(--green);
+  stroke-width: 2;
+  fill: none;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  transition: stroke-dashoffset 1.2s ease;
+}
+
+.panel.visible .kpi-sparkline path {
+  stroke-dashoffset: 0;
+}
+
+/* Skills Chart Panel */
+.skills-panel {
+  grid-column: 1 / -1;
+}
+
+.skill-bars {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.skill-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.skill-label {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+}
+
+.skill-name {
+  color: var(--text-primary);
+}
+
+.skill-percent {
+  color: var(--blue);
+}
+
+.skill-track {
+  width: 100%;
+  height: 8px;
+  background: rgba(59, 130, 246, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.skill-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--blue), #60a5fa);
+  width: 0%;
+  transition: width 1s ease;
+}
+
+.skills-panel.visible .skill-fill {
+  /* widths set inline */
+}
+
+/* Project Panels */
+.project-panel {
+  grid-column: span 3;
+}
+
+.project-name {
+  font-family: var(--mono);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.project-desc {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.project-viz {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 12px;
+}
+
+.project-viz path,
+.project-viz rect,
+.project-viz circle {
+  stroke: var(--blue);
+  stroke-width: 1.5;
+  fill: none;
+}
+
+.project-progress {
+  margin-top: auto;
+}
+
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.progress-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(59, 130, 246, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  width: 0%;
+  transition: width 1s ease 0.3s;
+}
+
+.progress-fill.green {
+  background: linear-gradient(90deg, var(--green), #4ade80);
+}
+
+.progress-fill.blue {
+  background: linear-gradient(90deg, var(--blue), #60a5fa);
+}
+
+.progress-fill.orange {
+  background: linear-gradient(90deg, var(--orange), #fbbf24);
+}
+
+.panel.visible .progress-fill {
+  /* widths set inline */
+}
+
+/* Contact Panel */
+.contact-panel {
+  grid-column: 1 / -1;
+}
+
+.contact-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group.full {
+  grid-column: 1 / -1;
+}
+
+.form-label {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-input,
+.form-textarea {
+  background: var(--bg);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  color: var(--text-primary);
+  font-family: var(--sans);
+  font-size: 0.875rem;
+  transition: border-color 0.3s;
+  outline: none;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  border-color: var(--blue);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.form-submit {
+  grid-column: 1 / -1;
+  background: var(--green);
+  color: #0c1222;
+  border: none;
+  border-radius: 8px;
+  padding: 14px 32px;
+  font-family: var(--mono);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+  justify-self: start;
+}
+
+.form-submit:hover {
+  background: #16a34a;
+  transform: translateY(-1px);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .project-panel {
+    grid-column: span 6;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard {
+    grid-template-columns: repeat(2, 1fr);
+    padding-top: 70px;
+  }
+
+  .hero-panel {
+    grid-column: 1 / -1;
+  }
+
+  .kpi-card {
+    grid-column: span 1;
+  }
+
+  .skills-panel {
+    grid-column: 1 / -1;
+  }
+
+  .skill-bars {
+    grid-template-columns: 1fr;
+  }
+
+  .project-panel {
+    grid-column: span 1;
+  }
+
+  .contact-panel {
+    grid-column: 1 / -1;
+  }
+
+  .contact-form {
+    grid-template-columns: 1fr;
+  }
+
+  .form-group.full {
+    grid-column: 1;
+  }
+
+  .form-submit {
+    grid-column: 1;
+  }
+}
+
+@media (max-width: 375px) {
+  .dashboard {
+    grid-template-columns: 1fr;
+    padding: 70px 12px 12px;
+  }
+
+  .kpi-card {
+    grid-column: 1;
+  }
+
+  .project-panel {
+    grid-column: 1;
+  }
+
+  .hero-info {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .kpi-value {
+    font-size: 2rem;
+  }
+
+  .lang-switcher {
+    top: 14px;
+    right: 12px;
+  }
+
+  .lang-btn {
+    padding: 4px 8px;
+    font-size: 0.625rem;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .panel {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .hero-sparkline path,
+  .kpi-sparkline path {
+    stroke-dashoffset: 0;
+    transition: none;
+  }
+
+  .skill-fill,
+  .progress-fill {
+    transition: none;
+  }
+
+  .status-dot {
+    animation: none;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+}
+</style>
+</head>
+<body>
+
+<a href="../index.html" class="gallery-link" data-i18n="gallery_link">&larr; Gallery</a>
+
+<div class="lang-switcher">
+  <button class="lang-btn active" data-lang="en">EN</button>
+  <button class="lang-btn" data-lang="ko">KO</button>
+  <button class="lang-btn" data-lang="ja">JA</button>
+  <button class="lang-btn" data-lang="zh">ZH</button>
+</div>
+
+<main class="dashboard">
+
+  <!-- Hero Panel -->
+  <section class="panel hero-panel" id="hero">
+    <div class="hero-info">
+      <div>
+        <div class="hero-name" data-i18n="name">Gil-dong Hong</div>
+        <div class="hero-title" data-i18n="title">Creative Developer &amp; Designer</div>
+      </div>
+      <div class="hero-status">
+        <span class="status-dot"></span>
+        <span data-i18n="status">Online</span>
+      </div>
+    </div>
+    <svg class="hero-sparkline" viewBox="0 0 120 40" preserveAspectRatio="none">
+      <path d="M0,35 L10,28 L20,32 L30,18 L40,22 L50,12 L60,16 L70,8 L80,14 L90,6 L100,10 L110,4 L120,8" />
+    </svg>
+  </section>
+
+  <!-- KPI Cards -->
+  <section class="panel kpi-card" id="kpi-years">
+    <div class="panel-header">
+      <span class="panel-title" data-i18n="kpi_years_label">Experience</span>
+      <span class="panel-badge badge-active" data-i18n="kpi_active">Active</span>
+    </div>
+    <div class="kpi-value" data-count="5" data-suffix="+">0</div>
+    <div class="kpi-label" data-i18n="kpi_years">Years</div>
+    <svg class="kpi-sparkline" viewBox="0 0 80 24" preserveAspectRatio="none">
+      <path d="M0,20 L13,14 L26,18 L40,8 L53,12 L66,4 L80,8" />
+    </svg>
+  </section>
+
+  <section class="panel kpi-card" id="kpi-projects">
+    <div class="panel-header">
+      <span class="panel-title" data-i18n="kpi_projects_label">Completed</span>
+      <span class="panel-badge badge-active" data-i18n="kpi_active">Active</span>
+    </div>
+    <div class="kpi-value" data-count="50" data-suffix="+">0</div>
+    <div class="kpi-label" data-i18n="kpi_projects">Projects</div>
+    <svg class="kpi-sparkline" viewBox="0 0 80 24" preserveAspectRatio="none">
+      <path d="M0,18 L13,12 L26,16 L40,6 L53,10 L66,2 L80,6" />
+    </svg>
+  </section>
+
+  <section class="panel kpi-card" id="kpi-clients">
+    <div class="panel-header">
+      <span class="panel-title" data-i18n="kpi_clients_label">Worldwide</span>
+      <span class="panel-badge badge-active" data-i18n="kpi_active">Active</span>
+    </div>
+    <div class="kpi-value" data-count="30" data-suffix="+">0</div>
+    <div class="kpi-label" data-i18n="kpi_clients">Clients</div>
+    <svg class="kpi-sparkline" viewBox="0 0 80 24" preserveAspectRatio="none">
+      <path d="M0,22 L13,16 L26,20 L40,10 L53,14 L66,6 L80,10" />
+    </svg>
+  </section>
+
+  <!-- Skills Panel -->
+  <section class="panel skills-panel" id="skills">
+    <div class="panel-header">
+      <span class="panel-title" data-i18n="skills_title">Skills Overview</span>
+      <span class="panel-badge badge-active" data-i18n="skills_badge">Updated</span>
+    </div>
+    <div class="skill-bars">
+      <div class="skill-item">
+        <div class="skill-label">
+          <span class="skill-name">React</span>
+          <span class="skill-percent">90%</span>
+        </div>
+        <div class="skill-track">
+          <div class="skill-fill" data-width="90"></div>
+        </div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-label">
+          <span class="skill-name">TypeScript</span>
+          <span class="skill-percent">85%</span>
+        </div>
+        <div class="skill-track">
+          <div class="skill-fill" data-width="85"></div>
+        </div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-label">
+          <span class="skill-name">Node.js</span>
+          <span class="skill-percent">80%</span>
+        </div>
+        <div class="skill-track">
+          <div class="skill-fill" data-width="80"></div>
+        </div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-label">
+          <span class="skill-name">Python</span>
+          <span class="skill-percent">75%</span>
+        </div>
+        <div class="skill-track">
+          <div class="skill-fill" data-width="75"></div>
+        </div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-label">
+          <span class="skill-name">Figma</span>
+          <span class="skill-percent">70%</span>
+        </div>
+        <div class="skill-track">
+          <div class="skill-fill" data-width="70"></div>
+        </div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-label">
+          <span class="skill-name">AWS</span>
+          <span class="skill-percent">65%</span>
+        </div>
+        <div class="skill-track">
+          <div class="skill-fill" data-width="65"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Project Panels -->
+  <section class="panel project-panel" id="project-1">
+    <div class="panel-header">
+      <span class="panel-title" data-i18n="project_label">Project</span>
+      <span class="panel-badge badge-active" data-i18n="status_active">Active</span>
+    </div>
+    <svg class="project-viz" viewBox="0 0 40 40">
+      <path d="M4,36 L4,20 L12,20 L12,36" />
+      <path d="M16,36 L16,12 L24,12 L24,36" />
+      <path d="M28,36 L28,6 L36,6 L36,36" />
+    </svg>
+    <div class="project-name" data-i18n="project_1_name">Data Pipeline</div>
+    <div class="project-desc" data-i18n="project_1_desc">Real-time data ingestion and processing system</div>
+    <div class="project-progress">
+      <div class="progress-label">
+        <span data-i18n="progress">Progress</span>
+        <span>92%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill green" data-width="92"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel project-panel" id="project-2">
+    <div class="panel-header">
+      <span class="panel-title" data-i18n="project_label">Project</span>
+      <span class="panel-badge badge-complete" data-i18n="status_complete">Complete</span>
+    </div>
+    <svg class="project-viz" viewBox="0 0 40 40">
+      <circle cx="20" cy="20" r="14" />
+      <path d="M20,6 L20,20 L30,14" />
+    </svg>
+    <div class="project-name" data-i18n="project_2_name">ML Dashboard</div>
+    <div class="project-desc" data-i18n="project_2_desc">Machine learning model monitoring interface</div>
+    <div class="project-progress">
+      <div class="progress-label">
+        <span data-i18n="progress">Progress</span>
+        <span>100%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill blue" data-width="100"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel project-panel" id="project-3">
+    <div class="panel-header">
+      <span class="panel-title" data-i18n="project_label">Project</span>
+      <span class="panel-badge badge-active" data-i18n="status_active">Active</span>
+    </div>
+    <svg class="project-viz" viewBox="0 0 40 40">
+      <path d="M4,36 L20,4 L36,36 Z" />
+      <path d="M12,28 L20,14 L28,28" />
+    </svg>
+    <div class="project-name" data-i18n="project_3_name">Analytics Hub</div>
+    <div class="project-desc" data-i18n="project_3_desc">Centralized analytics and reporting platform</div>
+    <div class="project-progress">
+      <div class="progress-label">
+        <span data-i18n="progress">Progress</span>
+        <span>78%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill orange" data-width="78"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel project-panel" id="project-4">
+    <div class="panel-header">
+      <span class="panel-title" data-i18n="project_label">Project</span>
+      <span class="panel-badge badge-active" data-i18n="status_active">Active</span>
+    </div>
+    <svg class="project-viz" viewBox="0 0 40 40">
+      <path d="M4,20 Q12,4 20,20 Q28,36 36,20" />
+      <circle cx="20" cy="20" r="3" />
+    </svg>
+    <div class="project-name" data-i18n="project_4_name">Real-time Monitor</div>
+    <div class="project-desc" data-i18n="project_4_desc">Live system health and performance tracker</div>
+    <div class="project-progress">
+      <div class="progress-label">
+        <span data-i18n="progress">Progress</span>
+        <span>65%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill blue" data-width="65"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Panel -->
+  <section class="panel contact-panel" id="contact">
+    <div class="panel-header">
+      <span class="panel-title" data-i18n="contact_title">Contact</span>
+      <span class="panel-badge badge-active" data-i18n="contact_badge">Open</span>
+    </div>
+    <form class="contact-form" onsubmit="return false;">
+      <div class="form-group">
+        <label class="form-label" data-i18n="form_name">Name</label>
+        <input type="text" class="form-input" data-i18n-placeholder="form_name_ph">
+      </div>
+      <div class="form-group">
+        <label class="form-label" data-i18n="form_email">Email</label>
+        <input type="email" class="form-input" data-i18n-placeholder="form_email_ph">
+      </div>
+      <div class="form-group full">
+        <label class="form-label" data-i18n="form_message">Message</label>
+        <textarea class="form-textarea" data-i18n-placeholder="form_message_ph"></textarea>
+      </div>
+      <button type="submit" class="form-submit" data-i18n="form_submit">Submit Query</button>
+    </form>
+  </section>
+
+</main>
+
+<script>
+const TRANSLATIONS = {
+  en: {
+    gallery_link: "\u2190 Gallery",
+    name: "Gil-dong Hong",
+    title: "Creative Developer & Designer",
+    status: "Online",
+    kpi_years_label: "Experience",
+    kpi_projects_label: "Completed",
+    kpi_clients_label: "Worldwide",
+    kpi_active: "Active",
+    kpi_years: "Years",
+    kpi_projects: "Projects",
+    kpi_clients: "Clients",
+    skills_title: "Skills Overview",
+    skills_badge: "Updated",
+    project_label: "Project",
+    status_active: "Active",
+    status_complete: "Complete",
+    project_1_name: "Data Pipeline",
+    project_1_desc: "Real-time data ingestion and processing system",
+    project_2_name: "ML Dashboard",
+    project_2_desc: "Machine learning model monitoring interface",
+    project_3_name: "Analytics Hub",
+    project_3_desc: "Centralized analytics and reporting platform",
+    project_4_name: "Real-time Monitor",
+    project_4_desc: "Live system health and performance tracker",
+    progress: "Progress",
+    contact_title: "Contact",
+    contact_badge: "Open",
+    form_name: "Name",
+    form_email: "Email",
+    form_message: "Message",
+    form_name_ph: "Enter your name",
+    form_email_ph: "Enter your email",
+    form_message_ph: "Describe your project or inquiry...",
+    form_submit: "Submit Query",
+    about_text: "A full-stack developer specializing in data visualization and analytics dashboards. Transforming complex data into intuitive and beautiful interfaces."
+  },
+  ko: {
+    gallery_link: "\u2190 \uac24\ub7ec\ub9ac",
+    name: "\ud64d\uae38\ub3d9",
+    title: "\ud06c\ub9ac\uc5d0\uc774\ud2f0\ube0c \uac1c\ubc1c\uc790 & \ub514\uc790\uc774\ub108",
+    status: "\uc628\ub77c\uc778",
+    kpi_years_label: "\uacbd\ub825",
+    kpi_projects_label: "\uc644\ub8cc",
+    kpi_clients_label: "\uae00\ub85c\ubc8c",
+    kpi_active: "\ud65c\uc131",
+    kpi_years: "\ub144",
+    kpi_projects: "\ud504\ub85c\uc81d\ud2b8",
+    kpi_clients: "\ud074\ub77c\uc774\uc5b8\ud2b8",
+    skills_title: "\uc2a4\ud0ac \uac1c\uc694",
+    skills_badge: "\uc5c5\ub370\uc774\ud2b8",
+    project_label: "\ud504\ub85c\uc81d\ud2b8",
+    status_active: "\uc9c4\ud589 \uc911",
+    status_complete: "\uc644\ub8cc",
+    project_1_name: "\ub370\uc774\ud130 \ud30c\uc774\ud504\ub77c\uc778",
+    project_1_desc: "\uc2e4\uc2dc\uac04 \ub370\uc774\ud130 \uc218\uc9d1 \ubc0f \ucc98\ub9ac \uc2dc\uc2a4\ud15c",
+    project_2_name: "ML \ub300\uc2dc\ubcf4\ub4dc",
+    project_2_desc: "\uba38\uc2e0\ub7ec\ub2dd \ubaa8\ub378 \ubaa8\ub2c8\ud130\ub9c1 \uc778\ud130\ud398\uc774\uc2a4",
+    project_3_name: "\uc560\ub110\ub9ac\ud2f1\uc2a4 \ud5c8\ube0c",
+    project_3_desc: "\uc911\uc559 \uc9d1\uc911\uc2dd \ubd84\uc11d \ubc0f \ubcf4\uace0 \ud50c\ub7ab\ud3fc",
+    project_4_name: "\uc2e4\uc2dc\uac04 \ubaa8\ub2c8\ud130",
+    project_4_desc: "\ub77c\uc774\ube0c \uc2dc\uc2a4\ud15c \uc0c1\ud0dc \ubc0f \uc131\ub2a5 \ud2b8\ub798\ucee4",
+    progress: "\uc9c4\ud589\ub960",
+    contact_title: "\uc5f0\ub77d\ucc98",
+    contact_badge: "\uc624\ud508",
+    form_name: "\uc774\ub984",
+    form_email: "\uc774\uba54\uc77c",
+    form_message: "\uba54\uc2dc\uc9c0",
+    form_name_ph: "\uc774\ub984\uc744 \uc785\ub825\ud558\uc138\uc694",
+    form_email_ph: "\uc774\uba54\uc77c\uc744 \uc785\ub825\ud558\uc138\uc694",
+    form_message_ph: "\ud504\ub85c\uc81d\ud2b8 \ub610\ub294 \ubb38\uc758 \ub0b4\uc6a9\uc744 \uc124\uba85\ud574\uc8fc\uc138\uc694...",
+    form_submit: "\ucffc\ub9ac \uc804\uc1a1",
+    about_text: "\ub370\uc774\ud130 \uc2dc\uac01\ud654\uc640 \ubd84\uc11d \ub300\uc2dc\ubcf4\ub4dc\uc5d0 \ud2b9\ud654\ub41c \ud480\uc2a4\ud0dd \uac1c\ubc1c\uc790\uc785\ub2c8\ub2e4. \ubcf5\uc7a1\ud55c \ub370\uc774\ud130\ub97c \uc9c1\uad00\uc801\uc774\uace0 \uc544\ub984\ub2e4\uc6b4 \uc778\ud130\ud398\uc774\uc2a4\ub85c \uc804\ud658\ud569\ub2c8\ub2e4."
+  },
+  ja: {
+    gallery_link: "\u2190 \u30ae\u30e3\u30e9\u30ea\u30fc",
+    name: "\u30db\u30f3 \u30ae\u30eb\u30c9\u30f3",
+    title: "\u30af\u30ea\u30a8\u30a4\u30c6\u30a3\u30d6\u30c7\u30d9\u30ed\u30c3\u30d1\u30fc & \u30c7\u30b6\u30a4\u30ca\u30fc",
+    status: "\u30aa\u30f3\u30e9\u30a4\u30f3",
+    kpi_years_label: "\u7d4c\u9a13",
+    kpi_projects_label: "\u5b8c\u4e86",
+    kpi_clients_label: "\u4e16\u754c",
+    kpi_active: "\u30a2\u30af\u30c6\u30a3\u30d6",
+    kpi_years: "\u5e74",
+    kpi_projects: "\u30d7\u30ed\u30b8\u30a7\u30af\u30c8",
+    kpi_clients: "\u30af\u30e9\u30a4\u30a2\u30f3\u30c8",
+    skills_title: "\u30b9\u30ad\u30eb\u6982\u8981",
+    skills_badge: "\u66f4\u65b0\u6e08\u307f",
+    project_label: "\u30d7\u30ed\u30b8\u30a7\u30af\u30c8",
+    status_active: "\u9032\u884c\u4e2d",
+    status_complete: "\u5b8c\u4e86",
+    project_1_name: "\u30c7\u30fc\u30bf\u30d1\u30a4\u30d7\u30e9\u30a4\u30f3",
+    project_1_desc: "\u30ea\u30a2\u30eb\u30bf\u30a4\u30e0\u30c7\u30fc\u30bf\u53ce\u96c6\u30fb\u51e6\u7406\u30b7\u30b9\u30c6\u30e0",
+    project_2_name: "ML\u30c0\u30c3\u30b7\u30e5\u30dc\u30fc\u30c9",
+    project_2_desc: "\u6a5f\u68b0\u5b66\u7fd2\u30e2\u30c7\u30eb\u30e2\u30cb\u30bf\u30ea\u30f3\u30b0\u30a4\u30f3\u30bf\u30fc\u30d5\u30a7\u30fc\u30b9",
+    project_3_name: "\u30a2\u30ca\u30ea\u30c6\u30a3\u30af\u30b9\u30cf\u30d6",
+    project_3_desc: "\u4e2d\u592e\u5316\u5206\u6790\u30fb\u30ec\u30dd\u30fc\u30c6\u30a3\u30f3\u30b0\u30d7\u30e9\u30c3\u30c8\u30d5\u30a9\u30fc\u30e0",
+    project_4_name: "\u30ea\u30a2\u30eb\u30bf\u30a4\u30e0\u30e2\u30cb\u30bf\u30fc",
+    project_4_desc: "\u30e9\u30a4\u30d6\u30b7\u30b9\u30c6\u30e0\u30d8\u30eb\u30b9\u30fb\u30d1\u30d5\u30a9\u30fc\u30de\u30f3\u30b9\u30c8\u30e9\u30c3\u30ab\u30fc",
+    progress: "\u9032\u6357",
+    contact_title: "\u304a\u554f\u3044\u5408\u308f\u305b",
+    contact_badge: "\u30aa\u30fc\u30d7\u30f3",
+    form_name: "\u540d\u524d",
+    form_email: "\u30e1\u30fc\u30eb",
+    form_message: "\u30e1\u30c3\u30bb\u30fc\u30b8",
+    form_name_ph: "\u304a\u540d\u524d\u3092\u5165\u529b",
+    form_email_ph: "\u30e1\u30fc\u30eb\u3092\u5165\u529b",
+    form_message_ph: "\u30d7\u30ed\u30b8\u30a7\u30af\u30c8\u307e\u305f\u306f\u304a\u554f\u3044\u5408\u308f\u305b\u5185\u5bb9\u3092\u3054\u8a18\u5165\u304f\u3060\u3055\u3044...",
+    form_submit: "\u30af\u30a8\u30ea\u9001\u4fe1",
+    about_text: "\u30c7\u30fc\u30bf\u53ef\u8996\u5316\u3068\u5206\u6790\u30c0\u30c3\u30b7\u30e5\u30dc\u30fc\u30c9\u3092\u5c02\u9580\u3068\u3059\u308b\u30d5\u30eb\u30b9\u30bf\u30c3\u30af\u958b\u767a\u8005\u3067\u3059\u3002\u8907\u96d1\u306a\u30c7\u30fc\u30bf\u3092\u76f4\u611f\u7684\u3067\u7f8e\u3057\u3044\u30a4\u30f3\u30bf\u30fc\u30d5\u30a7\u30fc\u30b9\u306b\u5909\u63db\u3057\u307e\u3059\u3002"
+  },
+  zh: {
+    gallery_link: "\u2190 \u753b\u5eca",
+    name: "\u6d2a\u5409\u7ae5",
+    title: "\u521b\u610f\u5f00\u53d1\u8005 & \u8bbe\u8ba1\u5e08",
+    status: "\u5728\u7ebf",
+    kpi_years_label: "\u7ecf\u9a8c",
+    kpi_projects_label: "\u5df2\u5b8c\u6210",
+    kpi_clients_label: "\u5168\u7403",
+    kpi_active: "\u6d3b\u8dc3",
+    kpi_years: "\u5e74",
+    kpi_projects: "\u9879\u76ee",
+    kpi_clients: "\u5ba2\u6237",
+    skills_title: "\u6280\u80fd\u6982\u89c8",
+    skills_badge: "\u5df2\u66f4\u65b0",
+    project_label: "\u9879\u76ee",
+    status_active: "\u8fdb\u884c\u4e2d",
+    status_complete: "\u5df2\u5b8c\u6210",
+    project_1_name: "\u6570\u636e\u7ba1\u9053",
+    project_1_desc: "\u5b9e\u65f6\u6570\u636e\u91c7\u96c6\u4e0e\u5904\u7406\u7cfb\u7edf",
+    project_2_name: "ML\u4eea\u8868\u76d8",
+    project_2_desc: "\u673a\u5668\u5b66\u4e60\u6a21\u578b\u76d1\u63a7\u754c\u9762",
+    project_3_name: "\u5206\u6790\u4e2d\u5fc3",
+    project_3_desc: "\u96c6\u4e2d\u5f0f\u5206\u6790\u4e0e\u62a5\u544a\u5e73\u53f0",
+    project_4_name: "\u5b9e\u65f6\u76d1\u63a7",
+    project_4_desc: "\u5b9e\u65f6\u7cfb\u7edf\u5065\u5eb7\u4e0e\u6027\u80fd\u8ffd\u8e2a\u5668",
+    progress: "\u8fdb\u5ea6",
+    contact_title: "\u8054\u7cfb\u65b9\u5f0f",
+    contact_badge: "\u5f00\u653e",
+    form_name: "\u59d3\u540d",
+    form_email: "\u90ae\u7bb1",
+    form_message: "\u6d88\u606f",
+    form_name_ph: "\u8bf7\u8f93\u5165\u59d3\u540d",
+    form_email_ph: "\u8bf7\u8f93\u5165\u90ae\u7bb1",
+    form_message_ph: "\u8bf7\u63cf\u8ff0\u60a8\u7684\u9879\u76ee\u6216\u54a8\u8be2\u5185\u5bb9...",
+    form_submit: "\u63d0\u4ea4\u67e5\u8be2",
+    about_text: "\u4e13\u6ce8\u4e8e\u6570\u636e\u53ef\u89c6\u5316\u548c\u5206\u6790\u4eea\u8868\u76d8\u7684\u5168\u6808\u5f00\u53d1\u8005\u3002\u5c06\u590d\u6742\u6570\u636e\u8f6c\u5316\u4e3a\u76f4\u89c2\u4e14\u7f8e\u89c2\u7684\u754c\u9762\u3002"
+  }
+};
+
+let currentLang = 'en';
+
+function setLanguage(lang) {
+  currentLang = lang;
+  const t = TRANSLATIONS[lang];
+
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    if (t[key] !== undefined) {
+      el.textContent = t[key];
+    }
+  });
+
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n-placeholder');
+    if (t[key] !== undefined) {
+      el.setAttribute('placeholder', t[key]);
+    }
+  });
+
+  document.documentElement.lang = lang;
+
+  document.querySelectorAll('.lang-btn').forEach(function(btn) {
+    btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+  });
+}
+
+document.querySelectorAll('.lang-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    setLanguage(this.getAttribute('data-lang'));
+  });
+});
+
+// Counter animation
+function animateCounter(el) {
+  var target = parseInt(el.getAttribute('data-count'), 10);
+  var suffix = el.getAttribute('data-suffix') || '';
+  var duration = 1500;
+  var start = performance.now();
+
+  var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (prefersReduced) {
+    el.textContent = target + suffix;
+    return;
+  }
+
+  function tick(now) {
+    var elapsed = now - start;
+    var progress = Math.min(elapsed / duration, 1);
+    var eased = 1 - Math.pow(1 - progress, 3);
+    var current = Math.round(target * eased);
+    el.textContent = current + suffix;
+    if (progress < 1) {
+      requestAnimationFrame(tick);
+    }
+  }
+
+  requestAnimationFrame(tick);
+}
+
+// IntersectionObserver
+var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+var observer = new IntersectionObserver(function(entries) {
+  entries.forEach(function(entry) {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+
+      // Animate skill bars
+      entry.target.querySelectorAll('.skill-fill').forEach(function(bar) {
+        var w = bar.getAttribute('data-width');
+        bar.style.width = w + '%';
+      });
+
+      // Animate progress bars
+      entry.target.querySelectorAll('.progress-fill').forEach(function(bar) {
+        var w = bar.getAttribute('data-width');
+        bar.style.width = w + '%';
+      });
+
+      // Animate counters
+      entry.target.querySelectorAll('.kpi-value[data-count]').forEach(function(el) {
+        animateCounter(el);
+      });
+
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('.panel').forEach(function(panel) {
+  if (prefersReduced) {
+    panel.classList.add('visible');
+    panel.querySelectorAll('.skill-fill, .progress-fill').forEach(function(bar) {
+      var w = bar.getAttribute('data-width');
+      if (w) bar.style.width = w + '%';
+    });
+    panel.querySelectorAll('.kpi-value[data-count]').forEach(function(el) {
+      el.textContent = el.getAttribute('data-count') + (el.getAttribute('data-suffix') || '');
+    });
+  } else {
+    observer.observe(panel);
+  }
+});
+
+// Set initial language
+setLanguage('en');
+</script>
+</body>
+</html>

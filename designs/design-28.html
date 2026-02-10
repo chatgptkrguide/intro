@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio - Vintage Film</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Libre+Franklin:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #0a0a0a;
+  --amber: #D4A574;
+  --cream: #FFF8E7;
+  --sepia: #8B6914;
+  --frame-border: #e8e0d0;
+  --sprocket: #1a1a1a;
+  --text: #e8e0d0;
+  --text-dim: #9a9080;
+  --grain-opacity: 0.04;
+  --leak-orange: rgba(255, 140, 50, 0.3);
+  --leak-pink: rgba(255, 100, 120, 0.2);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Libre Franklin', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* Film grain overlay */
+body::after {
+  content: '';
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  background-image:
+    repeating-radial-gradient(circle at 17% 32%, rgba(255,255,255,0.1) 0px, transparent 1px),
+    repeating-radial-gradient(circle at 62% 78%, rgba(255,255,255,0.08) 0px, transparent 1px),
+    repeating-radial-gradient(circle at 89% 14%, rgba(255,255,255,0.12) 0px, transparent 1px);
+  background-size: 3px 3px, 4px 4px, 2px 2px;
+  animation: grain 0.5s steps(4) infinite;
+}
+
+@keyframes grain {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-2px, 3px); }
+  50% { transform: translate(3px, -1px); }
+  75% { transform: translate(-1px, -3px); }
+  100% { transform: translate(2px, 1px); }
+}
+
+/* Vignette */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9998;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.6) 100%);
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Cormorant Garamond', serif;
+}
+
+a {
+  color: var(--amber);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+a:hover {
+  color: var(--cream);
+}
+
+/* Gallery link */
+.gallery-link {
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  z-index: 1000;
+  font-family: 'Libre Franklin', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-dim);
+  letter-spacing: 0.05em;
+  transition: color 0.3s;
+}
+
+.gallery-link:hover {
+  color: var(--amber);
+}
+
+/* Language switcher — film format selector */
+.lang-switcher {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(20, 20, 20, 0.9);
+  border: 1px solid rgba(212, 165, 116, 0.3);
+  border-radius: 4px;
+  padding: 4px 6px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.7rem;
+}
+
+.lang-switcher-label {
+  color: var(--text-dim);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  margin-right: 4px;
+}
+
+.lang-btn {
+  background: none;
+  border: 1px solid transparent;
+  color: var(--text-dim);
+  font-family: 'Courier New', monospace;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  cursor: pointer;
+  transition: all 0.3s;
+  border-radius: 2px;
+}
+
+.lang-btn:hover {
+  color: var(--amber);
+}
+
+.lang-btn.active {
+  color: var(--cream);
+  border-color: var(--amber);
+  background: rgba(212, 165, 116, 0.15);
+}
+
+/* Film strip container */
+.film-strip {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  position: relative;
+}
+
+/* Film frame */
+.film-frame {
+  position: relative;
+  margin: 60px 0;
+  padding: 0;
+  opacity: 0;
+  filter: sepia(0.6) brightness(0.7);
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, filter 1.2s ease, transform 0.8s ease;
+}
+
+.film-frame.visible {
+  opacity: 1;
+  filter: sepia(0) brightness(1);
+  transform: translateY(0);
+}
+
+/* Sprocket holes */
+.film-frame::before,
+.film-frame::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 20px;
+  height: 100%;
+  z-index: 2;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 16px,
+      var(--bg) 16px,
+      var(--bg) 20px,
+      rgba(40, 36, 30, 1) 20px,
+      rgba(40, 36, 30, 1) 32px,
+      var(--bg) 32px,
+      var(--bg) 36px,
+      transparent 36px,
+      transparent 52px
+    );
+}
+
+.film-frame::before {
+  left: 0;
+  border-right: 1px solid rgba(212, 165, 116, 0.15);
+}
+
+.film-frame::after {
+  right: 0;
+  border-left: 1px solid rgba(212, 165, 116, 0.15);
+}
+
+.frame-inner {
+  margin: 0 28px;
+  border: 2px solid var(--frame-border);
+  border-radius: 4px;
+  padding: 40px;
+  position: relative;
+  background: rgba(15, 13, 10, 0.6);
+}
+
+.frame-number {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.7rem;
+  color: var(--sepia);
+  letter-spacing: 0.1em;
+  opacity: 0.7;
+}
+
+.frame-label {
+  position: absolute;
+  bottom: 8px;
+  left: 12px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+/* Hero section */
+.hero-frame .frame-inner {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.hero-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 600;
+  color: var(--cream);
+  letter-spacing: 0.06em;
+  margin-bottom: 16px;
+  line-height: 1.1;
+}
+
+.hero-title {
+  font-family: 'Libre Franklin', sans-serif;
+  font-size: clamp(0.9rem, 2vw, 1.1rem);
+  font-weight: 300;
+  color: var(--amber);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.hero-divider {
+  width: 60px;
+  height: 1px;
+  background: var(--sepia);
+  margin: 24px auto;
+  opacity: 0.6;
+}
+
+/* About section */
+.about-content {
+  position: relative;
+}
+
+.about-text {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: var(--text);
+  max-width: 600px;
+  margin: 0 auto 32px;
+  text-align: center;
+}
+
+.exposure-readings {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+
+.exposure-item {
+  text-align: center;
+}
+
+.exposure-value {
+  font-family: 'Courier New', monospace;
+  font-size: 1.4rem;
+  color: var(--amber);
+  font-weight: 700;
+  display: block;
+}
+
+.exposure-label {
+  font-family: 'Courier New', monospace;
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-top: 4px;
+  display: block;
+}
+
+/* Section headings */
+.section-heading {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 600;
+  color: var(--cream);
+  text-align: center;
+  margin-bottom: 32px;
+  letter-spacing: 0.04em;
+}
+
+/* Skills — contact sheet strip */
+.skills-strip-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--sepia) transparent;
+  padding-bottom: 8px;
+}
+
+.skills-strip-wrapper::-webkit-scrollbar {
+  height: 4px;
+}
+
+.skills-strip-wrapper::-webkit-scrollbar-thumb {
+  background: var(--sepia);
+  border-radius: 2px;
+}
+
+.skills-strip {
+  display: flex;
+  gap: 16px;
+  padding: 8px 0;
+  min-width: max-content;
+}
+
+.skill-thumbnail {
+  width: 130px;
+  flex-shrink: 0;
+  border: 1px solid rgba(212, 165, 116, 0.3);
+  border-radius: 3px;
+  padding: 16px 12px;
+  text-align: center;
+  position: relative;
+  background: rgba(20, 18, 14, 0.5);
+  transition: border-color 0.3s, background 0.3s;
+}
+
+.skill-thumbnail:hover {
+  border-color: var(--amber);
+  background: rgba(212, 165, 116, 0.08);
+}
+
+.skill-thumbnail-number {
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.55rem;
+  color: var(--sepia);
+  opacity: 0.6;
+}
+
+.skill-icon {
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+  display: block;
+  filter: sepia(0.2);
+}
+
+.skill-name {
+  font-family: 'Courier New', monospace;
+  font-size: 0.75rem;
+  color: var(--text);
+  letter-spacing: 0.05em;
+}
+
+/* Projects — contact sheet */
+.projects-sheet {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--sepia) transparent;
+  padding-bottom: 12px;
+}
+
+.projects-sheet::-webkit-scrollbar {
+  height: 4px;
+}
+
+.projects-sheet::-webkit-scrollbar-thumb {
+  background: var(--sepia);
+  border-radius: 2px;
+}
+
+.projects-grid {
+  display: flex;
+  gap: 20px;
+  min-width: max-content;
+  padding: 8px 0;
+}
+
+.project-frame {
+  width: 260px;
+  flex-shrink: 0;
+  border: 2px solid rgba(212, 165, 116, 0.25);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  background: rgba(15, 13, 10, 0.6);
+  transition: border-color 0.3s, transform 0.3s;
+}
+
+.project-frame:hover {
+  border-color: var(--amber);
+  transform: translateY(-4px);
+}
+
+.project-frame-number {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.65rem;
+  color: var(--sepia);
+  z-index: 3;
+  opacity: 0.7;
+}
+
+.project-image-area {
+  height: 160px;
+  background: linear-gradient(135deg, rgba(139, 105, 20, 0.2), rgba(212, 165, 116, 0.1));
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.project-image-area::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--leak-orange),
+    var(--leak-pink),
+    transparent
+  );
+  transition: left 0.6s ease;
+  z-index: 2;
+}
+
+.project-frame:hover .project-image-area::before {
+  left: 100%;
+}
+
+.project-image-icon {
+  font-size: 2.5rem;
+  opacity: 0.5;
+  filter: sepia(0.4);
+}
+
+.project-info {
+  padding: 16px;
+}
+
+.project-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--cream);
+  margin-bottom: 6px;
+}
+
+.project-desc {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+.project-tags {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.project-tag {
+  font-family: 'Courier New', monospace;
+  font-size: 0.6rem;
+  color: var(--sepia);
+  border: 1px solid rgba(139, 105, 20, 0.3);
+  padding: 2px 6px;
+  border-radius: 2px;
+  letter-spacing: 0.05em;
+}
+
+/* Contact section */
+.contact-form {
+  max-width: 460px;
+  margin: 0 auto;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  font-family: 'Courier New', monospace;
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.form-input,
+.form-textarea {
+  width: 100%;
+  background: rgba(20, 18, 14, 0.6);
+  border: 1px solid rgba(212, 165, 116, 0.2);
+  border-radius: 3px;
+  padding: 12px 14px;
+  color: var(--text);
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  transition: border-color 0.3s;
+  outline: none;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  border-color: var(--amber);
+}
+
+.form-textarea {
+  height: 120px;
+  resize: vertical;
+}
+
+.form-submit {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  background: transparent;
+  border: 2px solid var(--amber);
+  color: var(--amber);
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+  border-radius: 3px;
+}
+
+.form-submit:hover {
+  background: var(--amber);
+  color: var(--bg);
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 40px 20px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+  opacity: 0.5;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  body::after {
+    animation: none;
+  }
+
+  .film-frame {
+    opacity: 1;
+    filter: none;
+    transform: none;
+    transition: none;
+  }
+
+  .project-image-area::before {
+    transition: none;
+  }
+
+  .project-frame {
+    transition: none;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* Responsive — 375px mobile */
+@media (max-width: 767px) {
+  .film-strip {
+    padding: 20px 10px;
+  }
+
+  .film-frame {
+    margin: 40px 0;
+  }
+
+  .film-frame::before,
+  .film-frame::after {
+    width: 14px;
+  }
+
+  .frame-inner {
+    margin: 0 20px;
+    padding: 24px 16px;
+  }
+
+  .hero-frame .frame-inner {
+    min-height: 50vh;
+  }
+
+  .exposure-readings {
+    gap: 20px;
+  }
+
+  .skill-thumbnail {
+    width: 110px;
+  }
+
+  .project-frame {
+    width: 220px;
+  }
+
+  .gallery-link {
+    top: 16px;
+    left: 16px;
+    font-size: 0.75rem;
+  }
+
+  .lang-switcher {
+    top: 16px;
+    right: 16px;
+  }
+}
+
+/* Responsive — 768px tablet */
+@media (min-width: 768px) and (max-width: 1439px) {
+  .film-strip {
+    max-width: 800px;
+  }
+}
+
+/* Responsive — 1440px+ full cinematic */
+@media (min-width: 1440px) {
+  .film-strip {
+    max-width: 1000px;
+  }
+
+  .frame-inner {
+    padding: 56px;
+  }
+
+  .hero-frame .frame-inner {
+    min-height: 75vh;
+  }
+
+  .project-frame {
+    width: 300px;
+  }
+}
+</style>
+</head>
+<body>
+
+<a href="../index.html" class="gallery-link" data-i18n="gallery_link">&larr; Gallery</a>
+
+<div class="lang-switcher">
+  <span class="lang-switcher-label">FORMAT</span>
+  <button class="lang-btn active" data-lang="en">EN</button>
+  <button class="lang-btn" data-lang="ko">KO</button>
+  <button class="lang-btn" data-lang="ja">JA</button>
+  <button class="lang-btn" data-lang="zh">ZH</button>
+</div>
+
+<div class="film-strip">
+
+  <!-- Hero — Frame 01 -->
+  <section class="film-frame hero-frame" id="hero">
+    <div class="frame-inner">
+      <span class="frame-number">01</span>
+      <span class="frame-label">KODAK 5248</span>
+      <div class="hero-divider"></div>
+      <h1 class="hero-name" data-i18n="name">Gil-dong Hong</h1>
+      <p class="hero-title" data-i18n="title">Creative Developer &amp; Designer</p>
+      <div class="hero-divider"></div>
+    </div>
+  </section>
+
+  <!-- About — Frame 02 -->
+  <section class="film-frame" id="about">
+    <div class="frame-inner">
+      <span class="frame-number">02</span>
+      <span class="frame-label">FUJI 8553</span>
+      <h2 class="section-heading" data-i18n="about_title">About</h2>
+      <div class="about-content">
+        <p class="about-text" data-i18n="about_text">A creative developer who transforms vintage film and cinematic sensibility into digital experiences. Creating unique atmospheres with film grain and warm tones.</p>
+        <div class="exposure-readings">
+          <div class="exposure-item">
+            <span class="exposure-value">5+</span>
+            <span class="exposure-label" data-i18n="exp_years">YEARS EXP</span>
+          </div>
+          <div class="exposure-item">
+            <span class="exposure-value">f/1.4</span>
+            <span class="exposure-label" data-i18n="exp_focus">FOCUS</span>
+          </div>
+          <div class="exposure-item">
+            <span class="exposure-value">ISO 400</span>
+            <span class="exposure-label" data-i18n="exp_sensitivity">SENSITIVITY</span>
+          </div>
+          <div class="exposure-item">
+            <span class="exposure-value">50+</span>
+            <span class="exposure-label" data-i18n="exp_projects">PROJECTS</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills — Frame 03 -->
+  <section class="film-frame" id="skills">
+    <div class="frame-inner">
+      <span class="frame-number">03</span>
+      <span class="frame-label">ILFORD HP5</span>
+      <h2 class="section-heading" data-i18n="skills_title">Skills</h2>
+      <div class="skills-strip-wrapper">
+        <div class="skills-strip">
+          <div class="skill-thumbnail">
+            <span class="skill-thumbnail-number">03-1</span>
+            <span class="skill-icon">&#9883;</span>
+            <span class="skill-name">React</span>
+          </div>
+          <div class="skill-thumbnail">
+            <span class="skill-thumbnail-number">03-2</span>
+            <span class="skill-icon">&#9638;</span>
+            <span class="skill-name">TypeScript</span>
+          </div>
+          <div class="skill-thumbnail">
+            <span class="skill-thumbnail-number">03-3</span>
+            <span class="skill-icon">&#9672;</span>
+            <span class="skill-name">Node.js</span>
+          </div>
+          <div class="skill-thumbnail">
+            <span class="skill-thumbnail-number">03-4</span>
+            <span class="skill-icon">&#9830;</span>
+            <span class="skill-name">Python</span>
+          </div>
+          <div class="skill-thumbnail">
+            <span class="skill-thumbnail-number">03-5</span>
+            <span class="skill-icon">&#9733;</span>
+            <span class="skill-name">Figma</span>
+          </div>
+          <div class="skill-thumbnail">
+            <span class="skill-thumbnail-number">03-6</span>
+            <span class="skill-icon">&#9635;</span>
+            <span class="skill-name">UI/UX</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects — Frame 04 -->
+  <section class="film-frame" id="projects">
+    <div class="frame-inner">
+      <span class="frame-number">04</span>
+      <span class="frame-label">VISION3 500T</span>
+      <h2 class="section-heading" data-i18n="projects_title">Projects</h2>
+      <div class="projects-sheet">
+        <div class="projects-grid">
+          <div class="project-frame">
+            <span class="project-frame-number">04-A</span>
+            <div class="project-image-area">
+              <span class="project-image-icon">&#127916;</span>
+            </div>
+            <div class="project-info">
+              <h3 class="project-name" data-i18n="project1_name">Cinema App</h3>
+              <p class="project-desc" data-i18n="project1_desc">A cinematic movie discovery and tracking application with curated collections.</p>
+              <div class="project-tags">
+                <span class="project-tag">React</span>
+                <span class="project-tag">API</span>
+                <span class="project-tag">UI</span>
+              </div>
+            </div>
+          </div>
+          <div class="project-frame">
+            <span class="project-frame-number">04-B</span>
+            <div class="project-image-area">
+              <span class="project-image-icon">&#128247;</span>
+            </div>
+            <div class="project-info">
+              <h3 class="project-name" data-i18n="project2_name">Photo Lab</h3>
+              <p class="project-desc" data-i18n="project2_desc">Digital darkroom with vintage filters, grain simulation, and color grading tools.</p>
+              <div class="project-tags">
+                <span class="project-tag">Canvas</span>
+                <span class="project-tag">WebGL</span>
+                <span class="project-tag">Filters</span>
+              </div>
+            </div>
+          </div>
+          <div class="project-frame">
+            <span class="project-frame-number">04-C</span>
+            <div class="project-image-area">
+              <span class="project-image-icon">&#127910;</span>
+            </div>
+            <div class="project-info">
+              <h3 class="project-name" data-i18n="project3_name">Retro Editor</h3>
+              <p class="project-desc" data-i18n="project3_desc">A retro-styled video editor with analog effects and film strip timeline.</p>
+              <div class="project-tags">
+                <span class="project-tag">FFmpeg</span>
+                <span class="project-tag">Node.js</span>
+                <span class="project-tag">UX</span>
+              </div>
+            </div>
+          </div>
+          <div class="project-frame">
+            <span class="project-frame-number">04-D</span>
+            <div class="project-image-area">
+              <span class="project-image-icon">&#128218;</span>
+            </div>
+            <div class="project-info">
+              <h3 class="project-name" data-i18n="project4_name">Film Archive</h3>
+              <p class="project-desc" data-i18n="project4_desc">A searchable archive of classic films with metadata, stills, and historical context.</p>
+              <div class="project-tags">
+                <span class="project-tag">Python</span>
+                <span class="project-tag">DB</span>
+                <span class="project-tag">Search</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact — Frame 05 -->
+  <section class="film-frame" id="contact">
+    <div class="frame-inner">
+      <span class="frame-number">05</span>
+      <span class="frame-label">EKTACHROME E100</span>
+      <h2 class="section-heading" data-i18n="contact_title">Contact</h2>
+      <form class="contact-form" onsubmit="event.preventDefault();">
+        <div class="form-group">
+          <label class="form-label" data-i18n="form_name">NAME</label>
+          <input type="text" class="form-input" data-i18n-placeholder="form_name_ph">
+        </div>
+        <div class="form-group">
+          <label class="form-label" data-i18n="form_email">EMAIL</label>
+          <input type="email" class="form-input" data-i18n-placeholder="form_email_ph">
+        </div>
+        <div class="form-group">
+          <label class="form-label" data-i18n="form_message">MESSAGE</label>
+          <textarea class="form-textarea" data-i18n-placeholder="form_message_ph"></textarea>
+        </div>
+        <button type="submit" class="form-submit" data-i18n="form_submit">DEVELOP</button>
+      </form>
+    </div>
+  </section>
+
+</div>
+
+<footer class="footer">
+  &copy; 2024 Gil-dong Hong &mdash; Shot on Digital
+</footer>
+
+<script>
+const TRANSLATIONS = {
+  en: {
+    gallery_link: '\u2190 Gallery',
+    name: 'Gil-dong Hong',
+    title: 'Creative Developer & Designer',
+    about_title: 'About',
+    about_text: 'A creative developer who transforms vintage film and cinematic sensibility into digital experiences. Creating unique atmospheres with film grain and warm tones.',
+    exp_years: 'YEARS EXP',
+    exp_focus: 'FOCUS',
+    exp_sensitivity: 'SENSITIVITY',
+    exp_projects: 'PROJECTS',
+    skills_title: 'Skills',
+    projects_title: 'Projects',
+    project1_name: 'Cinema App',
+    project1_desc: 'A cinematic movie discovery and tracking application with curated collections.',
+    project2_name: 'Photo Lab',
+    project2_desc: 'Digital darkroom with vintage filters, grain simulation, and color grading tools.',
+    project3_name: 'Retro Editor',
+    project3_desc: 'A retro-styled video editor with analog effects and film strip timeline.',
+    project4_name: 'Film Archive',
+    project4_desc: 'A searchable archive of classic films with metadata, stills, and historical context.',
+    contact_title: 'Contact',
+    form_name: 'NAME',
+    form_name_ph: 'Your name',
+    form_email: 'EMAIL',
+    form_email_ph: 'your@email.com',
+    form_message: 'MESSAGE',
+    form_message_ph: 'Write your message...',
+    form_submit: 'DEVELOP'
+  },
+  ko: {
+    gallery_link: '\u2190 \uac24\ub7ec\ub9ac',
+    name: '\ud64d\uae38\ub3d9',
+    title: '\ud06c\ub9ac\uc5d0\uc774\ud2f0\ube0c \uac1c\ubc1c\uc790 & \ub514\uc790\uc774\ub108',
+    about_title: '\uc18c\uac1c',
+    about_text: '\ube48\ud2f0\uc9c0 \ud544\ub984\uacfc \uc2dc\ub124\ub9c8\ud2f1 \uac10\uc131\uc744 \ub514\uc9c0\ud138 \uacbd\ud5d8\uc73c\ub85c \uc804\ud658\ud558\ub294 \ud06c\ub9ac\uc5d0\uc774\ud2f0\ube0c \uac1c\ubc1c\uc790\uc785\ub2c8\ub2e4. \ud544\ub984 \uadf8\ub808\uc778\uacfc \ub530\ub73b\ud55c \ud1a4\uc73c\ub85c \ub3c5\ud2b9\ud55c \ubd84\uc704\uae30\ub97c \ub9cc\ub4ed\ub2c8\ub2e4.',
+    exp_years: '\uacbd\ub825',
+    exp_focus: '\uc9d1\uc911\ub825',
+    exp_sensitivity: '\uac10\uc218\uc131',
+    exp_projects: '\ud504\ub85c\uc81d\ud2b8',
+    skills_title: '\uae30\uc220',
+    projects_title: '\ud504\ub85c\uc81d\ud2b8',
+    project1_name: '\uc2dc\ub124\ub9c8 \uc571',
+    project1_desc: '\ud050\ub808\uc774\ud2f0\ub4dc \ucee8\ud150\uce20\ub85c \uc601\ud654\ub97c \ud0d0\uc0c9\ud558\uace0 \ucd94\uc801\ud558\ub294 \uc2dc\ub124\ub9c8\ud2f1 \uc560\ud50c\ub9ac\ucf00\uc774\uc158.',
+    project2_name: '\ud3ec\ud1a0 \ub7a9',
+    project2_desc: '\ube48\ud2f0\uc9c0 \ud544\ud130, \uadf8\ub808\uc778 \uc2dc\ubbac\ub808\uc774\uc158, \ucee8\ub7ec \uadf8\ub808\uc774\ub529 \ub3c4\uad6c\ub97c \uac16\ucd98 \ub514\uc9c0\ud138 \uc554\uc2e4.',
+    project3_name: '\ub808\ud2b8\ub85c \uc5d0\ub514\ud130',
+    project3_desc: '\uc544\ub0a0\ub85c\uadf8 \uc774\ud399\ud2b8\uc640 \ud544\ub984 \uc2a4\ud2b8\ub9bd \ud0c0\uc784\ub77c\uc778\uc744 \uac16\ucd98 \ub808\ud2b8\ub85c \uc2a4\ud0c0\uc77c \ube44\ub514\uc624 \uc5d0\ub514\ud130.',
+    project4_name: '\ud544\ub984 \uc544\uce74\uc774\ube0c',
+    project4_desc: '\uba54\ud0c0\ub370\uc774\ud130, \uc2a4\ud2f8\uc0f7, \uc5ed\uc0ac\uc801 \ubc30\uacbd\uc744 \uac16\ucd98 \ud074\ub798\uc2dd \uc601\ud654 \uac80\uc0c9 \uc544\uce74\uc774\ube0c.',
+    contact_title: '\uc5f0\ub77d\ucc98',
+    form_name: '\uc774\ub984',
+    form_name_ph: '\uc774\ub984\uc744 \uc785\ub825\ud558\uc138\uc694',
+    form_email: '\uc774\uba54\uc77c',
+    form_email_ph: 'your@email.com',
+    form_message: '\uba54\uc2dc\uc9c0',
+    form_message_ph: '\uba54\uc2dc\uc9c0\ub97c \uc791\uc131\ud558\uc138\uc694...',
+    form_submit: '\ud604\uc0c1'
+  },
+  ja: {
+    gallery_link: '\u2190 \u30ae\u30e3\u30e9\u30ea\u30fc',
+    name: '\u30db\u30f3 \u30ae\u30eb\u30c9\u30f3',
+    title: '\u30af\u30ea\u30a8\u30a4\u30c6\u30a3\u30d6\u30c7\u30d9\u30ed\u30c3\u30d1\u30fc & \u30c7\u30b6\u30a4\u30ca\u30fc',
+    about_title: '\u7d39\u4ecb',
+    about_text: '\u30f4\u30a3\u30f3\u30c6\u30fc\u30b8\u30d5\u30a3\u30eb\u30e0\u3068\u30b7\u30cd\u30de\u30c6\u30a3\u30c3\u30af\u306a\u611f\u6027\u3092\u30c7\u30b8\u30bf\u30eb\u4f53\u9a13\u306b\u5909\u63db\u3059\u308b\u30af\u30ea\u30a8\u30a4\u30c6\u30a3\u30d6\u30c7\u30d9\u30ed\u30c3\u30d1\u30fc\u3067\u3059\u3002\u30d5\u30a3\u30eb\u30e0\u30b0\u30ec\u30a4\u30f3\u3068\u6e29\u304b\u307f\u306e\u3042\u308b\u30c8\u30fc\u30f3\u3067\u72ec\u7279\u306e\u96f0\u56f2\u6c17\u3092\u4f5c\u308a\u307e\u3059\u3002',
+    exp_years: '\u7d4c\u9a13\u5e74\u6570',
+    exp_focus: '\u30d5\u30a9\u30fc\u30ab\u30b9',
+    exp_sensitivity: '\u611f\u5ea6',
+    exp_projects: '\u30d7\u30ed\u30b8\u30a7\u30af\u30c8',
+    skills_title: '\u30b9\u30ad\u30eb',
+    projects_title: '\u30d7\u30ed\u30b8\u30a7\u30af\u30c8',
+    project1_name: '\u30b7\u30cd\u30de\u30a2\u30d7\u30ea',
+    project1_desc: '\u30ad\u30e5\u30ec\u30fc\u30c8\u3055\u308c\u305f\u30b3\u30ec\u30af\u30b7\u30e7\u30f3\u3067\u6620\u753b\u3092\u63a2\u7d22\u30fb\u8ffd\u8de1\u3059\u308b\u30b7\u30cd\u30de\u30c6\u30a3\u30c3\u30af\u30a2\u30d7\u30ea\u3002',
+    project2_name: '\u30d5\u30a9\u30c8\u30e9\u30dc',
+    project2_desc: '\u30f4\u30a3\u30f3\u30c6\u30fc\u30b8\u30d5\u30a3\u30eb\u30bf\u30fc\u3001\u30b0\u30ec\u30a4\u30f3\u30b7\u30df\u30e5\u30ec\u30fc\u30b7\u30e7\u30f3\u3001\u30ab\u30e9\u30fc\u30b0\u30ec\u30fc\u30c7\u30a3\u30f3\u30b0\u30c4\u30fc\u30eb\u3092\u5099\u3048\u305f\u30c7\u30b8\u30bf\u30eb\u6697\u5ba4\u3002',
+    project3_name: '\u30ec\u30c8\u30ed\u30a8\u30c7\u30a3\u30bf\u30fc',
+    project3_desc: '\u30a2\u30ca\u30ed\u30b0\u30a8\u30d5\u30a7\u30af\u30c8\u3068\u30d5\u30a3\u30eb\u30e0\u30b9\u30c8\u30ea\u30c3\u30d7\u30bf\u30a4\u30e0\u30e9\u30a4\u30f3\u3092\u5099\u3048\u305f\u30ec\u30c8\u30ed\u30b9\u30bf\u30a4\u30eb\u306e\u30d3\u30c7\u30aa\u30a8\u30c7\u30a3\u30bf\u30fc\u3002',
+    project4_name: '\u30d5\u30a3\u30eb\u30e0\u30a2\u30fc\u30ab\u30a4\u30d6',
+    project4_desc: '\u30e1\u30bf\u30c7\u30fc\u30bf\u3001\u30b9\u30c1\u30fc\u30eb\u5199\u771f\u3001\u6b74\u53f2\u7684\u80cc\u666f\u3092\u5099\u3048\u305f\u30af\u30e9\u30b7\u30c3\u30af\u6620\u753b\u306e\u691c\u7d22\u30a2\u30fc\u30ab\u30a4\u30d6\u3002',
+    contact_title: '\u304a\u554f\u3044\u5408\u308f\u305b',
+    form_name: '\u304a\u540d\u524d',
+    form_name_ph: '\u304a\u540d\u524d\u3092\u5165\u529b',
+    form_email: '\u30e1\u30fc\u30eb',
+    form_email_ph: 'your@email.com',
+    form_message: '\u30e1\u30c3\u30bb\u30fc\u30b8',
+    form_message_ph: '\u30e1\u30c3\u30bb\u30fc\u30b8\u3092\u5165\u529b...',
+    form_submit: '\u73fe\u50cf'
+  },
+  zh: {
+    gallery_link: '\u2190 \u753b\u5eca',
+    name: '\u6d2a\u5409\u7ae5',
+    title: '\u521b\u610f\u5f00\u53d1\u8005 & \u8bbe\u8ba1\u5e08',
+    about_title: '\u5173\u4e8e',
+    about_text: '\u4e00\u4f4d\u5c06\u590d\u53e4\u80f6\u7247\u548c\u7535\u5f71\u611f\u8f6c\u5316\u4e3a\u6570\u5b57\u4f53\u9a8c\u7684\u521b\u610f\u5f00\u53d1\u8005\u3002\u901a\u8fc7\u80f6\u7247\u9897\u7c92\u548c\u6e29\u6696\u8272\u8c03\u521b\u9020\u72ec\u7279\u6c1b\u56f4\u3002',
+    exp_years: '\u7ecf\u9a8c',
+    exp_focus: '\u4e13\u6ce8',
+    exp_sensitivity: '\u654f\u611f\u5ea6',
+    exp_projects: '\u9879\u76ee',
+    skills_title: '\u6280\u80fd',
+    projects_title: '\u9879\u76ee',
+    project1_name: '\u7535\u5f71\u5e94\u7528',
+    project1_desc: '\u4e00\u4e2a\u5177\u6709\u7cbe\u9009\u96c6\u5408\u7684\u7535\u5f71\u63a2\u7d22\u548c\u8ffd\u8e2a\u5e94\u7528\u7a0b\u5e8f\u3002',
+    project2_name: '\u7167\u7247\u5b9e\u9a8c\u5ba4',
+    project2_desc: '\u914d\u5907\u590d\u53e4\u6ee4\u955c\u3001\u9897\u7c92\u6a21\u62df\u548c\u8272\u5f69\u5206\u7ea7\u5de5\u5177\u7684\u6570\u5b57\u6697\u623f\u3002',
+    project3_name: '\u590d\u53e4\u7f16\u8f91\u5668',
+    project3_desc: '\u5177\u6709\u6a21\u62df\u6548\u679c\u548c\u80f6\u7247\u65f6\u95f4\u7ebf\u7684\u590d\u53e4\u98ce\u683c\u89c6\u9891\u7f16\u8f91\u5668\u3002',
+    project4_name: '\u7535\u5f71\u6863\u6848',
+    project4_desc: '\u5177\u6709\u5143\u6570\u636e\u3001\u5267\u7167\u548c\u5386\u53f2\u80cc\u666f\u7684\u7ecf\u5178\u7535\u5f71\u641c\u7d22\u6863\u6848\u3002',
+    contact_title: '\u8054\u7cfb',
+    form_name: '\u59d3\u540d',
+    form_name_ph: '\u8bf7\u8f93\u5165\u59d3\u540d',
+    form_email: '\u90ae\u7bb1',
+    form_email_ph: 'your@email.com',
+    form_message: '\u6d88\u606f',
+    form_message_ph: '\u8bf7\u8f93\u5165\u6d88\u606f...',
+    form_submit: '\u663e\u5f71'
+  }
+};
+
+// i18n
+let currentLang = 'en';
+
+function setLanguage(lang) {
+  currentLang = lang;
+  const t = TRANSLATIONS[lang];
+  if (!t) return;
+
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    if (t[key] !== undefined) {
+      el.textContent = t[key];
+    }
+  });
+
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n-placeholder');
+    if (t[key] !== undefined) {
+      el.placeholder = t[key];
+    }
+  });
+
+  document.documentElement.lang = lang;
+
+  document.querySelectorAll('.lang-btn').forEach(function(btn) {
+    btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+  });
+}
+
+document.querySelectorAll('.lang-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    setLanguage(this.getAttribute('data-lang'));
+  });
+});
+
+// IntersectionObserver — frames "develop" into view
+var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+if (prefersReduced) {
+  document.querySelectorAll('.film-frame').forEach(function(frame) {
+    frame.classList.add('visible');
+  });
+} else {
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, {
+    threshold: 0.15,
+    rootMargin: '0px 0px -60px 0px'
+  });
+
+  document.querySelectorAll('.film-frame').forEach(function(frame) {
+    observer.observe(frame);
+  });
+}
+</script>
+</body>
+</html>

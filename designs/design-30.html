@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio - Tattoo Ink Flash</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --parchment: #F5ECD7;
+  --parchment-dark: #E8DCC4;
+  --ink: #1a1a1a;
+  --ink-light: #3a3a3a;
+  --crimson: #8B0000;
+  --crimson-light: #A52A2A;
+  --gold: #B8860B;
+  --gold-light: #DAA520;
+  --text-muted: #5a5040;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Source Serif 4', serif;
+  background: var(--parchment);
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 50px,
+      rgba(139, 115, 85, 0.03) 50px,
+      rgba(139, 115, 85, 0.03) 51px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 50px,
+      rgba(139, 115, 85, 0.03) 50px,
+      rgba(139, 115, 85, 0.03) 51px
+    ),
+    radial-gradient(ellipse at 20% 50%, rgba(139, 115, 85, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(139, 115, 85, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(139, 115, 85, 0.05) 0%, transparent 50%);
+  color: var(--ink);
+  overflow-x: hidden;
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Playfair Display', serif;
+  line-height: 1.2;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Gallery Link */
+.gallery-link {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 100;
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--parchment);
+  background: var(--ink);
+  padding: 10px 20px;
+  border: 2px solid var(--ink);
+  letter-spacing: 0.05em;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.gallery-link:hover {
+  background: var(--parchment);
+  color: var(--ink);
+}
+
+/* Language Switcher - Ribbon Tabs */
+.lang-switcher {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 100;
+  display: flex;
+  gap: 0;
+}
+
+.lang-btn {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 8px 14px;
+  border: 2px solid var(--ink);
+  background: var(--parchment);
+  color: var(--ink);
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  position: relative;
+  margin-left: -2px;
+}
+
+.lang-btn:first-child {
+  margin-left: 0;
+}
+
+.lang-btn.active {
+  background: var(--crimson);
+  color: var(--parchment);
+  border-color: var(--crimson);
+  z-index: 1;
+}
+
+.lang-btn::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid var(--parchment);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.lang-btn.active::after {
+  border-top-color: var(--crimson);
+  opacity: 1;
+}
+
+.lang-btn:hover:not(.active) {
+  background: var(--ink);
+  color: var(--parchment);
+}
+
+/* Main Container */
+.flash-sheet {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 100px 30px 60px;
+  column-count: 3;
+  column-gap: 24px;
+}
+
+/* Flash Card Base */
+.flash-card {
+  break-inside: avoid;
+  margin-bottom: 24px;
+  background: var(--parchment);
+  border: 2px solid var(--ink);
+  padding: 30px;
+  position: relative;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.flash-card.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Rotation per card */
+.flash-card:nth-child(6n+1) { transform: scale(0.8) rotate(-2deg); }
+.flash-card:nth-child(6n+2) { transform: scale(0.8) rotate(1.5deg); }
+.flash-card:nth-child(6n+3) { transform: scale(0.8) rotate(-1deg); }
+.flash-card:nth-child(6n+4) { transform: scale(0.8) rotate(2deg); }
+.flash-card:nth-child(6n+5) { transform: scale(0.8) rotate(-0.5deg); }
+.flash-card:nth-child(6n+6) { transform: scale(0.8) rotate(1deg); }
+
+.flash-card.visible:nth-child(6n+1) { transform: scale(1) rotate(-2deg); }
+.flash-card.visible:nth-child(6n+2) { transform: scale(1) rotate(1.5deg); }
+.flash-card.visible:nth-child(6n+3) { transform: scale(1) rotate(-1deg); }
+.flash-card.visible:nth-child(6n+4) { transform: scale(1) rotate(2deg); }
+.flash-card.visible:nth-child(6n+5) { transform: scale(1) rotate(-0.5deg); }
+.flash-card.visible:nth-child(6n+6) { transform: scale(1) rotate(1deg); }
+
+/* Ornamental Corner Brackets */
+.corner-card {
+  padding: 40px;
+}
+
+.corner-card::before,
+.corner-card::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-color: var(--gold);
+  border-style: solid;
+}
+
+.corner-card::before {
+  top: 8px;
+  left: 8px;
+  border-width: 3px 0 0 3px;
+}
+
+.corner-card::after {
+  top: 8px;
+  right: 8px;
+  border-width: 3px 3px 0 0;
+}
+
+.corner-bottom::before,
+.corner-bottom::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-color: var(--gold);
+  border-style: solid;
+}
+
+.corner-bottom::before {
+  bottom: 8px;
+  left: 8px;
+  border-width: 0 0 3px 3px;
+}
+
+.corner-bottom::after {
+  bottom: 8px;
+  right: 8px;
+  border-width: 0 3px 3px 0;
+}
+
+/* Decorative Divider */
+.divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--ink);
+}
+
+.divider-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--gold);
+  transform: rotate(45deg);
+  flex-shrink: 0;
+}
+
+/* Banner Ribbon */
+.ribbon {
+  position: relative;
+  display: inline-block;
+  background: var(--crimson);
+  color: var(--parchment);
+  padding: 8px 30px;
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-align: center;
+  margin: 0 -10px;
+}
+
+.ribbon::before,
+.ribbon::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  width: 0;
+  height: 0;
+}
+
+.ribbon::before {
+  left: 0;
+  border-left: 10px solid transparent;
+  border-top: 8px solid #5a0000;
+}
+
+.ribbon::after {
+  right: 0;
+  border-right: 10px solid transparent;
+  border-top: 8px solid #5a0000;
+}
+
+.ribbon-full {
+  display: block;
+  width: calc(100% + 20px);
+  margin-left: -10px;
+}
+
+/* Hero Card */
+.hero-card {
+  text-align: center;
+  padding: 50px 30px;
+  border: 3px solid var(--ink);
+}
+
+.hero-card .hero-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.4rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin: 20px 0 10px;
+}
+
+.hero-card .hero-title {
+  font-family: 'Source Serif 4', serif;
+  font-size: 1rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.hero-top-ornament {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+
+.hero-top-ornament span {
+  width: 8px;
+  height: 8px;
+  border: 2px solid var(--gold);
+  transform: rotate(45deg);
+}
+
+.hero-top-ornament span:nth-child(2) {
+  background: var(--gold);
+}
+
+/* About Card */
+.about-card .about-text {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: var(--ink-light);
+  margin: 15px 0;
+  text-align: center;
+}
+
+.flash-numbers {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.flash-number {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.flash-number .number-circle {
+  width: 50px;
+  height: 50px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.flash-number .number-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+
+/* Skill Cards */
+.skill-card {
+  text-align: center;
+  padding: 25px 20px;
+  border: 2px solid var(--ink);
+  position: relative;
+}
+
+.skill-card .skill-icon {
+  font-size: 2rem;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.skill-card .skill-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.skill-card .skill-level {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-top: 4px;
+}
+
+/* Skill card decorative borders */
+.skill-card.dagger-border {
+  border-style: double;
+  border-width: 4px;
+}
+
+.skill-card.rose-border {
+  border-width: 2px;
+  box-shadow: inset 0 0 0 4px var(--parchment), inset 0 0 0 6px var(--ink);
+}
+
+.skill-card.anchor-border {
+  border-width: 3px;
+  border-color: var(--gold);
+}
+
+.skill-card .flash-price {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 32px;
+  height: 32px;
+  background: var(--crimson);
+  color: var(--parchment);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 0.6rem;
+  font-weight: 700;
+}
+
+/* Project Cards */
+.project-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.project-header {
+  background: var(--ink);
+  padding: 15px 20px;
+  position: relative;
+}
+
+.project-header .ribbon {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 10px 20px;
+  background: var(--crimson);
+}
+
+.project-header .ribbon::before,
+.project-header .ribbon::after {
+  display: none;
+}
+
+.project-body {
+  padding: 20px;
+  border-top: none;
+}
+
+.project-body p {
+  font-size: 0.9rem;
+  color: var(--ink-light);
+  line-height: 1.7;
+  margin-bottom: 12px;
+}
+
+.project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.project-tag {
+  font-size: 0.7rem;
+  padding: 3px 10px;
+  border: 1px solid var(--ink);
+  font-family: 'Source Serif 4', serif;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Ornamental frame for project cards */
+.project-card .ornament-frame {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  right: 5px;
+  bottom: 5px;
+  border: 1px solid rgba(245, 236, 215, 0.3);
+  pointer-events: none;
+}
+
+/* Contact Card */
+.contact-card {
+  padding: 40px 30px;
+  background:
+    linear-gradient(135deg, rgba(184, 134, 11, 0.05) 0%, transparent 50%),
+    var(--parchment);
+  border: 3px solid var(--ink);
+}
+
+.contact-card .section-title {
+  text-align: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 5px;
+}
+
+.contact-form {
+  margin-top: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  font-family: 'Playfair Display', serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 2px solid var(--ink);
+  background: transparent;
+  font-family: 'Source Serif 4', serif;
+  font-size: 0.9rem;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: var(--gold);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.submit-ribbon {
+  display: block;
+  width: calc(100% + 20px);
+  margin-left: -10px;
+  margin-top: 20px;
+  background: var(--crimson);
+  color: var(--parchment);
+  border: none;
+  padding: 14px 30px;
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.3s ease;
+}
+
+.submit-ribbon:hover {
+  background: var(--crimson-light);
+}
+
+.submit-ribbon::before,
+.submit-ribbon::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  width: 0;
+  height: 0;
+}
+
+.submit-ribbon::before {
+  left: 0;
+  border-left: 10px solid transparent;
+  border-top: 8px solid #5a0000;
+}
+
+.submit-ribbon::after {
+  right: 0;
+  border-right: 10px solid transparent;
+  border-top: 8px solid #5a0000;
+}
+
+/* Section Title in cards */
+.card-section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-align: center;
+}
+
+/* Skills section header */
+.skills-header {
+  text-align: center;
+  column-span: all;
+  margin-bottom: 20px;
+}
+
+/* Flash sheet number label */
+.sheet-number {
+  position: absolute;
+  bottom: 8px;
+  right: 12px;
+  font-family: 'Playfair Display', serif;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .flash-card {
+    opacity: 1;
+    transition: none;
+  }
+  .flash-card:nth-child(6n+1) { transform: rotate(-2deg); }
+  .flash-card:nth-child(6n+2) { transform: rotate(1.5deg); }
+  .flash-card:nth-child(6n+3) { transform: rotate(-1deg); }
+  .flash-card:nth-child(6n+4) { transform: rotate(2deg); }
+  .flash-card:nth-child(6n+5) { transform: rotate(-0.5deg); }
+  .flash-card:nth-child(6n+6) { transform: rotate(1deg); }
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* Responsive */
+@media (max-width: 1439px) {
+  .flash-sheet {
+    column-count: 3;
+  }
+}
+
+@media (max-width: 1024px) {
+  .flash-sheet {
+    column-count: 2;
+    padding: 100px 20px 40px;
+  }
+}
+
+@media (max-width: 767px) {
+  .flash-sheet {
+    column-count: 1;
+    max-width: 500px;
+    padding: 90px 16px 40px;
+  }
+
+  .hero-card .hero-name {
+    font-size: 1.8rem;
+  }
+
+  .gallery-link {
+    top: 14px;
+    left: 14px;
+    padding: 8px 14px;
+    font-size: 0.75rem;
+  }
+
+  .lang-switcher {
+    top: 14px;
+    right: 14px;
+  }
+
+  .lang-btn {
+    padding: 6px 10px;
+    font-size: 0.65rem;
+  }
+
+  .flash-numbers {
+    gap: 12px;
+  }
+
+  .flash-number .number-circle {
+    width: 42px;
+    height: 42px;
+    font-size: 0.75rem;
+  }
+}
+</style>
+</head>
+<body>
+
+<a href="../index.html" class="gallery-link" data-i18n="gallery_link">&larr; Gallery</a>
+
+<div class="lang-switcher">
+  <button class="lang-btn active" data-lang="en">EN</button>
+  <button class="lang-btn" data-lang="ko">KO</button>
+  <button class="lang-btn" data-lang="ja">JA</button>
+  <button class="lang-btn" data-lang="zh">ZH</button>
+</div>
+
+<main class="flash-sheet">
+
+  <!-- Hero Card -->
+  <div class="flash-card hero-card">
+    <div class="hero-top-ornament">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <div class="ribbon ribbon-full" data-i18n="hero_ribbon">PORTFOLIO</div>
+    <h1 class="hero-name" data-i18n="name">John Doe</h1>
+    <div class="divider"><div class="divider-dot"></div></div>
+    <p class="hero-title" data-i18n="title">Creative Developer & Designer</p>
+    <div class="divider"><div class="divider-dot"></div></div>
+    <div class="hero-top-ornament" style="margin-top: 10px;">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <span class="sheet-number">No. 30</span>
+  </div>
+
+  <!-- About Card -->
+  <div class="flash-card corner-card about-card">
+    <div class="corner-bottom"></div>
+    <div class="card-section-title" data-i18n="about_title">About</div>
+    <div class="divider"><div class="divider-dot"></div></div>
+    <p class="about-text" data-i18n="about_text">A creative developer inspired by tattoo flash art. Crafting unique digital experiences with ornamental frames and intricate details.</p>
+    <div class="flash-numbers">
+      <div class="flash-number">
+        <div class="number-circle">$50</div>
+        <span class="number-label" data-i18n="stat_projects">Projects</span>
+      </div>
+      <div class="flash-number">
+        <div class="number-circle">$7+</div>
+        <span class="number-label" data-i18n="stat_years">Years</span>
+      </div>
+      <div class="flash-number">
+        <div class="number-circle">$30</div>
+        <span class="number-label" data-i18n="stat_clients">Clients</span>
+      </div>
+    </div>
+    <span class="sheet-number">No. 31</span>
+  </div>
+
+  <!-- Skill Cards -->
+  <div class="flash-card skill-card dagger-border">
+    <span class="flash-price">$01</span>
+    <span class="skill-icon">&#9876;</span>
+    <div class="skill-name" data-i18n="skill_1">JavaScript</div>
+    <div class="skill-level" data-i18n="skill_level_expert">Expert</div>
+    <span class="sheet-number">No. 32</span>
+  </div>
+
+  <div class="flash-card skill-card rose-border">
+    <span class="flash-price">$02</span>
+    <span class="skill-icon">&#10047;</span>
+    <div class="skill-name" data-i18n="skill_2">React</div>
+    <div class="skill-level" data-i18n="skill_level_expert">Expert</div>
+    <span class="sheet-number">No. 33</span>
+  </div>
+
+  <div class="flash-card skill-card anchor-border">
+    <span class="flash-price">$03</span>
+    <span class="skill-icon">&#9875;</span>
+    <div class="skill-name" data-i18n="skill_3">TypeScript</div>
+    <div class="skill-level" data-i18n="skill_level_advanced">Advanced</div>
+    <span class="sheet-number">No. 34</span>
+  </div>
+
+  <div class="flash-card skill-card dagger-border">
+    <span class="flash-price">$04</span>
+    <span class="skill-icon">&#9733;</span>
+    <div class="skill-name" data-i18n="skill_4">Node.js</div>
+    <div class="skill-level" data-i18n="skill_level_advanced">Advanced</div>
+    <span class="sheet-number">No. 35</span>
+  </div>
+
+  <div class="flash-card skill-card rose-border">
+    <span class="flash-price">$05</span>
+    <span class="skill-icon">&#10070;</span>
+    <div class="skill-name" data-i18n="skill_5">CSS/SCSS</div>
+    <div class="skill-level" data-i18n="skill_level_expert">Expert</div>
+    <span class="sheet-number">No. 36</span>
+  </div>
+
+  <div class="flash-card skill-card anchor-border">
+    <span class="flash-price">$06</span>
+    <span class="skill-icon">&#9883;</span>
+    <div class="skill-name" data-i18n="skill_6">Python</div>
+    <div class="skill-level" data-i18n="skill_level_intermediate">Intermediate</div>
+    <span class="sheet-number">No. 37</span>
+  </div>
+
+  <!-- Project Cards -->
+  <div class="flash-card project-card">
+    <div class="project-header">
+      <div class="ribbon" data-i18n="project_1_title">Ink Studio</div>
+      <div class="ornament-frame"></div>
+    </div>
+    <div class="project-body">
+      <p data-i18n="project_1_desc">A digital canvas platform for creating and sharing tattoo designs with real-time collaboration tools.</p>
+      <div class="project-tags">
+        <span class="project-tag">React</span>
+        <span class="project-tag">Canvas API</span>
+        <span class="project-tag">WebSocket</span>
+      </div>
+    </div>
+    <span class="sheet-number">No. 38</span>
+  </div>
+
+  <div class="flash-card project-card">
+    <div class="project-header">
+      <div class="ribbon" data-i18n="project_2_title">Flash Catalog</div>
+      <div class="ornament-frame"></div>
+    </div>
+    <div class="project-body">
+      <p data-i18n="project_2_desc">A curated gallery system for browsing and organizing tattoo flash designs with advanced filtering.</p>
+      <div class="project-tags">
+        <span class="project-tag">Next.js</span>
+        <span class="project-tag">Prisma</span>
+        <span class="project-tag">PostgreSQL</span>
+      </div>
+    </div>
+    <span class="sheet-number">No. 39</span>
+  </div>
+
+  <div class="flash-card project-card">
+    <div class="project-header">
+      <div class="ribbon" data-i18n="project_3_title">Tattoo Booking</div>
+      <div class="ornament-frame"></div>
+    </div>
+    <div class="project-body">
+      <p data-i18n="project_3_desc">An appointment scheduling platform connecting tattoo artists with clients, featuring deposit management.</p>
+      <div class="project-tags">
+        <span class="project-tag">Vue.js</span>
+        <span class="project-tag">Stripe</span>
+        <span class="project-tag">Node.js</span>
+      </div>
+    </div>
+    <span class="sheet-number">No. 40</span>
+  </div>
+
+  <div class="flash-card project-card">
+    <div class="project-header">
+      <div class="ribbon" data-i18n="project_4_title">Art Gallery</div>
+      <div class="ornament-frame"></div>
+    </div>
+    <div class="project-body">
+      <p data-i18n="project_4_desc">A virtual exhibition space showcasing traditional and digital art with immersive 3D viewing experience.</p>
+      <div class="project-tags">
+        <span class="project-tag">Three.js</span>
+        <span class="project-tag">WebGL</span>
+        <span class="project-tag">GSAP</span>
+      </div>
+    </div>
+    <span class="sheet-number">No. 41</span>
+  </div>
+
+  <!-- Contact Card -->
+  <div class="flash-card contact-card corner-card">
+    <div class="corner-bottom"></div>
+    <div class="section-title" data-i18n="contact_title">Get In Touch</div>
+    <div class="divider"><div class="divider-dot"></div></div>
+    <form class="contact-form" onsubmit="event.preventDefault();">
+      <div class="form-group">
+        <label data-i18n="form_name">Name</label>
+        <input type="text" data-i18n-placeholder="form_name_placeholder">
+      </div>
+      <div class="form-group">
+        <label data-i18n="form_email">Email</label>
+        <input type="email" data-i18n-placeholder="form_email_placeholder">
+      </div>
+      <div class="form-group">
+        <label data-i18n="form_message">Message</label>
+        <textarea data-i18n-placeholder="form_message_placeholder"></textarea>
+      </div>
+      <button type="submit" class="submit-ribbon" data-i18n="form_submit">BOOK NOW</button>
+    </form>
+    <span class="sheet-number">No. 42</span>
+  </div>
+
+</main>
+
+<script>
+const TRANSLATIONS = {
+  en: {
+    gallery_link: '\u2190 Gallery',
+    hero_ribbon: 'PORTFOLIO',
+    name: 'John Doe',
+    title: 'Creative Developer & Designer',
+    about_title: 'About',
+    about_text: 'A creative developer inspired by tattoo flash art. Crafting unique digital experiences with ornamental frames and intricate details.',
+    stat_projects: 'Projects',
+    stat_years: 'Years',
+    stat_clients: 'Clients',
+    skill_1: 'JavaScript',
+    skill_2: 'React',
+    skill_3: 'TypeScript',
+    skill_4: 'Node.js',
+    skill_5: 'CSS/SCSS',
+    skill_6: 'Python',
+    skill_level_expert: 'Expert',
+    skill_level_advanced: 'Advanced',
+    skill_level_intermediate: 'Intermediate',
+    project_1_title: 'Ink Studio',
+    project_1_desc: 'A digital canvas platform for creating and sharing tattoo designs with real-time collaboration tools.',
+    project_2_title: 'Flash Catalog',
+    project_2_desc: 'A curated gallery system for browsing and organizing tattoo flash designs with advanced filtering.',
+    project_3_title: 'Tattoo Booking',
+    project_3_desc: 'An appointment scheduling platform connecting tattoo artists with clients, featuring deposit management.',
+    project_4_title: 'Art Gallery',
+    project_4_desc: 'A virtual exhibition space showcasing traditional and digital art with immersive 3D viewing experience.',
+    contact_title: 'Get In Touch',
+    form_name: 'Name',
+    form_name_placeholder: 'Your name',
+    form_email: 'Email',
+    form_email_placeholder: 'your@email.com',
+    form_message: 'Message',
+    form_message_placeholder: 'Tell me about your project...',
+    form_submit: 'BOOK NOW'
+  },
+  ko: {
+    gallery_link: '\u2190 \uac24\ub7ec\ub9ac',
+    hero_ribbon: '\ud3ec\ud2b8\ud3f4\ub9ac\uc624',
+    name: '\ud64d\uae38\ub3d9',
+    title: '\ud06c\ub9ac\uc5d0\uc774\ud2f0\ube0c \uac1c\ubc1c\uc790 & \ub514\uc790\uc774\ub108',
+    about_title: '\uc18c\uac1c',
+    about_text: '\ud0c0\ud22c \ud50c\ub798\uc2dc \uc544\ud2b8\uc5d0\uc11c \uc601\uac10\uc744 \ubc1b\uc740 \ud06c\ub9ac\uc5d0\uc774\ud2f0\ube0c \uac1c\ubc1c\uc790\uc785\ub2c8\ub2e4. \uc7a5\uc2dd\uc801\uc778 \ud504\ub808\uc784\uacfc \uc815\uad50\ud55c \ub514\ud14c\uc77c\ub85c \ub3c5\ud2b9\ud55c \ub514\uc9c0\ud138 \uacbd\ud5d8\uc744 \ub9cc\ub4ed\ub2c8\ub2e4.',
+    stat_projects: '\ud504\ub85c\uc81d\ud2b8',
+    stat_years: '\uacbd\ub825',
+    stat_clients: '\ud074\ub77c\uc774\uc5b8\ud2b8',
+    skill_1: 'JavaScript',
+    skill_2: 'React',
+    skill_3: 'TypeScript',
+    skill_4: 'Node.js',
+    skill_5: 'CSS/SCSS',
+    skill_6: 'Python',
+    skill_level_expert: '\uc804\ubb38\uac00',
+    skill_level_advanced: '\uace0\uae09',
+    skill_level_intermediate: '\uc911\uae09',
+    project_1_title: '\uc789\ud06c \uc2a4\ud29c\ub514\uc624',
+    project_1_desc: '\uc2e4\uc2dc\uac04 \ud611\uc5c5 \ub3c4\uad6c\ub97c \uac16\ucda4 \ud0c0\ud22c \ub514\uc790\uc778 \uc81c\uc791 \ubc0f \uacf5\uc720\ub97c \uc704\ud55c \ub514\uc9c0\ud138 \uce94\ubc84\uc2a4 \ud50c\ub7ab\ud3fc\uc785\ub2c8\ub2e4.',
+    project_2_title: '\ud50c\ub798\uc2dc \uce74\ud0c8\ub85c\uadf8',
+    project_2_desc: '\uace0\uae09 \ud544\ud130\ub9c1\uc744 \uac16\ucda4 \ud0c0\ud22c \ud50c\ub798\uc2dc \ub514\uc790\uc778 \ud0d0\uc0c9 \ubc0f \uc815\ub9ac\ub97c \uc704\ud55c \ud050\ub808\uc774\ud2b8 \uac24\ub7ec\ub9ac \uc2dc\uc2a4\ud15c\uc785\ub2c8\ub2e4.',
+    project_3_title: '\ud0c0\ud22c \uc608\uc57d',
+    project_3_desc: '\ubcf4\uc99d\uae08 \uad00\ub9ac \uae30\ub2a5\uc744 \uac16\ucda4 \ud0c0\ud22c \uc544\ud2f0\uc2a4\ud2b8\uc640 \uace0\uac1d\uc744 \uc5f0\uacb0\ud558\ub294 \uc608\uc57d \uc2a4\ucf00\uc904\ub9c1 \ud50c\ub7ab\ud3fc\uc785\ub2c8\ub2e4.',
+    project_4_title: '\uc544\ud2b8 \uac24\ub7ec\ub9ac',
+    project_4_desc: '\ubab0\uc785\ud615 3D \ubdf0\uc789 \uacbd\ud5d8\uc744 \uac16\ucda4 \uc804\ud1b5 \ubc0f \ub514\uc9c0\ud138 \uc544\ud2b8 \uc804\uc2dc \uacf5\uac04\uc785\ub2c8\ub2e4.',
+    contact_title: '\uc5f0\ub77d\ud558\uae30',
+    form_name: '\uc774\ub984',
+    form_name_placeholder: '\uc774\ub984\uc744 \uc785\ub825\ud558\uc138\uc694',
+    form_email: '\uc774\uba54\uc77c',
+    form_email_placeholder: 'your@email.com',
+    form_message: '\uba54\uc2dc\uc9c0',
+    form_message_placeholder: '\ud504\ub85c\uc81d\ud2b8\uc5d0 \ub300\ud574 \uc54c\ub824\uc8fc\uc138\uc694...',
+    form_submit: '\uc608\uc57d\ud558\uae30'
+  },
+  ja: {
+    gallery_link: '\u2190 \u30ae\u30e3\u30e9\u30ea\u30fc',
+    hero_ribbon: '\u30dd\u30fc\u30c8\u30d5\u30a9\u30ea\u30aa',
+    name: 'John Doe',
+    title: '\u30af\u30ea\u30a8\u30a4\u30c6\u30a3\u30d6\u30c7\u30d9\u30ed\u30c3\u30d1\u30fc & \u30c7\u30b6\u30a4\u30ca\u30fc',
+    about_title: '\u7d39\u4ecb',
+    about_text: '\u30bf\u30c8\u30a5\u30fc\u30d5\u30e9\u30c3\u30b7\u30e5\u30a2\u30fc\u30c8\u306b\u30a4\u30f3\u30b9\u30d1\u30a4\u30a2\u3055\u308c\u305f\u30af\u30ea\u30a8\u30a4\u30c6\u30a3\u30d6\u30c7\u30d9\u30ed\u30c3\u30d1\u30fc\u3067\u3059\u3002\u88c5\u98fe\u7684\u306a\u30d5\u30ec\u30fc\u30e0\u3068\u7cbe\u5de7\u306a\u30c7\u30a3\u30c6\u30fc\u30eb\u3067\u30e6\u30cb\u30fc\u30af\u306a\u30c7\u30b8\u30bf\u30eb\u4f53\u9a13\u3092\u5275\u9020\u3057\u307e\u3059\u3002',
+    stat_projects: '\u30d7\u30ed\u30b8\u30a7\u30af\u30c8',
+    stat_years: '\u5e74\u6570',
+    stat_clients: '\u30af\u30e9\u30a4\u30a2\u30f3\u30c8',
+    skill_1: 'JavaScript',
+    skill_2: 'React',
+    skill_3: 'TypeScript',
+    skill_4: 'Node.js',
+    skill_5: 'CSS/SCSS',
+    skill_6: 'Python',
+    skill_level_expert: '\u30a8\u30ad\u30b9\u30d1\u30fc\u30c8',
+    skill_level_advanced: '\u4e0a\u7d1a',
+    skill_level_intermediate: '\u4e2d\u7d1a',
+    project_1_title: '\u30a4\u30f3\u30af\u30b9\u30bf\u30b8\u30aa',
+    project_1_desc: '\u30ea\u30a2\u30eb\u30bf\u30a4\u30e0\u30b3\u30e9\u30dc\u30ec\u30fc\u30b7\u30e7\u30f3\u30c4\u30fc\u30eb\u3092\u5099\u3048\u305f\u30bf\u30c8\u30a5\u30fc\u30c7\u30b6\u30a4\u30f3\u4f5c\u6210\u30fb\u5171\u6709\u306e\u305f\u3081\u306e\u30c7\u30b8\u30bf\u30eb\u30ad\u30e3\u30f3\u30d0\u30b9\u30d7\u30e9\u30c3\u30c8\u30d5\u30a9\u30fc\u30e0\u3002',
+    project_2_title: '\u30d5\u30e9\u30c3\u30b7\u30e5\u30ab\u30bf\u30ed\u30b0',
+    project_2_desc: '\u9ad8\u5ea6\u306a\u30d5\u30a3\u30eb\u30bf\u30ea\u30f3\u30b0\u6a5f\u80fd\u3092\u5099\u3048\u305f\u30bf\u30c8\u30a5\u30fc\u30d5\u30e9\u30c3\u30b7\u30e5\u30c7\u30b6\u30a4\u30f3\u306e\u95b2\u89a7\u30fb\u6574\u7406\u306e\u305f\u3081\u306e\u30ad\u30e5\u30ec\u30fc\u30c8\u30ae\u30e3\u30e9\u30ea\u30fc\u3002',
+    project_3_title: '\u30bf\u30c8\u30a5\u30fc\u4e88\u7d04',
+    project_3_desc: '\u30c7\u30dd\u30b8\u30c3\u30c8\u7ba1\u7406\u6a5f\u80fd\u3092\u5099\u3048\u305f\u30bf\u30c8\u30a5\u30fc\u30a2\u30fc\u30c6\u30a3\u30b9\u30c8\u3068\u30af\u30e9\u30a4\u30a2\u30f3\u30c8\u3092\u3064\u306a\u3050\u4e88\u7d04\u30b9\u30b1\u30b8\u30e5\u30fc\u30ea\u30f3\u30b0\u30d7\u30e9\u30c3\u30c8\u30d5\u30a9\u30fc\u30e0\u3002',
+    project_4_title: '\u30a2\u30fc\u30c8\u30ae\u30e3\u30e9\u30ea\u30fc',
+    project_4_desc: '\u6ca1\u5165\u578b3D\u30d3\u30e5\u30fc\u30a4\u30f3\u30b0\u4f53\u9a13\u3092\u5099\u3048\u305f\u4f1d\u7d71\u7684\u304a\u3088\u3073\u30c7\u30b8\u30bf\u30eb\u30a2\u30fc\u30c8\u306e\u30d0\u30fc\u30c1\u30e3\u30eb\u5c55\u793a\u30b9\u30da\u30fc\u30b9\u3002',
+    contact_title: '\u304a\u554f\u3044\u5408\u308f\u305b',
+    form_name: '\u304a\u540d\u524d',
+    form_name_placeholder: '\u304a\u540d\u524d\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044',
+    form_email: '\u30e1\u30fc\u30eb',
+    form_email_placeholder: 'your@email.com',
+    form_message: '\u30e1\u30c3\u30bb\u30fc\u30b8',
+    form_message_placeholder: '\u30d7\u30ed\u30b8\u30a7\u30af\u30c8\u306b\u3064\u3044\u3066\u6559\u3048\u3066\u304f\u3060\u3055\u3044...',
+    form_submit: '\u4e88\u7d04\u3059\u308b'
+  },
+  zh: {
+    gallery_link: '\u2190 \u753b\u5eca',
+    hero_ribbon: '\u4f5c\u54c1\u96c6',
+    name: 'John Doe',
+    title: '\u521b\u610f\u5f00\u53d1\u8005 & \u8bbe\u8ba1\u5e08',
+    about_title: '\u5173\u4e8e',
+    about_text: '\u4e00\u4f4d\u53d7\u7eb9\u8eab\u95ea\u5361\u827a\u672f\u542f\u53d1\u7684\u521b\u610f\u5f00\u53d1\u8005\u3002\u7528\u88c5\u9970\u6027\u6846\u67b6\u548c\u7cbe\u7ec6\u7684\u7ec6\u8282\u6253\u9020\u72ec\u7279\u7684\u6570\u5b57\u4f53\u9a8c\u3002',
+    stat_projects: '\u9879\u76ee',
+    stat_years: '\u5e74\u7ecf\u9a8c',
+    stat_clients: '\u5ba2\u6237',
+    skill_1: 'JavaScript',
+    skill_2: 'React',
+    skill_3: 'TypeScript',
+    skill_4: 'Node.js',
+    skill_5: 'CSS/SCSS',
+    skill_6: 'Python',
+    skill_level_expert: '\u4e13\u5bb6',
+    skill_level_advanced: '\u9ad8\u7ea7',
+    skill_level_intermediate: '\u4e2d\u7ea7',
+    project_1_title: '\u58a8\u6c34\u5de5\u4f5c\u5ba4',
+    project_1_desc: '\u4e00\u4e2a\u5177\u6709\u5b9e\u65f6\u534f\u4f5c\u5de5\u5177\u7684\u7eb9\u8eab\u8bbe\u8ba1\u521b\u5efa\u548c\u5206\u4eab\u7684\u6570\u5b57\u753b\u5e03\u5e73\u53f0\u3002',
+    project_2_title: '\u95ea\u5361\u76ee\u5f55',
+    project_2_desc: '\u4e00\u4e2a\u5177\u6709\u9ad8\u7ea7\u7b5b\u9009\u529f\u80fd\u7684\u7eb9\u8eab\u95ea\u5361\u8bbe\u8ba1\u6d4f\u89c8\u548c\u7ec4\u7ec7\u7684\u7b56\u5c55\u753b\u5eca\u7cfb\u7edf\u3002',
+    project_3_title: '\u7eb9\u8eab\u9884\u7ea6',
+    project_3_desc: '\u4e00\u4e2a\u5177\u6709\u62bc\u91d1\u7ba1\u7406\u529f\u80fd\u7684\u8fde\u63a5\u7eb9\u8eab\u5e08\u548c\u5ba2\u6237\u7684\u9884\u7ea6\u8c03\u5ea6\u5e73\u53f0\u3002',
+    project_4_title: '\u827a\u672f\u753b\u5eca',
+    project_4_desc: '\u4e00\u4e2a\u5177\u6709\u6c89\u6d78\u5f0f3D\u89c2\u770b\u4f53\u9a8c\u7684\u4f20\u7edf\u548c\u6570\u5b57\u827a\u672f\u865a\u62df\u5c55\u89c8\u7a7a\u95f4\u3002',
+    contact_title: '\u8054\u7cfb\u6211',
+    form_name: '\u59d3\u540d',
+    form_name_placeholder: '\u8bf7\u8f93\u5165\u60a8\u7684\u59d3\u540d',
+    form_email: '\u90ae\u7bb1',
+    form_email_placeholder: 'your@email.com',
+    form_message: '\u6d88\u606f',
+    form_message_placeholder: '\u8bf7\u544a\u8bc9\u6211\u60a8\u7684\u9879\u76ee...',
+    form_submit: '\u7acb\u5373\u9884\u7ea6'
+  }
+};
+
+let currentLang = 'en';
+
+function setLanguage(lang) {
+  currentLang = lang;
+  document.documentElement.lang = lang;
+  const t = TRANSLATIONS[lang];
+
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    if (t[key] !== undefined) {
+      el.textContent = t[key];
+    }
+  });
+
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n-placeholder');
+    if (t[key] !== undefined) {
+      el.placeholder = t[key];
+    }
+  });
+
+  document.querySelectorAll('.lang-btn').forEach(function(btn) {
+    btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+  });
+}
+
+document.querySelectorAll('.lang-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    setLanguage(this.getAttribute('data-lang'));
+  });
+});
+
+/* IntersectionObserver for ink-press animation */
+var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+if (prefersReducedMotion) {
+  document.querySelectorAll('.flash-card').forEach(function(card) {
+    card.classList.add('visible');
+  });
+} else {
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  });
+
+  document.querySelectorAll('.flash-card').forEach(function(card) {
+    observer.observe(card);
+  });
+}
+</script>
+</body>
+</html>

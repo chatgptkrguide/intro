@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio - Blueprint Technical</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #1a2744;
+  --text: #7eb8e0;
+  --text-dim: rgba(126, 184, 224, 0.5);
+  --line: rgba(255, 255, 255, 0.12);
+  --line-strong: rgba(255, 255, 255, 0.8);
+  --accent: rgba(126, 184, 224, 0.3);
+  --card-border: rgba(126, 184, 224, 0.3);
+  --white-80: rgba(255, 255, 255, 0.8);
+  --grid-line: rgba(255, 255, 255, 0.05);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Azeret Mono', monospace;
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 20px 20px;
+  color: var(--text);
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* Gallery link */
+.gallery-link {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  color: var(--text);
+  text-decoration: none;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  z-index: 1000;
+  padding: 6px 12px;
+  border: 1px solid var(--card-border);
+  transition: border-color 0.3s, color 0.3s;
+}
+
+.gallery-link:hover {
+  border-color: var(--white-80);
+  color: #fff;
+}
+
+/* Language switcher */
+.lang-switcher {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border: 1px solid var(--card-border);
+}
+
+.lang-switcher label {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-dim);
+  padding: 6px 8px;
+  border-right: 1px solid var(--card-border);
+  white-space: nowrap;
+}
+
+.lang-switcher select {
+  font-family: 'Azeret Mono', monospace;
+  font-size: 0.7rem;
+  background: transparent;
+  color: var(--text);
+  border: none;
+  padding: 6px 8px;
+  cursor: pointer;
+  text-transform: uppercase;
+  outline: none;
+}
+
+.lang-switcher select option {
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* Main container */
+.blueprint-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 80px 40px 40px;
+}
+
+/* Section marker */
+.section-marker {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.section-marker-circle {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--white-80);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--white-80);
+  flex-shrink: 0;
+}
+
+.section-marker-line {
+  flex: 1;
+  height: 0;
+  border-top: 1px dashed var(--accent);
+}
+
+.section-marker-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--text-dim);
+}
+
+/* Dimension line */
+.dimension-line {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin: 12px 0;
+}
+
+.dimension-tick {
+  width: 1px;
+  height: 12px;
+  background: var(--white-80);
+  flex-shrink: 0;
+}
+
+.dimension-bar {
+  flex: 1;
+  height: 1px;
+  background: var(--white-80);
+}
+
+.dimension-label {
+  position: absolute;
+  top: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.55rem;
+  color: var(--white-80);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+
+/* Blueprint sections */
+.bp-section {
+  margin-bottom: 80px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.bp-section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bp-section {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* Hero section */
+.hero {
+  min-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  position: relative;
+  padding-bottom: 40px;
+}
+
+.hero-dimension-h {
+  position: absolute;
+  right: 0;
+  top: 10%;
+  bottom: 30%;
+  width: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hero-dimension-h .dimension-tick-v {
+  width: 12px;
+  height: 1px;
+  background: var(--white-80);
+}
+
+.hero-dimension-h .dimension-bar-v {
+  flex: 1;
+  width: 1px;
+  background: var(--white-80);
+}
+
+.hero-dimension-h .dimension-label-v {
+  position: absolute;
+  right: -8px;
+  top: 50%;
+  transform: rotate(90deg) translateX(-50%);
+  transform-origin: left center;
+  font-size: 0.55rem;
+  color: var(--white-80);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+
+.hero-spec {
+  margin-bottom: 40px;
+}
+
+.hero-spec-label {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--text-dim);
+  margin-bottom: 4px;
+}
+
+.hero-spec-value {
+  font-size: 0.85rem;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+.hero-title-block {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.title-block {
+  border: 1px solid var(--card-border);
+  min-width: 360px;
+}
+
+.title-block-row {
+  display: flex;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.title-block-row:last-child {
+  border-bottom: none;
+}
+
+.title-block-cell {
+  padding: 8px 12px;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.title-block-cell.label {
+  color: var(--text-dim);
+  border-right: 1px solid var(--card-border);
+  min-width: 100px;
+}
+
+.title-block-cell.value {
+  color: var(--text);
+  flex: 1;
+}
+
+.title-block-name {
+  padding: 16px;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--card-border);
+  text-align: right;
+}
+
+.title-block-title {
+  padding: 10px 16px;
+  font-size: 0.75rem;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  border-bottom: 1px solid var(--card-border);
+  text-align: right;
+}
+
+/* About section */
+.about-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+
+.about-text {
+  position: relative;
+  font-size: 0.85rem;
+  line-height: 2;
+  color: var(--text);
+}
+
+.annotation-arrow {
+  display: inline-block;
+  position: relative;
+}
+
+.annotation-arrow::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--white-80);
+}
+
+.annotation-arrow::before {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  width: 1px;
+  height: 6px;
+  background: var(--white-80);
+}
+
+.about-stats {
+  border: 1px solid var(--card-border);
+}
+
+.stat-row {
+  display: flex;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.stat-row:last-child {
+  border-bottom: none;
+}
+
+.stat-label {
+  flex: 1;
+  padding: 10px 12px;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  border-right: 1px solid var(--card-border);
+}
+
+.stat-value {
+  width: 120px;
+  padding: 10px 12px;
+  font-size: 0.75rem;
+  color: var(--text);
+  text-align: right;
+}
+
+/* Skills section */
+.skills-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  border: 1px solid var(--card-border);
+}
+
+.skill-row {
+  display: grid;
+  grid-template-columns: 140px 1fr 100px;
+  align-items: center;
+  border-bottom: 1px solid var(--card-border);
+  padding: 0;
+}
+
+.skill-row:last-child {
+  border-bottom: none;
+}
+
+.skill-name {
+  padding: 14px 16px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text);
+  border-right: 1px solid var(--card-border);
+}
+
+.skill-bar-container {
+  padding: 14px 16px;
+  border-right: 1px solid var(--card-border);
+}
+
+.skill-bar {
+  height: 4px;
+  background: var(--card-border);
+  position: relative;
+}
+
+.skill-bar-fill {
+  height: 100%;
+  background: var(--text);
+  transition: width 1s ease;
+  width: 0;
+}
+
+.bp-section.visible .skill-bar-fill {
+  width: var(--skill-level);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skill-bar-fill {
+    width: var(--skill-level);
+    transition: none;
+  }
+}
+
+.skill-tolerance {
+  padding: 14px 16px;
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  text-align: right;
+  letter-spacing: 0.05em;
+}
+
+/* Projects section */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+.project-card {
+  border: 1px solid var(--card-border);
+  position: relative;
+  padding: 24px;
+  transition: border-color 0.3s;
+}
+
+.project-card:hover {
+  border-color: var(--text);
+}
+
+.project-section-marker {
+  position: absolute;
+  top: -12px;
+  left: 20px;
+  background: var(--bg);
+  padding: 0 8px;
+  font-size: 0.65rem;
+  color: var(--white-80);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.project-rev {
+  font-size: 0.55rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+
+.project-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 12px;
+}
+
+.project-desc {
+  font-size: 0.75rem;
+  line-height: 1.8;
+  color: var(--text);
+  margin-bottom: 16px;
+}
+
+.project-specs {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.project-spec-tag {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  padding: 4px 8px;
+  border: 1px solid var(--card-border);
+}
+
+.project-dimension {
+  margin-top: 16px;
+}
+
+/* Contact section */
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 40px;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid var(--card-border);
+}
+
+.form-field {
+  display: flex;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.form-field:last-of-type {
+  border-bottom: none;
+}
+
+.form-label {
+  width: 120px;
+  padding: 12px 16px;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  border-right: 1px solid var(--card-border);
+  display: flex;
+  align-items: flex-start;
+  padding-top: 14px;
+}
+
+.form-input {
+  flex: 1;
+  padding: 12px 16px;
+  font-family: 'Azeret Mono', monospace;
+  font-size: 0.8rem;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  outline: none;
+}
+
+.form-input::placeholder {
+  color: var(--text-dim);
+}
+
+textarea.form-input {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.submit-btn {
+  font-family: 'Azeret Mono', monospace;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--bg);
+  background: var(--text);
+  border: none;
+  padding: 14px 24px;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+  margin-top: 0;
+}
+
+.submit-btn:hover {
+  background: #fff;
+  color: var(--bg);
+}
+
+.revision-block {
+  border: 1px solid var(--card-border);
+  align-self: flex-start;
+}
+
+.revision-header {
+  padding: 10px 16px;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--white-80);
+  border-bottom: 1px solid var(--card-border);
+  text-align: center;
+}
+
+.revision-row {
+  display: flex;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.revision-row:last-child {
+  border-bottom: none;
+}
+
+.revision-cell {
+  padding: 8px 12px;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.revision-cell.label {
+  color: var(--text-dim);
+  border-right: 1px solid var(--card-border);
+  min-width: 90px;
+}
+
+.revision-cell.value {
+  color: var(--text);
+  flex: 1;
+}
+
+/* Footer */
+.blueprint-footer {
+  margin-top: 60px;
+  padding: 20px 0;
+  border-top: 1px solid var(--card-border);
+  text-align: center;
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+}
+
+/* 3-column grid layout at 1440px */
+@media (min-width: 1200px) {
+  .projects-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .about-panel {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* 2-column at 768px */
+@media (max-width: 1199px) and (min-width: 768px) {
+  .projects-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .about-panel {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .contact-grid {
+    grid-template-columns: 1fr 260px;
+  }
+
+  .title-block {
+    min-width: 300px;
+  }
+}
+
+/* 1-column at 375px */
+@media (max-width: 767px) {
+  .blueprint-container {
+    padding: 70px 20px 20px;
+  }
+
+  .hero {
+    min-height: 80vh;
+  }
+
+  .hero-dimension-h {
+    display: none;
+  }
+
+  .hero-title-block {
+    justify-content: stretch;
+  }
+
+  .title-block {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .title-block-name {
+    font-size: 1.4rem;
+    padding: 12px;
+  }
+
+  .about-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .projects-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .skill-row {
+    grid-template-columns: 100px 1fr 80px;
+  }
+
+  .skill-name {
+    font-size: 0.6rem;
+    padding: 10px 10px;
+  }
+
+  .form-label {
+    width: 80px;
+    font-size: 0.55rem;
+  }
+
+  .lang-switcher {
+    top: 16px;
+    right: 16px;
+  }
+
+  .gallery-link {
+    top: 16px;
+    left: 16px;
+    font-size: 0.65rem;
+  }
+}
+</style>
+</head>
+<body>
+
+<a href="../index.html" class="gallery-link" data-i18n="gallery_link">&larr; Gallery</a>
+
+<div class="lang-switcher">
+  <label>REV</label>
+  <select id="langSelect" aria-label="Language">
+    <option value="en">EN</option>
+    <option value="ko">KO</option>
+    <option value="ja">JA</option>
+    <option value="zh">ZH</option>
+  </select>
+</div>
+
+<div class="blueprint-container">
+
+  <!-- HERO SECTION -->
+  <section class="bp-section hero" id="hero">
+    <div class="hero-dimension-h">
+      <div class="dimension-tick-v"></div>
+      <div class="dimension-bar-v"></div>
+      <div class="dimension-tick-v"></div>
+      <span class="dimension-label-v">VIEWPORT HEIGHT</span>
+    </div>
+
+    <div class="hero-spec">
+      <div class="hero-spec-label" data-i18n="spec_label">SPECIFICATION</div>
+      <div class="hero-spec-value" data-i18n="hero_title">Creative Developer &amp; Designer</div>
+    </div>
+
+    <div class="dimension-line" style="margin-bottom: 32px;">
+      <div class="dimension-tick"></div>
+      <div class="dimension-bar"></div>
+      <div class="dimension-tick"></div>
+      <span class="dimension-label">1440px</span>
+    </div>
+
+    <div class="hero-title-block">
+      <div class="title-block">
+        <div class="title-block-name" data-i18n="name">HONG GIL-DONG</div>
+        <div class="title-block-title" data-i18n="hero_title">Creative Developer &amp; Designer</div>
+        <div class="title-block-row">
+          <div class="title-block-cell label" data-i18n="drawn_by_label">DRAWN BY</div>
+          <div class="title-block-cell value" data-i18n="name">HONG GIL-DONG</div>
+        </div>
+        <div class="title-block-row">
+          <div class="title-block-cell label" data-i18n="checked_label">CHECKED</div>
+          <div class="title-block-cell value" data-i18n="checked_value">VERIFIED</div>
+        </div>
+        <div class="title-block-row">
+          <div class="title-block-cell label" data-i18n="date_label">DATE</div>
+          <div class="title-block-cell value">2026.02.10</div>
+        </div>
+        <div class="title-block-row">
+          <div class="title-block-cell label" data-i18n="rev_label">REV</div>
+          <div class="title-block-cell value">1.0</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT SECTION -->
+  <section class="bp-section" id="about">
+    <div class="section-marker">
+      <div class="section-marker-circle">A</div>
+      <div class="section-marker-line"></div>
+      <span class="section-marker-label" data-i18n="about_label">ANNOTATION PANEL</span>
+    </div>
+
+    <div class="about-panel">
+      <div class="about-text" data-i18n="about_text">
+        A technically-driven developer who designs digital products with engineering precision. Every project is implemented with blueprint-level accuracy.
+      </div>
+      <div class="about-stats">
+        <div class="stat-row">
+          <div class="stat-label" data-i18n="stat_exp_label">Experience</div>
+          <div class="stat-value" data-i18n="stat_exp_value">5+ YRS</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-label" data-i18n="stat_projects_label">Projects</div>
+          <div class="stat-value" data-i18n="stat_projects_value">40+</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-label" data-i18n="stat_clients_label">Clients</div>
+          <div class="stat-value" data-i18n="stat_clients_value">25+</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-label" data-i18n="stat_accuracy_label">Accuracy</div>
+          <div class="stat-value" data-i18n="stat_accuracy_value">99.9%</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS SECTION -->
+  <section class="bp-section" id="skills">
+    <div class="section-marker">
+      <div class="section-marker-circle">B</div>
+      <div class="section-marker-line"></div>
+      <span class="section-marker-label" data-i18n="skills_label">TECHNICAL SPECS</span>
+    </div>
+
+    <div class="skills-grid">
+      <div class="skill-row">
+        <div class="skill-name">React</div>
+        <div class="skill-bar-container">
+          <div class="skill-bar">
+            <div class="skill-bar-fill" style="--skill-level: 92%"></div>
+          </div>
+        </div>
+        <div class="skill-tolerance">+92% -5%</div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-name">TypeScript</div>
+        <div class="skill-bar-container">
+          <div class="skill-bar">
+            <div class="skill-bar-fill" style="--skill-level: 90%"></div>
+          </div>
+        </div>
+        <div class="skill-tolerance">+90% -5%</div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-name">Node.js</div>
+        <div class="skill-bar-container">
+          <div class="skill-bar">
+            <div class="skill-bar-fill" style="--skill-level: 88%"></div>
+          </div>
+        </div>
+        <div class="skill-tolerance">+88% -5%</div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-name">Python</div>
+        <div class="skill-bar-container">
+          <div class="skill-bar">
+            <div class="skill-bar-fill" style="--skill-level: 85%"></div>
+          </div>
+        </div>
+        <div class="skill-tolerance">+85% -5%</div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-name">Figma</div>
+        <div class="skill-bar-container">
+          <div class="skill-bar">
+            <div class="skill-bar-fill" style="--skill-level: 90%"></div>
+          </div>
+        </div>
+        <div class="skill-tolerance">+90% -5%</div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-name">UI/UX</div>
+        <div class="skill-bar-container">
+          <div class="skill-bar">
+            <div class="skill-bar-fill" style="--skill-level: 87%"></div>
+          </div>
+        </div>
+        <div class="skill-tolerance">+87% -5%</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS SECTION -->
+  <section class="bp-section" id="projects">
+    <div class="section-marker">
+      <div class="section-marker-circle">C</div>
+      <div class="section-marker-line"></div>
+      <span class="section-marker-label" data-i18n="projects_label">BLUEPRINT DRAWINGS</span>
+    </div>
+
+    <div class="projects-grid">
+      <div class="project-card">
+        <span class="project-section-marker">SECTION A-A</span>
+        <div class="project-rev" data-i18n="project_rev">REV 1.0</div>
+        <div class="project-name" data-i18n="project1_name">System Blueprint</div>
+        <div class="project-desc" data-i18n="project1_desc">Full-stack system architecture designed with precision engineering methodology and scalable infrastructure.</div>
+        <div class="project-specs">
+          <span class="project-spec-tag">React</span>
+          <span class="project-spec-tag">Node.js</span>
+          <span class="project-spec-tag">AWS</span>
+        </div>
+        <div class="project-dimension">
+          <div class="dimension-line">
+            <div class="dimension-tick"></div>
+            <div class="dimension-bar"></div>
+            <div class="dimension-tick"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <span class="project-section-marker">SECTION B-B</span>
+        <div class="project-rev" data-i18n="project_rev">REV 1.0</div>
+        <div class="project-name" data-i18n="project2_name">Circuit Planner</div>
+        <div class="project-desc" data-i18n="project2_desc">Interactive circuit design tool with real-time validation and component specification management.</div>
+        <div class="project-specs">
+          <span class="project-spec-tag">TypeScript</span>
+          <span class="project-spec-tag">Canvas</span>
+          <span class="project-spec-tag">WebGL</span>
+        </div>
+        <div class="project-dimension">
+          <div class="dimension-line">
+            <div class="dimension-tick"></div>
+            <div class="dimension-bar"></div>
+            <div class="dimension-tick"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <span class="project-section-marker">SECTION C-C</span>
+        <div class="project-rev" data-i18n="project_rev">REV 1.0</div>
+        <div class="project-name" data-i18n="project3_name">Architecture CAD</div>
+        <div class="project-desc" data-i18n="project3_desc">Browser-based CAD application for architectural drafting with measurement tools and layer management.</div>
+        <div class="project-specs">
+          <span class="project-spec-tag">Python</span>
+          <span class="project-spec-tag">Three.js</span>
+          <span class="project-spec-tag">SVG</span>
+        </div>
+        <div class="project-dimension">
+          <div class="dimension-line">
+            <div class="dimension-tick"></div>
+            <div class="dimension-bar"></div>
+            <div class="dimension-tick"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <span class="project-section-marker">SECTION D-D</span>
+        <div class="project-rev" data-i18n="project_rev">REV 1.0</div>
+        <div class="project-name" data-i18n="project4_name">Precision Tools</div>
+        <div class="project-desc" data-i18n="project4_desc">Suite of developer productivity tools engineered for maximum accuracy and minimum tolerance in workflows.</div>
+        <div class="project-specs">
+          <span class="project-spec-tag">Figma</span>
+          <span class="project-spec-tag">UI/UX</span>
+          <span class="project-spec-tag">Design System</span>
+        </div>
+        <div class="project-dimension">
+          <div class="dimension-line">
+            <div class="dimension-tick"></div>
+            <div class="dimension-bar"></div>
+            <div class="dimension-tick"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT SECTION -->
+  <section class="bp-section" id="contact">
+    <div class="section-marker">
+      <div class="section-marker-circle">D</div>
+      <div class="section-marker-line"></div>
+      <span class="section-marker-label" data-i18n="contact_label">REVISION BLOCK</span>
+    </div>
+
+    <div class="contact-grid">
+      <form class="contact-form" onsubmit="return false;">
+        <div class="form-field">
+          <label class="form-label" data-i18n="form_name">NAME</label>
+          <input type="text" class="form-input" data-i18n-placeholder="form_name_ph" placeholder="Enter your name">
+        </div>
+        <div class="form-field">
+          <label class="form-label" data-i18n="form_email">EMAIL</label>
+          <input type="email" class="form-input" data-i18n-placeholder="form_email_ph" placeholder="Enter your email">
+        </div>
+        <div class="form-field">
+          <label class="form-label" data-i18n="form_subject">SUBJECT</label>
+          <input type="text" class="form-input" data-i18n-placeholder="form_subject_ph" placeholder="Project specification">
+        </div>
+        <div class="form-field">
+          <label class="form-label" data-i18n="form_message">MESSAGE</label>
+          <textarea class="form-input" data-i18n-placeholder="form_message_ph" placeholder="Describe your project requirements..."></textarea>
+        </div>
+        <button type="submit" class="submit-btn" data-i18n="submit_btn">SUBMIT FOR REVIEW</button>
+      </form>
+
+      <div class="revision-block">
+        <div class="revision-header" data-i18n="revision_title">TITLE BLOCK</div>
+        <div class="revision-row">
+          <div class="revision-cell label" data-i18n="drawn_by_label">DRAWN BY</div>
+          <div class="revision-cell value" data-i18n="name">HONG GIL-DONG</div>
+        </div>
+        <div class="revision-row">
+          <div class="revision-cell label" data-i18n="checked_label">CHECKED</div>
+          <div class="revision-cell value" data-i18n="checked_value">VERIFIED</div>
+        </div>
+        <div class="revision-row">
+          <div class="revision-cell label" data-i18n="date_label">DATE</div>
+          <div class="revision-cell value">2026.02.10</div>
+        </div>
+        <div class="revision-row">
+          <div class="revision-cell label" data-i18n="rev_label">REV</div>
+          <div class="revision-cell value">1.0</div>
+        </div>
+        <div class="revision-row">
+          <div class="revision-cell label" data-i18n="scale_label">SCALE</div>
+          <div class="revision-cell value">1:1</div>
+        </div>
+        <div class="revision-row">
+          <div class="revision-cell label" data-i18n="sheet_label">SHEET</div>
+          <div class="revision-cell value">1 / 1</div>
+        </div>
+        <div class="revision-row">
+          <div class="revision-cell label" data-i18n="status_label">STATUS</div>
+          <div class="revision-cell value" data-i18n="status_value">FOR REVIEW</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="blueprint-footer">
+    <span data-i18n="footer_text">&copy; 2026 HONG GIL-DONG &mdash; ALL DIMENSIONS IN PIXELS</span>
+  </footer>
+
+</div>
+
+<script>
+const TRANSLATIONS = {
+  en: {
+    gallery_link: '\u2190 Gallery',
+    name: 'HONG GIL-DONG',
+    hero_title: 'Creative Developer & Designer',
+    spec_label: 'SPECIFICATION',
+    drawn_by_label: 'DRAWN BY',
+    checked_label: 'CHECKED',
+    checked_value: 'VERIFIED',
+    date_label: 'DATE',
+    rev_label: 'REV',
+    scale_label: 'SCALE',
+    sheet_label: 'SHEET',
+    status_label: 'STATUS',
+    status_value: 'FOR REVIEW',
+    about_label: 'ANNOTATION PANEL',
+    about_text: 'A technically-driven developer who designs digital products with engineering precision. Every project is implemented with blueprint-level accuracy.',
+    stat_exp_label: 'Experience',
+    stat_exp_value: '5+ YRS',
+    stat_projects_label: 'Projects',
+    stat_projects_value: '40+',
+    stat_clients_label: 'Clients',
+    stat_clients_value: '25+',
+    stat_accuracy_label: 'Accuracy',
+    stat_accuracy_value: '99.9%',
+    skills_label: 'TECHNICAL SPECS',
+    projects_label: 'BLUEPRINT DRAWINGS',
+    project_rev: 'REV 1.0',
+    project1_name: 'System Blueprint',
+    project1_desc: 'Full-stack system architecture designed with precision engineering methodology and scalable infrastructure.',
+    project2_name: 'Circuit Planner',
+    project2_desc: 'Interactive circuit design tool with real-time validation and component specification management.',
+    project3_name: 'Architecture CAD',
+    project3_desc: 'Browser-based CAD application for architectural drafting with measurement tools and layer management.',
+    project4_name: 'Precision Tools',
+    project4_desc: 'Suite of developer productivity tools engineered for maximum accuracy and minimum tolerance in workflows.',
+    contact_label: 'REVISION BLOCK',
+    form_name: 'NAME',
+    form_email: 'EMAIL',
+    form_subject: 'SUBJECT',
+    form_message: 'MESSAGE',
+    form_name_ph: 'Enter your name',
+    form_email_ph: 'Enter your email',
+    form_subject_ph: 'Project specification',
+    form_message_ph: 'Describe your project requirements...',
+    submit_btn: 'SUBMIT FOR REVIEW',
+    revision_title: 'TITLE BLOCK',
+    footer_text: '\u00a9 2026 HONG GIL-DONG \u2014 ALL DIMENSIONS IN PIXELS'
+  },
+  ko: {
+    gallery_link: '\u2190 \uac24\ub7ec\ub9ac',
+    name: '\ud64d\uae38\ub3d9',
+    hero_title: '\ud06c\ub9ac\uc5d0\uc774\ud2f0\ube0c \uac1c\ubc1c\uc790 & \ub514\uc790\uc774\ub108',
+    spec_label: '\uc0ac\uc591',
+    drawn_by_label: '\uc791\uc131\uc790',
+    checked_label: '\uac80\ud1a0',
+    checked_value: '\ud655\uc778\uc644\ub8cc',
+    date_label: '\ub0a0\uc9dc',
+    rev_label: '\uac1c\uc815',
+    scale_label: '\ucd95\ucc99',
+    sheet_label: '\ub3c4\uba74',
+    status_label: '\uc0c1\ud0dc',
+    status_value: '\uac80\ud1a0 \ub300\uae30',
+    about_label: '\uc8fc\uc11d \ud328\ub110',
+    about_text: '\uc5d4\uc9c0\ub2c8\uc5b4\ub9c1 \uc815\ubc00\ub3c4\ub85c \ub514\uc9c0\ud138 \uc81c\ud488\uc744 \uc124\uacc4\ud558\ub294 \uae30\uc220 \uc911\uc2ec \uac1c\ubc1c\uc790\uc785\ub2c8\ub2e4. \ubaa8\ub4e0 \ud504\ub85c\uc81d\ud2b8\ub97c \uccad\uc0ac\uc9c4 \uc218\uc900\uc758 \uc815\ud655\ub3c4\ub85c \uad6c\ud604\ud569\ub2c8\ub2e4.',
+    stat_exp_label: '\uacbd\ub825',
+    stat_exp_value: '5\ub144+',
+    stat_projects_label: '\ud504\ub85c\uc81d\ud2b8',
+    stat_projects_value: '40+',
+    stat_clients_label: '\ud074\ub77c\uc774\uc5b8\ud2b8',
+    stat_clients_value: '25+',
+    stat_accuracy_label: '\uc815\ud655\ub3c4',
+    stat_accuracy_value: '99.9%',
+    skills_label: '\uae30\uc220 \uc0ac\uc591',
+    projects_label: '\uccad\uc0ac\uc9c4 \ub3c4\uba74',
+    project_rev: '\uac1c\uc815 1.0',
+    project1_name: '\uc2dc\uc2a4\ud15c \ube14\ub8e8\ud504\ub9b0\ud2b8',
+    project1_desc: '\uc815\ubc00 \uc5d4\uc9c0\ub2c8\uc5b4\ub9c1 \ubc29\ubc95\ub860\uacfc \ud655\uc7a5 \uac00\ub2a5\ud55c \uc778\ud504\ub77c\ub85c \uc124\uacc4\ub41c \ud480\uc2a4\ud0dd \uc2dc\uc2a4\ud15c \uc544\ud0a4\ud14d\ucc98.',
+    project2_name: '\ud68c\ub85c \ud50c\ub798\ub108',
+    project2_desc: '\uc2e4\uc2dc\uac04 \uac80\uc99d\uacfc \ucef4\ud3ec\ub10c\ud2b8 \uc0ac\uc591 \uad00\ub9ac\ub97c \uc81c\uacf5\ud558\ub294 \uc778\ud130\ub799\ud2f0\ube0c \ud68c\ub85c \uc124\uacc4 \ub3c4\uad6c.',
+    project3_name: '\uc544\ud0a4\ud14d\ucc98 CAD',
+    project3_desc: '\uce21\uc815 \ub3c4\uad6c\uc640 \ub808\uc774\uc5b4 \uad00\ub9ac\ub97c \uac16\ucd98 \ube0c\ub77c\uc6b0\uc800 \uae30\ubc18 \uac74\ucd95 \uc124\uacc4 CAD \uc560\ud50c\ub9ac\ucf00\uc774\uc158.',
+    project4_name: '\uc815\ubc00 \ub3c4\uad6c',
+    project4_desc: '\uc6cc\ud06c\ud50c\ub85c\uc6b0\uc5d0\uc11c \ucd5c\ub300 \uc815\ud655\ub3c4\uc640 \ucd5c\uc18c \ud5c8\uc6a9 \uc624\ucc28\ub97c \uc704\ud574 \uc124\uacc4\ub41c \uac1c\ubc1c\uc790 \uc0dd\uc0b0\uc131 \ub3c4\uad6c \ubaa8\uc74c.',
+    contact_label: '\uac1c\uc815 \ube14\ub85d',
+    form_name: '\uc774\ub984',
+    form_email: '\uc774\uba54\uc77c',
+    form_subject: '\uc81c\ubaa9',
+    form_message: '\uba54\uc2dc\uc9c0',
+    form_name_ph: '\uc774\ub984\uc744 \uc785\ub825\ud558\uc138\uc694',
+    form_email_ph: '\uc774\uba54\uc77c\uc744 \uc785\ub825\ud558\uc138\uc694',
+    form_subject_ph: '\ud504\ub85c\uc81d\ud2b8 \uc0ac\uc591',
+    form_message_ph: '\ud504\ub85c\uc81d\ud2b8 \uc694\uad6c\uc0ac\ud56d\uc744 \uc124\uba85\ud574\uc8fc\uc138\uc694...',
+    submit_btn: '\uac80\ud1a0 \uc81c\ucd9c',
+    revision_title: '\ud45c\uc81c\ub780',
+    footer_text: '\u00a9 2026 \ud64d\uae38\ub3d9 \u2014 \ubaa8\ub4e0 \uce58\uc218\ub294 \ud53d\uc140 \ub2e8\uc704'
+  },
+  ja: {
+    gallery_link: '\u2190 \u30ae\u30e3\u30e9\u30ea\u30fc',
+    name: '\u30db\u30f3\u30fb\u30ae\u30eb\u30c9\u30f3',
+    hero_title: '\u30af\u30ea\u30a8\u30a4\u30c6\u30a3\u30d6\u30c7\u30d9\u30ed\u30c3\u30d1\u30fc & \u30c7\u30b6\u30a4\u30ca\u30fc',
+    spec_label: '\u4ed5\u69d8',
+    drawn_by_label: '\u4f5c\u6210\u8005',
+    checked_label: '\u78ba\u8a8d',
+    checked_value: '\u78ba\u8a8d\u6e08\u307f',
+    date_label: '\u65e5\u4ed8',
+    rev_label: '\u6539\u8a02',
+    scale_label: '\u7e2e\u5c3a',
+    sheet_label: '\u56f3\u9762',
+    status_label: '\u72b6\u614b',
+    status_value: '\u30ec\u30d3\u30e5\u30fc\u5f85\u3061',
+    about_label: '\u6ce8\u91c8\u30d1\u30cd\u30eb',
+    about_text: '\u30a8\u30f3\u30b8\u30cb\u30a2\u30ea\u30f3\u30b0\u306e\u7cbe\u5ea6\u3067\u30c7\u30b8\u30bf\u30eb\u88fd\u54c1\u3092\u8a2d\u8a08\u3059\u308b\u6280\u8853\u4e2d\u5fc3\u306e\u958b\u767a\u8005\u3067\u3059\u3002\u3059\u3079\u3066\u306e\u30d7\u30ed\u30b8\u30a7\u30af\u30c8\u3092\u8a2d\u8a08\u56f3\u30ec\u30d9\u30eb\u306e\u6b63\u78ba\u3055\u3067\u5b9f\u88c5\u3057\u307e\u3059\u3002',
+    stat_exp_label: '\u7d4c\u9a13',
+    stat_exp_value: '5\u5e74+',
+    stat_projects_label: '\u30d7\u30ed\u30b8\u30a7\u30af\u30c8',
+    stat_projects_value: '40+',
+    stat_clients_label: '\u30af\u30e9\u30a4\u30a2\u30f3\u30c8',
+    stat_clients_value: '25+',
+    stat_accuracy_label: '\u7cbe\u5ea6',
+    stat_accuracy_value: '99.9%',
+    skills_label: '\u6280\u8853\u4ed5\u69d8',
+    projects_label: '\u8a2d\u8a08\u56f3\u9762',
+    project_rev: '\u6539\u8a02 1.0',
+    project1_name: '\u30b7\u30b9\u30c6\u30e0\u30d6\u30eb\u30fc\u30d7\u30ea\u30f3\u30c8',
+    project1_desc: '\u7cbe\u5bc6\u30a8\u30f3\u30b8\u30cb\u30a2\u30ea\u30f3\u30b0\u624b\u6cd5\u3068\u30b9\u30b1\u30fc\u30e9\u30d6\u30eb\u306a\u30a4\u30f3\u30d5\u30e9\u3067\u8a2d\u8a08\u3055\u308c\u305f\u30d5\u30eb\u30b9\u30bf\u30c3\u30af\u30b7\u30b9\u30c6\u30e0\u30a2\u30fc\u30ad\u30c6\u30af\u30c1\u30e3\u3002',
+    project2_name: '\u56de\u8def\u30d7\u30e9\u30f3\u30ca\u30fc',
+    project2_desc: '\u30ea\u30a2\u30eb\u30bf\u30a4\u30e0\u691c\u8a3c\u3068\u30b3\u30f3\u30dd\u30fc\u30cd\u30f3\u30c8\u4ed5\u69d8\u7ba1\u7406\u3092\u5099\u3048\u305f\u30a4\u30f3\u30bf\u30e9\u30af\u30c6\u30a3\u30d6\u56de\u8def\u8a2d\u8a08\u30c4\u30fc\u30eb\u3002',
+    project3_name: '\u30a2\u30fc\u30ad\u30c6\u30af\u30c1\u30e3CAD',
+    project3_desc: '\u6e2c\u5b9a\u30c4\u30fc\u30eb\u3068\u30ec\u30a4\u30e4\u30fc\u7ba1\u7406\u3092\u5099\u3048\u305f\u30d6\u30e9\u30a6\u30b6\u30d9\u30fc\u30b9\u306e\u5efa\u7bc9\u8a2d\u8a08CAD\u30a2\u30d7\u30ea\u30b1\u30fc\u30b7\u30e7\u30f3\u3002',
+    project4_name: '\u7cbe\u5bc6\u30c4\u30fc\u30eb',
+    project4_desc: '\u30ef\u30fc\u30af\u30d5\u30ed\u30fc\u3067\u6700\u5927\u306e\u7cbe\u5ea6\u3068\u6700\u5c0f\u306e\u8a31\u5bb9\u5dee\u3092\u5b9f\u73fe\u3059\u308b\u958b\u767a\u8005\u751f\u7523\u6027\u30c4\u30fc\u30eb\u30b9\u30a4\u30fc\u30c8\u3002',
+    contact_label: '\u6539\u8a02\u30d6\u30ed\u30c3\u30af',
+    form_name: '\u540d\u524d',
+    form_email: '\u30e1\u30fc\u30eb',
+    form_subject: '\u4ef6\u540d',
+    form_message: '\u30e1\u30c3\u30bb\u30fc\u30b8',
+    form_name_ph: '\u304a\u540d\u524d\u3092\u5165\u529b',
+    form_email_ph: '\u30e1\u30fc\u30eb\u30a2\u30c9\u30ec\u30b9\u3092\u5165\u529b',
+    form_subject_ph: '\u30d7\u30ed\u30b8\u30a7\u30af\u30c8\u4ed5\u69d8',
+    form_message_ph: '\u30d7\u30ed\u30b8\u30a7\u30af\u30c8\u8981\u4ef6\u3092\u8a18\u8ff0\u3057\u3066\u304f\u3060\u3055\u3044...',
+    submit_btn: '\u30ec\u30d3\u30e5\u30fc\u63d0\u51fa',
+    revision_title: '\u8868\u984c\u6b04',
+    footer_text: '\u00a9 2026 \u30db\u30f3\u30fb\u30ae\u30eb\u30c9\u30f3 \u2014 \u5168\u3066\u306e\u5bf8\u6cd5\u306f\u30d4\u30af\u30bb\u30eb\u5358\u4f4d'
+  },
+  zh: {
+    gallery_link: '\u2190 \u753b\u5eca',
+    name: '\u6d2a\u5409\u7ae5',
+    hero_title: '\u521b\u610f\u5f00\u53d1\u8005 & \u8bbe\u8ba1\u5e08',
+    spec_label: '\u89c4\u683c',
+    drawn_by_label: '\u7ed8\u5236\u8005',
+    checked_label: '\u5ba1\u6838',
+    checked_value: '\u5df2\u9a8c\u8bc1',
+    date_label: '\u65e5\u671f',
+    rev_label: '\u7248\u672c',
+    scale_label: '\u6bd4\u4f8b',
+    sheet_label: '\u56fe\u7eb8',
+    status_label: '\u72b6\u6001',
+    status_value: '\u5f85\u5ba1\u6838',
+    about_label: '\u6ce8\u91ca\u9762\u677f',
+    about_text: '\u4ee5\u5de5\u7a0b\u7cbe\u5ea6\u8bbe\u8ba1\u6570\u5b57\u4ea7\u54c1\u7684\u6280\u672f\u9a71\u52a8\u578b\u5f00\u53d1\u8005\u3002\u6bcf\u4e2a\u9879\u76ee\u90fd\u4ee5\u84dd\u56fe\u7ea7\u522b\u7684\u7cbe\u786e\u5ea6\u5b9e\u73b0\u3002',
+    stat_exp_label: '\u7ecf\u9a8c',
+    stat_exp_value: '5\u5e74+',
+    stat_projects_label: '\u9879\u76ee',
+    stat_projects_value: '40+',
+    stat_clients_label: '\u5ba2\u6237',
+    stat_clients_value: '25+',
+    stat_accuracy_label: '\u7cbe\u786e\u5ea6',
+    stat_accuracy_value: '99.9%',
+    skills_label: '\u6280\u672f\u89c4\u683c',
+    projects_label: '\u84dd\u56fe\u56fe\u7eb8',
+    project_rev: '\u7248\u672c 1.0',
+    project1_name: '\u7cfb\u7edf\u84dd\u56fe',
+    project1_desc: '\u91c7\u7528\u7cbe\u5bc6\u5de5\u7a0b\u65b9\u6cd5\u548c\u53ef\u6269\u5c55\u57fa\u7840\u8bbe\u65bd\u8bbe\u8ba1\u7684\u5168\u6808\u7cfb\u7edf\u67b6\u6784\u3002',
+    project2_name: '\u7535\u8def\u89c4\u5212\u5668',
+    project2_desc: '\u5177\u5907\u5b9e\u65f6\u9a8c\u8bc1\u548c\u7ec4\u4ef6\u89c4\u683c\u7ba1\u7406\u7684\u4ea4\u4e92\u5f0f\u7535\u8def\u8bbe\u8ba1\u5de5\u5177\u3002',
+    project3_name: '\u5efa\u7b51CAD',
+    project3_desc: '\u5177\u5907\u6d4b\u91cf\u5de5\u5177\u548c\u56fe\u5c42\u7ba1\u7406\u7684\u57fa\u4e8e\u6d4f\u89c8\u5668\u7684\u5efa\u7b51\u8bbe\u8ba1CAD\u5e94\u7528\u7a0b\u5e8f\u3002',
+    project4_name: '\u7cbe\u5bc6\u5de5\u5177',
+    project4_desc: '\u4e3a\u5de5\u4f5c\u6d41\u7a0b\u4e2d\u7684\u6700\u5927\u7cbe\u786e\u5ea6\u548c\u6700\u5c0f\u5bb9\u5dee\u800c\u8bbe\u8ba1\u7684\u5f00\u53d1\u8005\u751f\u4ea7\u529b\u5de5\u5177\u5957\u4ef6\u3002',
+    contact_label: '\u7248\u672c\u5757',
+    form_name: '\u59d3\u540d',
+    form_email: '\u90ae\u7bb1',
+    form_subject: '\u4e3b\u9898',
+    form_message: '\u6d88\u606f',
+    form_name_ph: '\u8bf7\u8f93\u5165\u59d3\u540d',
+    form_email_ph: '\u8bf7\u8f93\u5165\u90ae\u7bb1',
+    form_subject_ph: '\u9879\u76ee\u89c4\u683c',
+    form_message_ph: '\u8bf7\u63cf\u8ff0\u60a8\u7684\u9879\u76ee\u9700\u6c42...',
+    submit_btn: '\u63d0\u4ea4\u5ba1\u6838',
+    revision_title: '\u6807\u9898\u680f',
+    footer_text: '\u00a9 2026 \u6d2a\u5409\u7ae5 \u2014 \u6240\u6709\u5c3a\u5bf8\u5747\u4e3a\u50cf\u7d20'
+  }
+};
+
+// i18n
+function setLanguage(lang) {
+  const t = TRANSLATIONS[lang];
+  if (!t) return;
+  document.documentElement.lang = lang;
+
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    if (t[key] !== undefined) {
+      el.textContent = t[key];
+    }
+  });
+
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n-placeholder');
+    if (t[key] !== undefined) {
+      el.placeholder = t[key];
+    }
+  });
+}
+
+document.getElementById('langSelect').addEventListener('change', function() {
+  setLanguage(this.value);
+});
+
+// IntersectionObserver for drawing-in animation
+var observerOptions = {
+  threshold: 0.15,
+  rootMargin: '0px 0px -40px 0px'
+};
+
+var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+if (!prefersReducedMotion) {
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, observerOptions);
+
+  document.querySelectorAll('.bp-section').forEach(function(section) {
+    observer.observe(section);
+  });
+} else {
+  document.querySelectorAll('.bp-section').forEach(function(section) {
+    section.classList.add('visible');
+  });
+}
+</script>
+</body>
+</html>
