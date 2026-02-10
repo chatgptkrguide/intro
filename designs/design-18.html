@@ -5,159 +5,408 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Portfolio - Isometric</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-:root{--purple:#6C5CE7;--green:#00B894;--yellow:#FDCB6E;--coral:#E17055;--bg:#F8F9FA;--bg-dark:#eef0f2;--text:#2d3436;--text-light:#636e72;--white:#ffffff}
+:root{
+  --purple:#6C5CE7;--purple-light:rgba(108,92,231,0.12);
+  --green:#00B894;--green-light:rgba(0,184,148,0.12);
+  --yellow:#FDCB6E;--yellow-light:rgba(253,203,110,0.15);
+  --coral:#E17055;--coral-light:rgba(225,112,85,0.12);
+  --bg:#F8F9FA;--bg-dark:#eef0f2;
+  --text:#2d3436;--text-light:#636e72;--white:#ffffff;
+  --iso-size:40px;
+}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;min-height:100vh}
 
-/* Isometric grid background */
-body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;background-image:linear-gradient(30deg,rgba(108,92,231,0.03) 12%,transparent 12.5%,transparent 87%,rgba(108,92,231,0.03) 87.5%,rgba(108,92,231,0.03)),linear-gradient(150deg,rgba(108,92,231,0.03) 12%,transparent 12.5%,transparent 87%,rgba(108,92,231,0.03) 87.5%,rgba(108,92,231,0.03)),linear-gradient(30deg,rgba(108,92,231,0.03) 12%,transparent 12.5%,transparent 87%,rgba(108,92,231,0.03) 87.5%,rgba(108,92,231,0.03)),linear-gradient(150deg,rgba(108,92,231,0.03) 12%,transparent 12.5%,transparent 87%,rgba(108,92,231,0.03) 87.5%,rgba(108,92,231,0.03)),linear-gradient(60deg,rgba(0,184,148,0.04) 25%,transparent 25.5%,transparent 75%,rgba(0,184,148,0.04) 75%,rgba(0,184,148,0.04)),linear-gradient(60deg,rgba(0,184,148,0.04) 25%,transparent 25.5%,transparent 75%,rgba(0,184,148,0.04) 75%,rgba(0,184,148,0.04));background-size:80px 140px;background-position:0 0,0 0,40px 70px,40px 70px,0 0,40px 70px}
+/* ============ ISOMETRIC GRID BACKGROUND ============ */
+body::before{
+  content:'';position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;
+  background-image:
+    radial-gradient(circle,rgba(108,92,231,0.08) 1px,transparent 1px),
+    radial-gradient(circle,rgba(0,184,148,0.06) 1px,transparent 1px);
+  background-size:60px 34.6px,60px 34.6px;
+  background-position:0 0,30px 17.3px;
+}
+body::after{
+  content:'';position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;
+  background-image:
+    linear-gradient(30deg,rgba(108,92,231,0.025) 12%,transparent 12.5%,transparent 87%,rgba(108,92,231,0.025) 87.5%),
+    linear-gradient(150deg,rgba(108,92,231,0.025) 12%,transparent 12.5%,transparent 87%,rgba(108,92,231,0.025) 87.5%),
+    linear-gradient(30deg,rgba(108,92,231,0.025) 12%,transparent 12.5%,transparent 87%,rgba(108,92,231,0.025) 87.5%),
+    linear-gradient(150deg,rgba(108,92,231,0.025) 12%,transparent 12.5%,transparent 87%,rgba(108,92,231,0.025) 87.5%),
+    linear-gradient(60deg,rgba(0,184,148,0.03) 25%,transparent 25.5%,transparent 75%,rgba(0,184,148,0.03) 75%),
+    linear-gradient(60deg,rgba(0,184,148,0.03) 25%,transparent 25.5%,transparent 75%,rgba(0,184,148,0.03) 75%);
+  background-size:80px 140px;
+  background-position:0 0,0 0,40px 70px,40px 70px,0 0,40px 70px;
+}
 
-/* Floating iso cubes */
-.iso-decorations{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
-.iso-cube{position:absolute;width:40px;height:40px;opacity:0.15;animation:isoCubeFloat 8s ease-in-out infinite}
-.iso-cube .top{position:absolute;width:40px;height:23px;background:var(--yellow);transform:rotate(0deg) skewX(-30deg) scaleY(0.866);transform-origin:bottom left;top:-11px;left:20px}
-.iso-cube .left{position:absolute;width:40px;height:40px;background:var(--green);transform:skewY(-30deg);transform-origin:top right;left:0;top:11px}
-.iso-cube .right{position:absolute;width:40px;height:40px;background:var(--purple);transform:skewY(30deg);transform-origin:top left;left:20px;top:31px}
-.iso-cube:nth-child(1){top:10%;left:5%;animation-delay:0s}
-.iso-cube:nth-child(2){top:20%;right:8%;animation-delay:1.5s}
-.iso-cube:nth-child(3){top:60%;left:3%;animation-delay:3s}
-.iso-cube:nth-child(4){top:75%;right:5%;animation-delay:4.5s}
+/* ============ FLOATING GRID PARTICLES (canvas) ============ */
+#iso-particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
+
+/* ============ FLOATING DECORATIVE CUBES ============ */
+.iso-decorations{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1}
+.iso-cube{position:absolute;opacity:0.12;animation:isoCubeFloat 8s ease-in-out infinite}
+.iso-cube .top,.iso-cube .left,.iso-cube .right{position:absolute}
+.iso-cube .top{transform:skewX(-30deg) scaleY(0.866);transform-origin:bottom left}
+.iso-cube .left{transform:skewY(-30deg);transform-origin:top right}
+.iso-cube .right{transform:skewY(30deg);transform-origin:top left}
+.iso-cube.size-sm{width:30px;height:30px}
+.iso-cube.size-sm .top{width:30px;height:17px;top:-8px;left:15px}
+.iso-cube.size-sm .left{width:30px;height:30px;top:8px;left:0}
+.iso-cube.size-sm .right{width:30px;height:30px;top:23px;left:15px}
+.iso-cube.size-md{width:40px;height:40px}
+.iso-cube.size-md .top{width:40px;height:23px;top:-11px;left:20px}
+.iso-cube.size-md .left{width:40px;height:40px;top:11px;left:0}
+.iso-cube.size-md .right{width:40px;height:40px;top:31px;left:20px}
+.iso-cube.size-lg{width:55px;height:55px}
+.iso-cube.size-lg .top{width:55px;height:32px;top:-16px;left:27px}
+.iso-cube.size-lg .left{width:55px;height:55px;top:16px;left:0}
+.iso-cube.size-lg .right{width:55px;height:55px;top:43px;left:27px}
+.iso-cube.color-purple .top{background:rgba(108,92,231,0.8)}.iso-cube.color-purple .left{background:rgba(108,92,231,0.6)}.iso-cube.color-purple .right{background:rgba(108,92,231,0.4)}
+.iso-cube.color-green .top{background:rgba(0,184,148,0.8)}.iso-cube.color-green .left{background:rgba(0,184,148,0.6)}.iso-cube.color-green .right{background:rgba(0,184,148,0.4)}
+.iso-cube.color-yellow .top{background:rgba(253,203,110,0.9)}.iso-cube.color-yellow .left{background:rgba(253,203,110,0.7)}.iso-cube.color-yellow .right{background:rgba(253,203,110,0.5)}
+.iso-cube.color-coral .top{background:rgba(225,112,85,0.8)}.iso-cube.color-coral .left{background:rgba(225,112,85,0.6)}.iso-cube.color-coral .right{background:rgba(225,112,85,0.4)}
+
+/* cube hover face highlights */
+.iso-cube:hover{opacity:0.35}
+.iso-cube:hover .top{filter:brightness(1.3)}
+.iso-cube:hover .left{filter:brightness(1.1)}
+.iso-cube:hover .right{filter:brightness(0.9)}
+
+/* Assembly animation: cubes build up from bottom */
+.iso-cube.assemble{opacity:0;transform:translateY(80px) scale(0.6);transition:all 0.8s cubic-bezier(0.34,1.56,0.64,1)}
+.iso-cube.assemble.assembled{opacity:0.12;transform:translateY(0) scale(1)}
+
 @keyframes isoCubeFloat{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-20px) rotate(3deg)}}
+@keyframes isoCubeFloatAlt{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-15px) rotate(-2deg)}}
+@keyframes isoCubeSpin{0%,100%{transform:translateY(0) rotate(0deg)}25%{transform:translateY(-12px) rotate(2deg)}75%{transform:translateY(-8px) rotate(-1deg)}}
 
-/* Navigation */
-.nav{position:fixed;top:0;left:0;width:100%;padding:20px 40px;display:flex;justify-content:space-between;align-items:center;z-index:100;background:rgba(248,249,250,0.9);backdrop-filter:blur(20px);border-bottom:1px solid rgba(0,0,0,0.05)}
-.gallery-link{color:var(--purple);text-decoration:none;font-weight:600;font-size:16px;transition:opacity 0.3s}
-.gallery-link:hover{opacity:0.7}
+/* ============ NAVIGATION ============ */
+.nav{position:fixed;top:0;left:0;width:100%;padding:20px 40px;display:flex;justify-content:space-between;align-items:center;z-index:100;background:rgba(248,249,250,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(0,0,0,0.05);transition:box-shadow 0.3s}
+.nav.scrolled{box-shadow:0 4px 20px rgba(0,0,0,0.06)}
+.gallery-link{color:var(--purple);text-decoration:none;font-weight:600;font-size:16px;transition:all 0.3s;position:relative}
+.gallery-link::after{content:'';position:absolute;bottom:-2px;left:0;width:0;height:2px;background:var(--purple);transition:width 0.3s}
+.gallery-link:hover::after{width:100%}
+.gallery-link:hover{opacity:0.8}
 .lang-switcher{display:flex;gap:6px}
 .lang-btn{background:var(--white);border:2px solid var(--bg-dark);color:var(--text-light);padding:6px 14px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;font-size:13px;border-radius:8px;transition:all 0.3s}
-.lang-btn:hover{border-color:var(--purple);color:var(--purple)}
-.lang-btn.active{background:var(--purple);border-color:var(--purple);color:#fff}
+.lang-btn:hover{border-color:var(--purple);color:var(--purple);transform:translateY(-1px)}
+.lang-btn.active{background:var(--purple);border-color:var(--purple);color:#fff;box-shadow:0 4px 12px rgba(108,92,231,0.3)}
 
-/* Content */
+/* ============ CONTENT ============ */
 .content{position:relative;z-index:10;max-width:1060px;margin:0 auto;padding:120px 24px 80px}
 
-/* Hero */
+/* ============ HERO ============ */
 .hero{text-align:center;padding:80px 0 100px;position:relative}
-.hero-iso-group{display:flex;justify-content:center;margin-bottom:40px;gap:8px}
-.hero-block{width:60px;height:60px;position:relative;animation:heroBlockBounce 2s ease-in-out infinite}
+.hero-iso-group{display:flex;justify-content:center;margin-bottom:40px;gap:10px;perspective:600px}
+.hero-block{width:60px;height:60px;position:relative;animation:heroBlockBounce 2s ease-in-out infinite;cursor:pointer;transition:filter 0.3s}
 .hero-block:nth-child(1){animation-delay:0s}
 .hero-block:nth-child(2){animation-delay:0.2s}
 .hero-block:nth-child(3){animation-delay:0.4s}
 .hero-block:nth-child(4){animation-delay:0.6s}
-.hero-block .top{position:absolute;width:60px;height:35px;transform:skewX(-30deg) scaleY(0.866);transform-origin:bottom left;top:-17px;left:30px}
-.hero-block .left{position:absolute;width:60px;height:60px;transform:skewY(-30deg);transform-origin:top right;left:0;top:17px}
-.hero-block .right{position:absolute;width:60px;height:60px;transform:skewY(30deg);transform-origin:top left;left:30px;top:47px}
-.hero-block:nth-child(1) .top{background:rgba(108,92,231,0.8)}.hero-block:nth-child(1) .left{background:rgba(108,92,231,0.6)}.hero-block:nth-child(1) .right{background:rgba(108,92,231,0.4)}
-.hero-block:nth-child(2) .top{background:rgba(0,184,148,0.8)}.hero-block:nth-child(2) .left{background:rgba(0,184,148,0.6)}.hero-block:nth-child(2) .right{background:rgba(0,184,148,0.4)}
-.hero-block:nth-child(3) .top{background:rgba(253,203,110,0.8)}.hero-block:nth-child(3) .left{background:rgba(253,203,110,0.6)}.hero-block:nth-child(3) .right{background:rgba(253,203,110,0.4)}
-.hero-block:nth-child(4) .top{background:rgba(225,112,85,0.8)}.hero-block:nth-child(4) .left{background:rgba(225,112,85,0.6)}.hero-block:nth-child(4) .right{background:rgba(225,112,85,0.4)}
-@keyframes heroBlockBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.hero-block:nth-child(5){animation-delay:0.8s}
+.hero-block .top,.hero-block .left,.hero-block .right{position:absolute;transition:filter 0.3s,transform 0.3s}
+.hero-block .top{width:60px;height:35px;transform:skewX(-30deg) scaleY(0.866);transform-origin:bottom left;top:-17px;left:30px}
+.hero-block .left{width:60px;height:60px;transform:skewY(-30deg);transform-origin:top right;left:0;top:17px}
+.hero-block .right{width:60px;height:60px;transform:skewY(30deg);transform-origin:top left;left:30px;top:47px}
+/* face highlight on hover */
+.hero-block:hover .top{filter:brightness(1.4)}
+.hero-block:hover .left{filter:brightness(1.15)}
+.hero-block:hover .right{filter:brightness(0.85)}
 
-.hero-name{font-size:52px;font-weight:700;margin-bottom:12px;color:var(--text)}
-.hero-title{font-size:20px;color:var(--text-light);font-weight:500}
+.hero-block:nth-child(1) .top{background:rgba(108,92,231,0.85)}.hero-block:nth-child(1) .left{background:rgba(108,92,231,0.65)}.hero-block:nth-child(1) .right{background:rgba(108,92,231,0.45)}
+.hero-block:nth-child(2) .top{background:rgba(0,184,148,0.85)}.hero-block:nth-child(2) .left{background:rgba(0,184,148,0.65)}.hero-block:nth-child(2) .right{background:rgba(0,184,148,0.45)}
+.hero-block:nth-child(3) .top{background:rgba(253,203,110,0.9)}.hero-block:nth-child(3) .left{background:rgba(253,203,110,0.7)}.hero-block:nth-child(3) .right{background:rgba(253,203,110,0.5)}
+.hero-block:nth-child(4) .top{background:rgba(225,112,85,0.85)}.hero-block:nth-child(4) .left{background:rgba(225,112,85,0.65)}.hero-block:nth-child(4) .right{background:rgba(225,112,85,0.45)}
+.hero-block:nth-child(5) .top{background:rgba(108,92,231,0.7)}.hero-block:nth-child(5) .left{background:rgba(0,184,148,0.55)}.hero-block:nth-child(5) .right{background:rgba(253,203,110,0.5)}
+@keyframes heroBlockBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
 
-/* Section */
-.section{margin-bottom:80px;opacity:0;transform:translateY(30px);transition:all 0.7s cubic-bezier(0.25,0.46,0.45,0.94)}
+.hero-name{font-size:56px;font-weight:700;margin-bottom:12px;color:var(--text);opacity:0;animation:heroFadeUp 0.8s 0.3s forwards}
+.hero-title{font-size:20px;color:var(--text-light);font-weight:500;opacity:0;animation:heroFadeUp 0.8s 0.5s forwards}
+.hero-subtitle{font-size:15px;color:var(--text-light);margin-top:16px;opacity:0;animation:heroFadeUp 0.8s 0.7s forwards;display:flex;align-items:center;justify-content:center;gap:8px}
+.hero-subtitle .dot{width:6px;height:6px;border-radius:50%;display:inline-block}
+.hero-subtitle .dot:nth-child(1){background:var(--purple)}
+.hero-subtitle .dot:nth-child(2){background:var(--green)}
+.hero-subtitle .dot:nth-child(3){background:var(--coral)}
+
+@keyframes heroFadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* ============ SECTIONS (3D block platforms) ============ */
+.section{margin-bottom:80px;opacity:0;transform:translateY(40px);transition:all 0.8s cubic-bezier(0.25,0.46,0.45,0.94)}
 .section.visible{opacity:1;transform:translateY(0)}
+
+/* Isometric platform container */
+.iso-platform{
+  position:relative;
+  background:var(--white);
+  border-radius:20px;
+  padding:40px;
+  box-shadow:
+    0 4px 24px rgba(0,0,0,0.06),
+    12px 12px 0 rgba(108,92,231,0.06),
+    12px 12px 0 1px rgba(108,92,231,0.03);
+  transition:box-shadow 0.4s,transform 0.4s;
+}
+.iso-platform:hover{
+  box-shadow:
+    0 8px 32px rgba(0,0,0,0.08),
+    16px 16px 0 rgba(108,92,231,0.08),
+    16px 16px 0 1px rgba(108,92,231,0.04);
+  transform:translate(-2px,-2px);
+}
+.iso-platform::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:4px;border-radius:20px 20px 0 0;
+}
+.iso-platform.plat-purple::before{background:linear-gradient(90deg,var(--purple),rgba(108,92,231,0.5))}
+.iso-platform.plat-green::before{background:linear-gradient(90deg,var(--green),rgba(0,184,148,0.5))}
+.iso-platform.plat-yellow::before{background:linear-gradient(90deg,var(--yellow),rgba(253,203,110,0.5))}
+.iso-platform.plat-coral::before{background:linear-gradient(90deg,var(--coral),rgba(225,112,85,0.5))}
+
 .section-header{display:flex;align-items:center;gap:16px;margin-bottom:32px}
-.section-color-bar{width:4px;height:40px;border-radius:2px}
+.section-color-bar{width:5px;height:44px;border-radius:3px;position:relative;overflow:hidden}
+.section-color-bar::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(180deg,rgba(255,255,255,0.3),transparent);border-radius:3px}
 .section-color-bar.purple{background:var(--purple)}
 .section-color-bar.green{background:var(--green)}
 .section-color-bar.yellow{background:var(--yellow)}
 .section-color-bar.coral{background:var(--coral)}
 .section-title{font-size:32px;font-weight:700}
 
-/* About card */
-.about-card{background:var(--white);border-radius:16px;padding:40px;box-shadow:0 4px 24px rgba(0,0,0,0.06);border-left:4px solid var(--purple);position:relative;overflow:hidden}
-.about-card::after{content:'';position:absolute;top:0;right:0;width:120px;height:120px;background:linear-gradient(135deg,rgba(108,92,231,0.05),transparent);border-radius:0 0 0 100%}
-.about-text{font-size:18px;line-height:1.8;color:var(--text-light)}
+/* ============ ABOUT ============ */
+.about-card{background:var(--white);border-radius:20px;padding:44px;box-shadow:0 4px 24px rgba(0,0,0,0.06);border-left:5px solid var(--purple);position:relative;overflow:hidden;transition:transform 0.4s,box-shadow 0.4s}
+.about-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.1)}
+.about-card::after{content:'';position:absolute;top:0;right:0;width:180px;height:180px;background:linear-gradient(135deg,rgba(108,92,231,0.06),transparent);border-radius:0 0 0 100%}
+.about-text{font-size:18px;line-height:1.9;color:var(--text-light)}
+.about-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:32px;padding-top:32px;border-top:1px solid var(--bg-dark)}
+.about-stat{text-align:center}
+.about-stat-num{font-size:32px;font-weight:700;color:var(--purple)}
+.about-stat-label{font-size:13px;color:var(--text-light);margin-top:4px}
 
-/* Isometric skills */
-.skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
-.skill-card{background:var(--white);border-radius:16px;padding:28px;box-shadow:0 4px 16px rgba(0,0,0,0.05);transition:all 0.4s cubic-bezier(0.25,0.46,0.45,0.94);position:relative;overflow:hidden;border-top:3px solid transparent}
-.skill-card:nth-child(1){border-top-color:var(--purple)}
-.skill-card:nth-child(2){border-top-color:var(--green)}
-.skill-card:nth-child(3){border-top-color:var(--yellow)}
-.skill-card:nth-child(4){border-top-color:var(--coral)}
-.skill-card:nth-child(5){border-top-color:var(--purple)}
-.skill-card:nth-child(6){border-top-color:var(--green)}
-.skill-card:hover{transform:translateY(-6px);box-shadow:0 12px 32px rgba(0,0,0,0.1)}
+/* ============ SKILLS (Isometric Towers) ============ */
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px}
+.skill-card{
+  background:var(--white);border-radius:16px;padding:28px;
+  box-shadow:0 4px 16px rgba(0,0,0,0.05);
+  transition:all 0.4s cubic-bezier(0.25,0.46,0.45,0.94);
+  position:relative;overflow:hidden;
+  border-top:3px solid transparent;
+  /* staggered reveal */
+  opacity:0;transform:translateY(30px);
+}
+.skill-card.revealed{opacity:1;transform:translateY(0)}
+.skill-card:nth-child(1){border-top-color:var(--purple);transition-delay:0s}
+.skill-card:nth-child(2){border-top-color:var(--green);transition-delay:0.1s}
+.skill-card:nth-child(3){border-top-color:var(--yellow);transition-delay:0.2s}
+.skill-card:nth-child(4){border-top-color:var(--coral);transition-delay:0.3s}
+.skill-card:nth-child(5){border-top-color:var(--purple);transition-delay:0.4s}
+.skill-card:nth-child(6){border-top-color:var(--green);transition-delay:0.5s}
+.skill-card:hover{transform:translateY(-8px);box-shadow:0 16px 40px rgba(0,0,0,0.12)}
 
-/* Mini iso cube in card */
-.skill-iso{width:36px;height:36px;position:relative;margin-bottom:16px}
-.skill-iso .s-top{position:absolute;width:36px;height:21px;transform:skewX(-30deg) scaleY(0.866);transform-origin:bottom left;top:-10px;left:18px}
-.skill-iso .s-left{position:absolute;width:36px;height:36px;transform:skewY(-30deg);transform-origin:top right;left:0;top:10px}
-.skill-iso .s-right{position:absolute;width:36px;height:36px;transform:skewY(30deg);transform-origin:top left;left:18px;top:28px}
-.skill-card:nth-child(1) .s-top{background:rgba(108,92,231,0.8)}.skill-card:nth-child(1) .s-left{background:rgba(108,92,231,0.6)}.skill-card:nth-child(1) .s-right{background:rgba(108,92,231,0.4)}
-.skill-card:nth-child(2) .s-top{background:rgba(0,184,148,0.8)}.skill-card:nth-child(2) .s-left{background:rgba(0,184,148,0.6)}.skill-card:nth-child(2) .s-right{background:rgba(0,184,148,0.4)}
-.skill-card:nth-child(3) .s-top{background:rgba(253,203,110,0.9)}.skill-card:nth-child(3) .s-left{background:rgba(253,203,110,0.7)}.skill-card:nth-child(3) .s-right{background:rgba(253,203,110,0.5)}
-.skill-card:nth-child(4) .s-top{background:rgba(225,112,85,0.8)}.skill-card:nth-child(4) .s-left{background:rgba(225,112,85,0.6)}.skill-card:nth-child(4) .s-right{background:rgba(225,112,85,0.4)}
-.skill-card:nth-child(5) .s-top{background:rgba(108,92,231,0.8)}.skill-card:nth-child(5) .s-left{background:rgba(108,92,231,0.6)}.skill-card:nth-child(5) .s-right{background:rgba(108,92,231,0.4)}
-.skill-card:nth-child(6) .s-top{background:rgba(0,184,148,0.8)}.skill-card:nth-child(6) .s-left{background:rgba(0,184,148,0.6)}.skill-card:nth-child(6) .s-right{background:rgba(0,184,148,0.4)}
+/* Isometric tower (height = skill level) */
+.skill-tower{position:relative;margin-bottom:18px;height:80px;display:flex;align-items:flex-end}
+.skill-tower-block{position:relative;transition:transform 0.4s}
+.skill-tower-block .t-top{position:absolute;transform:skewX(-30deg) scaleY(0.866);transform-origin:bottom left}
+.skill-tower-block .t-left{position:absolute;transform:skewY(-30deg);transform-origin:top right}
+.skill-tower-block .t-right{position:absolute;transform:skewY(30deg);transform-origin:top left}
+
+/* face highlight on skill card hover */
+.skill-card:hover .t-top{filter:brightness(1.3)}
+.skill-card:hover .t-left{filter:brightness(1.1)}
+.skill-card:hover .t-right{filter:brightness(0.85)}
+.skill-card:hover .skill-tower-block{transform:translateY(-4px)}
+
+/* color sets */
+.skill-card:nth-child(1) .t-top{background:rgba(108,92,231,0.85)}.skill-card:nth-child(1) .t-left{background:rgba(108,92,231,0.65)}.skill-card:nth-child(1) .t-right{background:rgba(108,92,231,0.45)}
+.skill-card:nth-child(2) .t-top{background:rgba(0,184,148,0.85)}.skill-card:nth-child(2) .t-left{background:rgba(0,184,148,0.65)}.skill-card:nth-child(2) .t-right{background:rgba(0,184,148,0.45)}
+.skill-card:nth-child(3) .t-top{background:rgba(253,203,110,0.9)}.skill-card:nth-child(3) .t-left{background:rgba(253,203,110,0.7)}.skill-card:nth-child(3) .t-right{background:rgba(253,203,110,0.5)}
+.skill-card:nth-child(4) .t-top{background:rgba(225,112,85,0.85)}.skill-card:nth-child(4) .t-left{background:rgba(225,112,85,0.65)}.skill-card:nth-child(4) .t-right{background:rgba(225,112,85,0.45)}
+.skill-card:nth-child(5) .t-top{background:rgba(108,92,231,0.85)}.skill-card:nth-child(5) .t-left{background:rgba(108,92,231,0.65)}.skill-card:nth-child(5) .t-right{background:rgba(108,92,231,0.45)}
+.skill-card:nth-child(6) .t-top{background:rgba(0,184,148,0.85)}.skill-card:nth-child(6) .t-left{background:rgba(0,184,148,0.65)}.skill-card:nth-child(6) .t-right{background:rgba(0,184,148,0.45)}
 
 .skill-name{font-weight:700;font-size:18px;margin-bottom:6px}
 .skill-desc{font-size:14px;color:var(--text-light);line-height:1.5}
-.skill-tag{display:inline-block;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600;margin-top:10px;background:var(--bg)}
+.skill-tag{display:inline-block;padding:4px 12px;border-radius:6px;font-size:12px;font-weight:600;margin-top:10px;background:var(--bg)}
 .skill-card:nth-child(1) .skill-tag{color:var(--purple)}
 .skill-card:nth-child(2) .skill-tag{color:var(--green)}
 .skill-card:nth-child(3) .skill-tag{color:#d4a017}
 .skill-card:nth-child(4) .skill-tag{color:var(--coral)}
 .skill-card:nth-child(5) .skill-tag{color:var(--purple)}
 .skill-card:nth-child(6) .skill-tag{color:var(--green)}
+/* skill bar */
+.skill-bar-container{margin-top:12px;height:4px;background:var(--bg-dark);border-radius:2px;overflow:hidden}
+.skill-bar-fill{height:100%;border-radius:2px;width:0;transition:width 1.2s cubic-bezier(0.25,0.46,0.45,0.94)}
+.skill-card:nth-child(1) .skill-bar-fill{background:var(--purple)}
+.skill-card:nth-child(2) .skill-bar-fill{background:var(--green)}
+.skill-card:nth-child(3) .skill-bar-fill{background:var(--yellow)}
+.skill-card:nth-child(4) .skill-bar-fill{background:var(--coral)}
+.skill-card:nth-child(5) .skill-bar-fill{background:var(--purple)}
+.skill-card:nth-child(6) .skill-bar-fill{background:var(--green)}
 
-/* Contact */
-.contact-card{background:var(--white);border-radius:20px;padding:56px 40px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.06);position:relative;overflow:hidden}
+/* ============ PROJECTS (Isometric cards with 3D lift) ============ */
+.projects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:28px}
+.project-card{
+  background:var(--white);border-radius:20px;padding:0;
+  box-shadow:0 4px 20px rgba(0,0,0,0.06);
+  transition:all 0.5s cubic-bezier(0.25,0.46,0.45,0.94);
+  position:relative;overflow:hidden;cursor:pointer;
+  /* staggered */
+  opacity:0;transform:translateY(30px) perspective(800px) rotateX(2deg);
+}
+.project-card.revealed{opacity:1;transform:translateY(0) perspective(800px) rotateX(0deg)}
+.project-card:nth-child(1){transition-delay:0s}
+.project-card:nth-child(2){transition-delay:0.15s}
+.project-card:nth-child(3){transition-delay:0.3s}
+.project-card:nth-child(4){transition-delay:0.45s}
+
+/* 3D block hover lift */
+.project-card:hover{
+  transform:translateY(-12px) perspective(800px) rotateX(0deg);
+  box-shadow:
+    0 20px 50px rgba(0,0,0,0.12),
+    8px 8px 0 rgba(108,92,231,0.08),
+    8px 8px 0 1px rgba(108,92,231,0.04);
+}
+.project-card-image{
+  height:180px;position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+}
+.project-card:nth-child(1) .project-card-image{background:linear-gradient(135deg,rgba(108,92,231,0.15),rgba(108,92,231,0.05))}
+.project-card:nth-child(2) .project-card-image{background:linear-gradient(135deg,rgba(0,184,148,0.15),rgba(0,184,148,0.05))}
+.project-card:nth-child(3) .project-card-image{background:linear-gradient(135deg,rgba(253,203,110,0.2),rgba(253,203,110,0.05))}
+.project-card:nth-child(4) .project-card-image{background:linear-gradient(135deg,rgba(225,112,85,0.15),rgba(225,112,85,0.05))}
+
+/* Isometric mini scene in project card */
+.project-iso-scene{position:relative;width:80px;height:80px;transition:transform 0.5s}
+.project-card:hover .project-iso-scene{transform:translateY(-8px) scale(1.1)}
+.project-iso-scene .pi-top,.project-iso-scene .pi-left,.project-iso-scene .pi-right{position:absolute;transition:filter 0.3s}
+.project-iso-scene .pi-top{width:80px;height:46px;transform:skewX(-30deg) scaleY(0.866);transform-origin:bottom left;top:-23px;left:40px}
+.project-iso-scene .pi-left{width:80px;height:80px;transform:skewY(-30deg);transform-origin:top right;left:0;top:23px}
+.project-iso-scene .pi-right{width:80px;height:80px;transform:skewY(30deg);transform-origin:top left;left:40px;top:63px}
+.project-card:hover .pi-top{filter:brightness(1.3)}
+.project-card:hover .pi-left{filter:brightness(1.1)}
+.project-card:hover .pi-right{filter:brightness(0.85)}
+
+.project-card:nth-child(1) .pi-top{background:rgba(108,92,231,0.7)}.project-card:nth-child(1) .pi-left{background:rgba(108,92,231,0.5)}.project-card:nth-child(1) .pi-right{background:rgba(108,92,231,0.35)}
+.project-card:nth-child(2) .pi-top{background:rgba(0,184,148,0.7)}.project-card:nth-child(2) .pi-left{background:rgba(0,184,148,0.5)}.project-card:nth-child(2) .pi-right{background:rgba(0,184,148,0.35)}
+.project-card:nth-child(3) .pi-top{background:rgba(253,203,110,0.8)}.project-card:nth-child(3) .pi-left{background:rgba(253,203,110,0.6)}.project-card:nth-child(3) .pi-right{background:rgba(253,203,110,0.4)}
+.project-card:nth-child(4) .pi-top{background:rgba(225,112,85,0.7)}.project-card:nth-child(4) .pi-left{background:rgba(225,112,85,0.5)}.project-card:nth-child(4) .pi-right{background:rgba(225,112,85,0.35)}
+
+.project-card-body{padding:28px}
+.project-card-title{font-size:20px;font-weight:700;margin-bottom:8px}
+.project-card-desc{font-size:14px;color:var(--text-light);line-height:1.6;margin-bottom:16px}
+.project-tags{display:flex;flex-wrap:wrap;gap:6px}
+.project-tag{padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600;background:var(--bg)}
+.project-card:nth-child(1) .project-tag{color:var(--purple)}
+.project-card:nth-child(2) .project-tag{color:var(--green)}
+.project-card:nth-child(3) .project-tag{color:#d4a017}
+.project-card:nth-child(4) .project-tag{color:var(--coral)}
+.project-card-arrow{position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.9);display:flex;align-items:center;justify-content:center;opacity:0;transform:translate(-8px,8px);transition:all 0.4s}
+.project-card:hover .project-card-arrow{opacity:1;transform:translate(0,0)}
+.project-card-arrow svg{width:16px;height:16px;stroke:var(--text);stroke-width:2;fill:none}
+
+/* ============ CONTACT ============ */
+.contact-card{background:var(--white);border-radius:20px;padding:60px 40px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.06);position:relative;overflow:hidden;transition:transform 0.4s}
+.contact-card:hover{transform:translateY(-4px)}
 .contact-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:4px;background:linear-gradient(90deg,var(--purple),var(--green),var(--yellow),var(--coral))}
+.contact-card::after{content:'';position:absolute;bottom:-60px;right:-60px;width:200px;height:200px;background:radial-gradient(circle,rgba(108,92,231,0.04),transparent);border-radius:50%}
 .contact-heading{font-size:36px;font-weight:700;margin-bottom:8px}
-.contact-sub{font-size:18px;color:var(--text-light);margin-bottom:32px}
+.contact-sub{font-size:18px;color:var(--text-light);margin-bottom:36px}
 .contact-links{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
-.contact-link{padding:12px 28px;border-radius:12px;font-weight:600;font-size:15px;text-decoration:none;transition:all 0.3s;border:2px solid transparent}
+.contact-link{padding:14px 32px;border-radius:12px;font-weight:600;font-size:15px;text-decoration:none;transition:all 0.3s;border:2px solid transparent;position:relative;overflow:hidden}
+.contact-link::after{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.3s}
 .contact-link:nth-child(1){background:var(--purple);color:#fff}
-.contact-link:nth-child(1):hover{background:transparent;border-color:var(--purple);color:var(--purple)}
+.contact-link:nth-child(1):hover{background:transparent;border-color:var(--purple);color:var(--purple);transform:translateY(-3px);box-shadow:0 8px 24px rgba(108,92,231,0.3)}
 .contact-link:nth-child(2){background:var(--green);color:#fff}
-.contact-link:nth-child(2):hover{background:transparent;border-color:var(--green);color:var(--green)}
+.contact-link:nth-child(2):hover{background:transparent;border-color:var(--green);color:var(--green);transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,184,148,0.3)}
 .contact-link:nth-child(3){background:var(--coral);color:#fff}
-.contact-link:nth-child(3):hover{background:transparent;border-color:var(--coral);color:var(--coral)}
+.contact-link:nth-child(3):hover{background:transparent;border-color:var(--coral);color:var(--coral);transform:translateY(-3px);box-shadow:0 8px 24px rgba(225,112,85,0.3)}
 
-/* Footer */
-.footer{text-align:center;padding:40px 20px;color:var(--text-light);font-size:14px}
+/* ============ FOOTER ============ */
+.footer{text-align:center;padding:48px 20px;color:var(--text-light);font-size:14px;position:relative;z-index:10}
+.footer-cubes{display:flex;justify-content:center;gap:8px;margin-bottom:16px}
+.footer-cube{width:16px;height:16px;position:relative;opacity:0.3}
+.footer-cube .fc-top{position:absolute;width:16px;height:9px;transform:skewX(-30deg) scaleY(0.866);transform-origin:bottom left;top:-5px;left:8px}
+.footer-cube .fc-left{position:absolute;width:16px;height:16px;transform:skewY(-30deg);transform-origin:top right;left:0;top:5px}
+.footer-cube .fc-right{position:absolute;width:16px;height:16px;transform:skewY(30deg);transform-origin:top left;left:8px;top:13px}
+.footer-cube:nth-child(1) .fc-top{background:var(--purple)}.footer-cube:nth-child(1) .fc-left{background:rgba(108,92,231,0.7)}.footer-cube:nth-child(1) .fc-right{background:rgba(108,92,231,0.4)}
+.footer-cube:nth-child(2) .fc-top{background:var(--green)}.footer-cube:nth-child(2) .fc-left{background:rgba(0,184,148,0.7)}.footer-cube:nth-child(2) .fc-right{background:rgba(0,184,148,0.4)}
+.footer-cube:nth-child(3) .fc-top{background:var(--yellow)}.footer-cube:nth-child(3) .fc-left{background:rgba(253,203,110,0.7)}.footer-cube:nth-child(3) .fc-right{background:rgba(253,203,110,0.4)}
+.footer-cube:nth-child(4) .fc-top{background:var(--coral)}.footer-cube:nth-child(4) .fc-left{background:rgba(225,112,85,0.7)}.footer-cube:nth-child(4) .fc-right{background:rgba(225,112,85,0.4)}
 
-/* Responsive */
+/* ============ RESPONSIVE ============ */
 @media(max-width:768px){
-  .hero-name{font-size:36px}
+  .hero-name{font-size:38px}
   .section-title{font-size:26px}
   .nav{padding:16px 20px}
   .content{padding:100px 16px 60px}
-  .skills-grid{grid-template-columns:repeat(2,1fr)}
+  .skills-grid{grid-template-columns:repeat(2,1fr);gap:16px}
+  .projects-grid{grid-template-columns:1fr;gap:20px}
   .about-card{padding:28px}
+  .about-stats{grid-template-columns:repeat(3,1fr);gap:16px}
+  .about-stat-num{font-size:24px}
   .contact-card{padding:36px 24px}
   .contact-heading{font-size:28px}
-  .hero-block{width:40px;height:40px}
-  .hero-block .top{width:40px;height:23px;top:-11px;left:20px}
-  .hero-block .left{width:40px;height:40px;top:11px}
-  .hero-block .right{width:40px;height:40px;left:20px;top:31px}
+  .iso-platform{padding:28px}
+  .hero-block{width:44px;height:44px}
+  .hero-block .top{width:44px;height:25px;top:-13px;left:22px}
+  .hero-block .left{width:44px;height:44px;top:13px}
+  .hero-block .right{width:44px;height:44px;left:22px;top:35px}
+  .project-card-image{height:140px}
+  .project-iso-scene{width:60px;height:60px}
+  .project-iso-scene .pi-top{width:60px;height:35px;top:-17px;left:30px}
+  .project-iso-scene .pi-left{width:60px;height:60px;top:17px}
+  .project-iso-scene .pi-right{width:60px;height:60px;left:30px;top:47px}
 }
 @media(max-width:375px){
   .hero-name{font-size:28px}
+  .hero-title{font-size:16px}
   .skills-grid{grid-template-columns:1fr}
   .lang-btn{padding:4px 10px;font-size:12px}
   .contact-links{flex-direction:column;align-items:center}
   .hero-iso-group{gap:4px}
+  .about-stats{grid-template-columns:1fr;gap:12px}
+  .hero-block{width:36px;height:36px}
+  .hero-block .top{width:36px;height:21px;top:-10px;left:18px}
+  .hero-block .left{width:36px;height:36px;top:10px}
+  .hero-block .right{width:36px;height:36px;left:18px;top:28px}
 }
 @media(min-width:1440px){
   .content{max-width:1200px}
+  .projects-grid{grid-template-columns:repeat(2,1fr)}
+}
+
+/* ============ REDUCED MOTION ============ */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:0.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:0.01ms !important;
+  }
+  .hero-name,.hero-title,.hero-subtitle{opacity:1;transform:none}
+  .section{opacity:1;transform:none}
+  .skill-card,.project-card{opacity:1;transform:none}
+  .iso-cube.assemble{opacity:0.12;transform:none}
+  .skill-bar-fill{width:var(--fill-width,0%) !important;transition:none}
 }
 </style>
 </head>
 <body>
 
+<canvas id="iso-particles"></canvas>
+
+<!-- Floating decorative cubes (various sizes/colors, assembly animation) -->
 <div class="iso-decorations">
-  <div class="iso-cube" style="top:10%;left:5%"><div class="top"></div><div class="left"></div><div class="right"></div></div>
-  <div class="iso-cube" style="top:20%;right:8%"><div class="top"></div><div class="left"></div><div class="right"></div></div>
-  <div class="iso-cube" style="top:60%;left:3%"><div class="top"></div><div class="left"></div><div class="right"></div></div>
-  <div class="iso-cube" style="top:75%;right:5%"><div class="top"></div><div class="left"></div><div class="right"></div></div>
+  <div class="iso-cube assemble size-sm color-purple" style="top:6%;left:4%"><div class="top"></div><div class="left"></div><div class="right"></div></div>
+  <div class="iso-cube assemble size-lg color-green" style="top:14%;right:6%"><div class="top"></div><div class="left"></div><div class="right"></div></div>
+  <div class="iso-cube assemble size-md color-yellow" style="top:28%;left:2%"><div class="top"></div><div class="left"></div><div class="right"></div></div>
+  <div class="iso-cube assemble size-sm color-coral" style="top:35%;right:3%"><div class="top"></div><div class="left"></div><div class="right"></div></div>
+  <div class="iso-cube assemble size-md color-purple" style="top:48%;left:6%"><div class="top"></div><div class="left"></div><div class="right"></div></div>
+  <div class="iso-cube assemble size-lg color-yellow" style="top:55%;right:4%"><div class="top"></div><div class="left"></div><div class="right"></div></div>
+  <div class="iso-cube assemble size-sm color-green" style="top:68%;left:3%"><div class="top"></div><div class="left"></div><div class="right"></div></div>
+  <div class="iso-cube assemble size-md color-coral" style="top:78%;right:7%"><div class="top"></div><div class="left"></div><div class="right"></div></div>
+  <div class="iso-cube assemble size-lg color-purple" style="top:88%;left:5%"><div class="top"></div><div class="left"></div><div class="right"></div></div>
+  <div class="iso-cube assemble size-sm color-green" style="top:92%;right:2%"><div class="top"></div><div class="left"></div><div class="right"></div></div>
 </div>
 
 <nav class="nav">
@@ -178,9 +427,16 @@ body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;z-ind
       <div class="hero-block"><div class="top"></div><div class="left"></div><div class="right"></div></div>
       <div class="hero-block"><div class="top"></div><div class="left"></div><div class="right"></div></div>
       <div class="hero-block"><div class="top"></div><div class="left"></div><div class="right"></div></div>
+      <div class="hero-block"><div class="top"></div><div class="left"></div><div class="right"></div></div>
     </div>
     <h1 class="hero-name" data-i18n="name">Your Name</h1>
     <p class="hero-title" data-i18n="title">Creative Developer &amp; Designer</p>
+    <p class="hero-subtitle" data-i18n="hero_subtitle">
+      <span class="dot"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+      Building with geometric precision
+    </p>
   </section>
 
   <!-- About -->
@@ -190,7 +446,21 @@ body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;z-ind
       <h2 class="section-title" data-i18n="about_label">About</h2>
     </div>
     <div class="about-card">
-      <p class="about-text" data-i18n="about_text">A creative developer crafting digital experiences at the intersection of design and technology. Building beautiful and functional products through clean code and thoughtful interfaces.</p>
+      <p class="about-text" data-i18n="about_text">A creative developer crafting digital experiences at the intersection of design and technology. Building beautiful and functional products through clean code and thoughtful interfaces. Passionate about translating complex ideas into elegant, intuitive solutions.</p>
+      <div class="about-stats">
+        <div class="about-stat">
+          <div class="about-stat-num" data-i18n="stat_years">5+</div>
+          <div class="about-stat-label" data-i18n="stat_years_label">Years Experience</div>
+        </div>
+        <div class="about-stat">
+          <div class="about-stat-num" data-i18n="stat_projects">40+</div>
+          <div class="about-stat-label" data-i18n="stat_projects_label">Projects Done</div>
+        </div>
+        <div class="about-stat">
+          <div class="about-stat-num" data-i18n="stat_clients">25+</div>
+          <div class="about-stat-label" data-i18n="stat_clients_label">Happy Clients</div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -201,41 +471,161 @@ body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;z-ind
       <h2 class="section-title" data-i18n="skills_label">Expertise</h2>
     </div>
     <div class="skills-grid">
-      <div class="skill-card">
-        <div class="skill-iso"><div class="s-top"></div><div class="s-left"></div><div class="s-right"></div></div>
+      <div class="skill-card" data-level="92">
+        <div class="skill-tower">
+          <div class="skill-tower-block" style="width:36px;height:66px;position:relative">
+            <div class="t-top" style="width:36px;height:21px;top:-10px;left:18px"></div>
+            <div class="t-left" style="width:36px;height:66px;top:10px;left:0"></div>
+            <div class="t-right" style="width:36px;height:66px;left:18px;top:28px"></div>
+          </div>
+        </div>
         <div class="skill-name">Frontend</div>
         <div class="skill-desc">React, Vue, TypeScript, Next.js</div>
         <span class="skill-tag">92%</span>
+        <div class="skill-bar-container"><div class="skill-bar-fill" style="--fill-width:92%"></div></div>
       </div>
-      <div class="skill-card">
-        <div class="skill-iso"><div class="s-top"></div><div class="s-left"></div><div class="s-right"></div></div>
+      <div class="skill-card" data-level="88">
+        <div class="skill-tower">
+          <div class="skill-tower-block" style="width:36px;height:58px;position:relative">
+            <div class="t-top" style="width:36px;height:21px;top:-10px;left:18px"></div>
+            <div class="t-left" style="width:36px;height:58px;top:10px;left:0"></div>
+            <div class="t-right" style="width:36px;height:58px;left:18px;top:28px"></div>
+          </div>
+        </div>
         <div class="skill-name">UI/UX Design</div>
         <div class="skill-desc">Figma, Prototyping, User Research</div>
         <span class="skill-tag">88%</span>
+        <div class="skill-bar-container"><div class="skill-bar-fill" style="--fill-width:88%"></div></div>
       </div>
-      <div class="skill-card">
-        <div class="skill-iso"><div class="s-top"></div><div class="s-left"></div><div class="s-right"></div></div>
+      <div class="skill-card" data-level="80">
+        <div class="skill-tower">
+          <div class="skill-tower-block" style="width:36px;height:50px;position:relative">
+            <div class="t-top" style="width:36px;height:21px;top:-10px;left:18px"></div>
+            <div class="t-left" style="width:36px;height:50px;top:10px;left:0"></div>
+            <div class="t-right" style="width:36px;height:50px;left:18px;top:28px"></div>
+          </div>
+        </div>
         <div class="skill-name">Backend</div>
         <div class="skill-desc">Node.js, Python, REST APIs</div>
         <span class="skill-tag">80%</span>
+        <div class="skill-bar-container"><div class="skill-bar-fill" style="--fill-width:80%"></div></div>
       </div>
-      <div class="skill-card">
-        <div class="skill-iso"><div class="s-top"></div><div class="s-left"></div><div class="s-right"></div></div>
+      <div class="skill-card" data-level="78">
+        <div class="skill-tower">
+          <div class="skill-tower-block" style="width:36px;height:47px;position:relative">
+            <div class="t-top" style="width:36px;height:21px;top:-10px;left:18px"></div>
+            <div class="t-left" style="width:36px;height:47px;top:10px;left:0"></div>
+            <div class="t-right" style="width:36px;height:47px;left:18px;top:28px"></div>
+          </div>
+        </div>
         <div class="skill-name">Mobile</div>
         <div class="skill-desc">React Native, Flutter, iOS</div>
         <span class="skill-tag">78%</span>
+        <div class="skill-bar-container"><div class="skill-bar-fill" style="--fill-width:78%"></div></div>
       </div>
-      <div class="skill-card">
-        <div class="skill-iso"><div class="s-top"></div><div class="s-left"></div><div class="s-right"></div></div>
+      <div class="skill-card" data-level="85">
+        <div class="skill-tower">
+          <div class="skill-tower-block" style="width:36px;height:55px;position:relative">
+            <div class="t-top" style="width:36px;height:21px;top:-10px;left:18px"></div>
+            <div class="t-left" style="width:36px;height:55px;top:10px;left:0"></div>
+            <div class="t-right" style="width:36px;height:55px;left:18px;top:28px"></div>
+          </div>
+        </div>
         <div class="skill-name">Creative Code</div>
         <div class="skill-desc">Canvas, WebGL, Animations</div>
         <span class="skill-tag">85%</span>
+        <div class="skill-bar-container"><div class="skill-bar-fill" style="--fill-width:85%"></div></div>
       </div>
-      <div class="skill-card">
-        <div class="skill-iso"><div class="s-top"></div><div class="s-left"></div><div class="s-right"></div></div>
+      <div class="skill-card" data-level="75">
+        <div class="skill-tower">
+          <div class="skill-tower-block" style="width:36px;height:44px;position:relative">
+            <div class="t-top" style="width:36px;height:21px;top:-10px;left:18px"></div>
+            <div class="t-left" style="width:36px;height:44px;top:10px;left:0"></div>
+            <div class="t-right" style="width:36px;height:44px;left:18px;top:28px"></div>
+          </div>
+        </div>
         <div class="skill-name">DevOps</div>
         <div class="skill-desc">Docker, CI/CD, AWS, Vercel</div>
         <span class="skill-tag">75%</span>
+        <div class="skill-bar-container"><div class="skill-bar-fill" style="--fill-width:75%"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects -->
+  <section class="section" id="projects">
+    <div class="section-header">
+      <div class="section-color-bar yellow"></div>
+      <h2 class="section-title" data-i18n="projects_label">Projects</h2>
+    </div>
+    <div class="projects-grid">
+      <div class="project-card">
+        <div class="project-card-image">
+          <div class="project-iso-scene">
+            <div class="pi-top"></div><div class="pi-left"></div><div class="pi-right"></div>
+          </div>
+        </div>
+        <div class="project-card-arrow"><svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        <div class="project-card-body">
+          <h3 class="project-card-title" data-i18n="project1_title">Design System</h3>
+          <p class="project-card-desc" data-i18n="project1_desc">A comprehensive component library with isometric illustrations, built for scalable enterprise applications.</p>
+          <div class="project-tags">
+            <span class="project-tag">React</span>
+            <span class="project-tag">TypeScript</span>
+            <span class="project-tag">Storybook</span>
+          </div>
+        </div>
+      </div>
+      <div class="project-card">
+        <div class="project-card-image">
+          <div class="project-iso-scene">
+            <div class="pi-top"></div><div class="pi-left"></div><div class="pi-right"></div>
+          </div>
+        </div>
+        <div class="project-card-arrow"><svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        <div class="project-card-body">
+          <h3 class="project-card-title" data-i18n="project2_title">Analytics Dashboard</h3>
+          <p class="project-card-desc" data-i18n="project2_desc">Real-time data visualization platform with interactive 3D charts and customizable widgets.</p>
+          <div class="project-tags">
+            <span class="project-tag">Vue.js</span>
+            <span class="project-tag">D3.js</span>
+            <span class="project-tag">Node.js</span>
+          </div>
+        </div>
+      </div>
+      <div class="project-card">
+        <div class="project-card-image">
+          <div class="project-iso-scene">
+            <div class="pi-top"></div><div class="pi-left"></div><div class="pi-right"></div>
+          </div>
+        </div>
+        <div class="project-card-arrow"><svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        <div class="project-card-body">
+          <h3 class="project-card-title" data-i18n="project3_title">Mobile Commerce</h3>
+          <p class="project-card-desc" data-i18n="project3_desc">Cross-platform mobile shopping experience with smooth animations and gesture-based navigation.</p>
+          <div class="project-tags">
+            <span class="project-tag">React Native</span>
+            <span class="project-tag">Firebase</span>
+            <span class="project-tag">Stripe</span>
+          </div>
+        </div>
+      </div>
+      <div class="project-card">
+        <div class="project-card-image">
+          <div class="project-iso-scene">
+            <div class="pi-top"></div><div class="pi-left"></div><div class="pi-right"></div>
+          </div>
+        </div>
+        <div class="project-card-arrow"><svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+        <div class="project-card-body">
+          <h3 class="project-card-title" data-i18n="project4_title">Creative Portfolio</h3>
+          <p class="project-card-desc" data-i18n="project4_desc">An immersive WebGL portfolio experience with procedural isometric landscapes and interactive elements.</p>
+          <div class="project-tags">
+            <span class="project-tag">Three.js</span>
+            <span class="project-tag">GLSL</span>
+            <span class="project-tag">GSAP</span>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -259,21 +649,99 @@ body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;z-ind
 </div>
 
 <footer class="footer">
+  <div class="footer-cubes">
+    <div class="footer-cube"><div class="fc-top"></div><div class="fc-left"></div><div class="fc-right"></div></div>
+    <div class="footer-cube"><div class="fc-top"></div><div class="fc-left"></div><div class="fc-right"></div></div>
+    <div class="footer-cube"><div class="fc-top"></div><div class="fc-left"></div><div class="fc-right"></div></div>
+    <div class="footer-cube"><div class="fc-top"></div><div class="fc-left"></div><div class="fc-right"></div></div>
+  </div>
   <p>&copy; 2025 Portfolio. Built with geometric precision.</p>
 </footer>
 
 <script>
+/* ============ TRANSLATIONS ============ */
 var TRANSLATIONS={
-  ko:{name:'\uD64D\uAE38\uB3D9',title:'\uD06C\uB9AC\uC5D0\uC774\uD2F0\uBE0C \uAC1C\uBC1C\uC790 & \uB514\uC790\uC774\uB108',about_label:'\uC18C\uAC1C',about_text:'\uB514\uC790\uC778\uACFC \uAE30\uC220\uC758 \uAD50\uCC28\uC810\uC5D0\uC11C \uB514\uC9C0\uD138 \uACBD\uD5D8\uC744 \uB9CC\uB4DC\uB294 \uD06C\uB9AC\uC5D0\uC774\uD2F0\uBE0C \uAC1C\uBC1C\uC790\uC785\uB2C8\uB2E4. \uAE54\uB054\uD55C \uCF54\uB4DC\uC640 \uC138\uC2EC\uD55C \uC778\uD130\uD398\uC774\uC2A4\uB97C \uD1B5\uD574 \uC544\uB984\uB2F5\uACE0 \uAE30\uB2A5\uC801\uC778 \uC81C\uD488\uC744 \uB9CC\uB4ED\uB2C8\uB2E4.',skills_label:'\uC804\uBB38 \uBD84\uC57C',contact_label:'\uC5F0\uB77D\uD558\uAE30',contact_heading:'\uD568\uAED8 \uC77C\uD574\uC694',contact_sub:'\uD504\uB9AC\uB79C\uC11C \uD504\uB85C\uC81D\uD2B8 \uAC00\uB2A5',gallery_link:'\u2190 \uAC24\uB7EC\uB9AC'},
-  en:{name:'Your Name',title:'Creative Developer & Designer',about_label:'About',about_text:'A creative developer crafting digital experiences at the intersection of design and technology. Building beautiful and functional products through clean code and thoughtful interfaces.',skills_label:'Expertise',contact_label:'Get in Touch',contact_heading:"Let's Work Together",contact_sub:'Available for freelance projects',gallery_link:'\u2190 Gallery'},
-  ja:{name:'\u3042\u306A\u305F\u306E\u540D\u524D',title:'\u30AF\u30EA\u30A8\u30A4\u30C6\u30A3\u30D6\u30C7\u30D9\u30ED\u30C3\u30D1\u30FC & \u30C7\u30B6\u30A4\u30CA\u30FC',about_label:'\u7D39\u4ECB',about_text:'\u30C7\u30B6\u30A4\u30F3\u3068\u30C6\u30AF\u30CE\u30ED\u30B8\u30FC\u306E\u4EA4\u5DEE\u70B9\u3067\u30C7\u30B8\u30BF\u30EB\u4F53\u9A13\u3092\u751F\u307F\u51FA\u3059\u30AF\u30EA\u30A8\u30A4\u30C6\u30A3\u30D6\u30C7\u30D9\u30ED\u30C3\u30D1\u30FC\u3067\u3059\u3002\u30AF\u30EA\u30FC\u30F3\u306A\u30B3\u30FC\u30C9\u3068\u601D\u616E\u6DF1\u3044\u30A4\u30F3\u30BF\u30FC\u30D5\u30A7\u30FC\u30B9\u3067\u7F8E\u3057\u304F\u6A5F\u80FD\u7684\u306A\u88FD\u54C1\u3092\u69CB\u7BC9\u3057\u307E\u3059\u3002',skills_label:'\u5C02\u9580\u5206\u91CE',contact_label:'\u304A\u554F\u3044\u5408\u308F\u305B',contact_heading:'\u4E00\u7DD2\u306B\u50CD\u304D\u307E\u3057\u3087\u3046',contact_sub:'\u30D5\u30EA\u30FC\u30E9\u30F3\u30B9\u30D7\u30ED\u30B8\u30A7\u30AF\u30C8\u5BFE\u5FDC\u53EF\u80FD',gallery_link:'\u2190 \u30AE\u30E3\u30E9\u30EA\u30FC'},
-  zh:{name:'\u4F60\u7684\u540D\u5B57',title:'\u521B\u610F\u5F00\u53D1\u8005 & \u8BBE\u8BA1\u5E08',about_label:'\u5173\u4E8E',about_text:'\u5728\u8BBE\u8BA1\u4E0E\u6280\u672F\u7684\u4EA4\u6C47\u5904\u521B\u9020\u6570\u5B57\u4F53\u9A8C\u7684\u521B\u610F\u5F00\u53D1\u8005\u3002\u901A\u8FC7\u7B80\u6D01\u7684\u4EE3\u7801\u548C\u7CBE\u5FC3\u8BBE\u8BA1\u7684\u754C\u9762\uFF0C\u6784\u5EFA\u65E2\u7F8E\u89C2\u53C8\u5B9E\u7528\u7684\u4EA7\u54C1\u3002',skills_label:'\u4E13\u4E1A\u9886\u57DF',contact_label:'\u8054\u7CFB\u6211',contact_heading:'\u4E00\u8D77\u5408\u4F5C\u5427',contact_sub:'\u53EF\u63A5\u53D7\u81EA\u7531\u804C\u4E1A\u9879\u76EE',gallery_link:'\u2190 \u753B\u5ECA'}
+  ko:{
+    name:'\uD64D\uAE38\uB3D9',
+    title:'\uD06C\uB9AC\uC5D0\uC774\uD2F0\uBE0C \uAC1C\uBC1C\uC790 & \uB514\uC790\uC774\uB108',
+    hero_subtitle:'\uAE30\uD558\uD559\uC801 \uC815\uBC00\uD568\uC73C\uB85C \uAD6C\uCD95',
+    about_label:'\uC18C\uAC1C',
+    about_text:'\uB514\uC790\uC778\uACFC \uAE30\uC220\uC758 \uAD50\uCC28\uC810\uC5D0\uC11C \uB514\uC9C0\uD138 \uACBD\uD5D8\uC744 \uB9CC\uB4DC\uB294 \uD06C\uB9AC\uC5D0\uC774\uD2F0\uBE0C \uAC1C\uBC1C\uC790\uC785\uB2C8\uB2E4. \uAE54\uB054\uD55C \uCF54\uB4DC\uC640 \uC138\uC2EC\uD55C \uC778\uD130\uD398\uC774\uC2A4\uB97C \uD1B5\uD574 \uC544\uB984\uB2F5\uACE0 \uAE30\uB2A5\uC801\uC778 \uC81C\uD488\uC744 \uB9CC\uB4ED\uB2C8\uB2E4. \uBCF5\uC7A1\uD55C \uC544\uC774\uB514\uC5B4\uB97C \uC6B0\uC544\uD558\uACE0 \uC9C1\uAD00\uC801\uC778 \uC194\uB8E8\uC158\uC73C\uB85C \uBC88\uC5ED\uD558\uB294 \uB370 \uC5F4\uC815\uC801\uC785\uB2C8\uB2E4.',
+    stat_years:'5+',stat_years_label:'\uB144 \uACBD\uB825',stat_projects:'40+',stat_projects_label:'\uC644\uB8CC \uD504\uB85C\uC81D\uD2B8',stat_clients:'25+',stat_clients_label:'\uB9CC\uC871\uD55C \uACE0\uAC1D',
+    skills_label:'\uC804\uBB38 \uBD84\uC57C',
+    projects_label:'\uD504\uB85C\uC81D\uD2B8',
+    project1_title:'\uB514\uC790\uC778 \uC2DC\uC2A4\uD15C',project1_desc:'\uC544\uC774\uC18C\uBA54\uD2B8\uB9AD \uC77C\uB7EC\uC2A4\uD2B8\uB97C \uD3EC\uD568\uD55C \uD3EC\uAD04\uC801\uC778 \uCEF4\uD3EC\uB10C\uD2B8 \uB77C\uC774\uBE0C\uB7EC\uB9AC\uB85C, \uD655\uC7A5 \uAC00\uB2A5\uD55C \uC5D4\uD130\uD504\uB77C\uC774\uC988 \uC560\uD50C\uB9AC\uCF00\uC774\uC158\uC744 \uC704\uD574 \uAD6C\uCD95\uB418\uC5C8\uC2B5\uB2C8\uB2E4.',
+    project2_title:'\uBD84\uC11D \uB300\uC2DC\uBCF4\uB4DC',project2_desc:'\uC778\uD130\uB799\uD2F0\uBE0C 3D \uCC28\uD2B8\uC640 \uCEE4\uC2A4\uD130\uB9C8\uC774\uC988 \uAC00\uB2A5\uD55C \uC704\uC82F\uC744 \uAC16\uCDB4 \uC2E4\uC2DC\uAC04 \uB370\uC774\uD130 \uC2DC\uAC01\uD654 \uD50C\uB7AB\uD3FC.',
+    project3_title:'\uBAA8\uBC14\uC77C \uCEE4\uBA38\uC2A4',project3_desc:'\uBD80\uB4DC\uB7EC\uC6B4 \uC560\uB2C8\uBA54\uC774\uC158\uACFC \uC81C\uC2A4\uCC98 \uAE30\uBC18 \uB124\uBE44\uAC8C\uC774\uC158\uC744 \uAC16\uCDB4 \uD06C\uB85C\uC2A4 \uD50C\uB7AB\uD3FC \uBAA8\uBC14\uC77C \uC1FC\uD551 \uACBD\uD5D8.',
+    project4_title:'\uD06C\uB9AC\uC5D0\uC774\uD2F0\uBE0C \uD3EC\uD2B8\uD3F4\uB9AC\uC624',project4_desc:'\uD504\uB85C\uC2DC\uC800\uB7F4 \uC544\uC774\uC18C\uBA54\uD2B8\uB9AD \uD48D\uACBD\uACFC \uC778\uD130\uB799\uD2F0\uBE0C \uC694\uC18C\uB97C \uAC16\uCDB4 \uBAB0\uC785\uD615 WebGL \uD3EC\uD2B8\uD3F4\uB9AC\uC624 \uACBD\uD5D8.',
+    contact_label:'\uC5F0\uB77D\uD558\uAE30',
+    contact_heading:'\uD568\uAED8 \uC77C\uD574\uC694',
+    contact_sub:'\uD504\uB9AC\uB79C\uC11C \uD504\uB85C\uC81D\uD2B8 \uAC00\uB2A5',
+    gallery_link:'\u2190 \uAC24\uB7EC\uB9AC'
+  },
+  en:{
+    name:'Your Name',
+    title:'Creative Developer & Designer',
+    hero_subtitle:'Building with geometric precision',
+    about_label:'About',
+    about_text:'A creative developer crafting digital experiences at the intersection of design and technology. Building beautiful and functional products through clean code and thoughtful interfaces. Passionate about translating complex ideas into elegant, intuitive solutions.',
+    stat_years:'5+',stat_years_label:'Years Experience',stat_projects:'40+',stat_projects_label:'Projects Done',stat_clients:'25+',stat_clients_label:'Happy Clients',
+    skills_label:'Expertise',
+    projects_label:'Projects',
+    project1_title:'Design System',project1_desc:'A comprehensive component library with isometric illustrations, built for scalable enterprise applications.',
+    project2_title:'Analytics Dashboard',project2_desc:'Real-time data visualization platform with interactive 3D charts and customizable widgets.',
+    project3_title:'Mobile Commerce',project3_desc:'Cross-platform mobile shopping experience with smooth animations and gesture-based navigation.',
+    project4_title:'Creative Portfolio',project4_desc:'An immersive WebGL portfolio experience with procedural isometric landscapes and interactive elements.',
+    contact_label:'Get in Touch',
+    contact_heading:"Let's Work Together",
+    contact_sub:'Available for freelance projects',
+    gallery_link:'\u2190 Gallery'
+  },
+  ja:{
+    name:'\u3042\u306A\u305F\u306E\u540D\u524D',
+    title:'\u30AF\u30EA\u30A8\u30A4\u30C6\u30A3\u30D6\u30C7\u30D9\u30ED\u30C3\u30D1\u30FC & \u30C7\u30B6\u30A4\u30CA\u30FC',
+    hero_subtitle:'\u5E7E\u4F55\u5B66\u7684\u7CBE\u5EA6\u3067\u69CB\u7BC9',
+    about_label:'\u7D39\u4ECB',
+    about_text:'\u30C7\u30B6\u30A4\u30F3\u3068\u30C6\u30AF\u30CE\u30ED\u30B8\u30FC\u306E\u4EA4\u5DEE\u70B9\u3067\u30C7\u30B8\u30BF\u30EB\u4F53\u9A13\u3092\u751F\u307F\u51FA\u3059\u30AF\u30EA\u30A8\u30A4\u30C6\u30A3\u30D6\u30C7\u30D9\u30ED\u30C3\u30D1\u30FC\u3067\u3059\u3002\u30AF\u30EA\u30FC\u30F3\u306A\u30B3\u30FC\u30C9\u3068\u601D\u616E\u6DF1\u3044\u30A4\u30F3\u30BF\u30FC\u30D5\u30A7\u30FC\u30B9\u3067\u7F8E\u3057\u304F\u6A5F\u80FD\u7684\u306A\u88FD\u54C1\u3092\u69CB\u7BC9\u3057\u307E\u3059\u3002\u8907\u96D1\u306A\u30A2\u30A4\u30C7\u30A2\u3092\u512A\u96C5\u3067\u76F4\u611F\u7684\u306A\u30BD\u30EA\u30E5\u30FC\u30B7\u30E7\u30F3\u306B\u5909\u63DB\u3059\u308B\u3053\u3068\u306B\u60C5\u71B1\u3092\u6CE8\u3044\u3067\u3044\u307E\u3059\u3002',
+    stat_years:'5+',stat_years_label:'\u5E74\u306E\u7D4C\u9A13',stat_projects:'40+',stat_projects_label:'\u5B8C\u4E86\u30D7\u30ED\u30B8\u30A7\u30AF\u30C8',stat_clients:'25+',stat_clients_label:'\u6E80\u8DB3\u306A\u304A\u5BA2\u69D8',
+    skills_label:'\u5C02\u9580\u5206\u91CE',
+    projects_label:'\u30D7\u30ED\u30B8\u30A7\u30AF\u30C8',
+    project1_title:'\u30C7\u30B6\u30A4\u30F3\u30B7\u30B9\u30C6\u30E0',project1_desc:'\u30A2\u30A4\u30BD\u30E1\u30C8\u30EA\u30C3\u30AF\u30A4\u30E9\u30B9\u30C8\u3092\u542B\u3080\u5305\u62EC\u7684\u306A\u30B3\u30F3\u30DD\u30FC\u30CD\u30F3\u30C8\u30E9\u30A4\u30D6\u30E9\u30EA\u3002',
+    project2_title:'\u5206\u6790\u30C0\u30C3\u30B7\u30E5\u30DC\u30FC\u30C9',project2_desc:'\u30A4\u30F3\u30BF\u30E9\u30AF\u30C6\u30A3\u30D63D\u30C1\u30E3\u30FC\u30C8\u3092\u5099\u3048\u305F\u30EA\u30A2\u30EB\u30BF\u30A4\u30E0\u30C7\u30FC\u30BF\u53EF\u8996\u5316\u30D7\u30E9\u30C3\u30C8\u30D5\u30A9\u30FC\u30E0\u3002',
+    project3_title:'\u30E2\u30D0\u30A4\u30EB\u30B3\u30DE\u30FC\u30B9',project3_desc:'\u30B9\u30E0\u30FC\u30BA\u306A\u30A2\u30CB\u30E1\u30FC\u30B7\u30E7\u30F3\u3068\u30B8\u30A7\u30B9\u30C1\u30E3\u30FC\u30CA\u30D3\u30B2\u30FC\u30B7\u30E7\u30F3\u3092\u5099\u3048\u305F\u30AF\u30ED\u30B9\u30D7\u30E9\u30C3\u30C8\u30D5\u30A9\u30FC\u30E0\u30E2\u30D0\u30A4\u30EB\u30B7\u30E7\u30C3\u30D4\u30F3\u30B0\u4F53\u9A13\u3002',
+    project4_title:'\u30AF\u30EA\u30A8\u30A4\u30C6\u30A3\u30D6\u30DD\u30FC\u30C8\u30D5\u30A9\u30EA\u30AA',project4_desc:'\u30D7\u30ED\u30B7\u30FC\u30B8\u30E3\u30EB\u306A\u30A2\u30A4\u30BD\u30E1\u30C8\u30EA\u30C3\u30AF\u98A8\u666F\u3092\u5099\u3048\u305F\u6CA1\u5165\u578BWebGL\u30DD\u30FC\u30C8\u30D5\u30A9\u30EA\u30AA\u4F53\u9A13\u3002',
+    contact_label:'\u304A\u554F\u3044\u5408\u308F\u305B',
+    contact_heading:'\u4E00\u7DD2\u306B\u50CD\u304D\u307E\u3057\u3087\u3046',
+    contact_sub:'\u30D5\u30EA\u30FC\u30E9\u30F3\u30B9\u30D7\u30ED\u30B8\u30A7\u30AF\u30C8\u5BFE\u5FDC\u53EF\u80FD',
+    gallery_link:'\u2190 \u30AE\u30E3\u30E9\u30EA\u30FC'
+  },
+  zh:{
+    name:'\u4F60\u7684\u540D\u5B57',
+    title:'\u521B\u610F\u5F00\u53D1\u8005 & \u8BBE\u8BA1\u5E08',
+    hero_subtitle:'\u4EE5\u51E0\u4F55\u7CBE\u5EA6\u6784\u5EFA',
+    about_label:'\u5173\u4E8E',
+    about_text:'\u5728\u8BBE\u8BA1\u4E0E\u6280\u672F\u7684\u4EA4\u6C47\u5904\u521B\u9020\u6570\u5B57\u4F53\u9A8C\u7684\u521B\u610F\u5F00\u53D1\u8005\u3002\u901A\u8FC7\u7B80\u6D01\u7684\u4EE3\u7801\u548C\u7CBE\u5FC3\u8BBE\u8BA1\u7684\u754C\u9762\uFF0C\u6784\u5EFA\u65E2\u7F8E\u89C2\u53C8\u5B9E\u7528\u7684\u4EA7\u54C1\u3002\u70ED\u8877\u4E8E\u5C06\u590D\u6742\u7684\u60F3\u6CD5\u8F6C\u5316\u4E3A\u4F18\u96C5\u3001\u76F4\u89C2\u7684\u89E3\u51B3\u65B9\u6848\u3002',
+    stat_years:'5+',stat_years_label:'\u5E74\u7ECF\u9A8C',stat_projects:'40+',stat_projects_label:'\u5B8C\u6210\u9879\u76EE',stat_clients:'25+',stat_clients_label:'\u6EE1\u610F\u5BA2\u6237',
+    skills_label:'\u4E13\u4E1A\u9886\u57DF',
+    projects_label:'\u9879\u76EE',
+    project1_title:'\u8BBE\u8BA1\u7CFB\u7EDF',project1_desc:'\u5305\u542B\u7B49\u8DDD\u63D2\u56FE\u7684\u7EFC\u5408\u7EC4\u4EF6\u5E93\uFF0C\u4E3A\u53EF\u6269\u5C55\u7684\u4F01\u4E1A\u5E94\u7528\u800C\u6784\u5EFA\u3002',
+    project2_title:'\u5206\u6790\u4EEA\u8868\u76D8',project2_desc:'\u5177\u6709\u4EA4\u4E92\u5F0F3D\u56FE\u8868\u548C\u53EF\u81EA\u5B9A\u4E49\u5C0F\u90E8\u4EF6\u7684\u5B9E\u65F6\u6570\u636E\u53EF\u89C6\u5316\u5E73\u53F0\u3002',
+    project3_title:'\u79FB\u52A8\u7535\u5546',project3_desc:'\u5177\u6709\u6D41\u7545\u52A8\u753B\u548C\u624B\u52BF\u5BFC\u822A\u7684\u8DE8\u5E73\u53F0\u79FB\u52A8\u8D2D\u7269\u4F53\u9A8C\u3002',
+    project4_title:'\u521B\u610F\u4F5C\u54C1\u96C6',project4_desc:'\u5177\u6709\u7A0B\u5E8F\u5316\u7B49\u8DDD\u98CE\u666F\u548C\u4EA4\u4E92\u5143\u7D20\u7684\u6C89\u6D78\u5F0FWebGL\u4F5C\u54C1\u96C6\u4F53\u9A8C\u3002',
+    contact_label:'\u8054\u7CFB\u6211',
+    contact_heading:'\u4E00\u8D77\u5408\u4F5C\u5427',
+    contact_sub:'\u53EF\u63A5\u53D7\u81EA\u7531\u804C\u4E1A\u9879\u76EE',
+    gallery_link:'\u2190 \u753B\u5ECA'
+  }
 };
 
+/* ============ LANGUAGE SWITCHER ============ */
 function setLanguage(lang){
   document.querySelectorAll('[data-i18n]').forEach(function(el){
     var key=el.getAttribute('data-i18n');
-    if(TRANSLATIONS[lang]&&TRANSLATIONS[lang][key])el.textContent=TRANSLATIONS[lang][key];
+    if(TRANSLATIONS[lang]&&TRANSLATIONS[lang][key]){
+      el.textContent=TRANSLATIONS[lang][key];
+    }
   });
   document.querySelectorAll('.lang-btn').forEach(function(btn){
     btn.classList.toggle('active',btn.getAttribute('data-lang')===lang);
@@ -288,14 +756,119 @@ function setLanguage(lang){
   else document.querySelectorAll('.lang-btn').forEach(function(btn){btn.classList.toggle('active',btn.getAttribute('data-lang')==='en')});
 })();
 
-/* Scroll reveal */
+/* ============ NAV SCROLL EFFECT ============ */
+var nav=document.querySelector('.nav');
+window.addEventListener('scroll',function(){
+  nav.classList.toggle('scrolled',window.scrollY>40);
+},{passive:true});
+
+/* ============ INTERSECTION OBSERVER: SECTION REVEAL ============ */
 var sections=document.querySelectorAll('.section');
-var observer=new IntersectionObserver(function(entries){
+var sectionObserver=new IntersectionObserver(function(entries){
   entries.forEach(function(entry){
-    if(entry.isIntersecting){entry.target.classList.add('visible');observer.unobserve(entry.target)}
+    if(entry.isIntersecting){
+      entry.target.classList.add('visible');
+      sectionObserver.unobserve(entry.target);
+    }
+  });
+},{threshold:0.12});
+sections.forEach(function(s){sectionObserver.observe(s)});
+
+/* ============ STAGGERED CARD REVEAL ============ */
+var staggerCards=document.querySelectorAll('.skill-card,.project-card');
+var cardObserver=new IntersectionObserver(function(entries){
+  entries.forEach(function(entry){
+    if(entry.isIntersecting){
+      entry.target.classList.add('revealed');
+      cardObserver.unobserve(entry.target);
+      /* animate skill bars when skill cards reveal */
+      var bar=entry.target.querySelector('.skill-bar-fill');
+      if(bar){
+        var w=bar.style.getPropertyValue('--fill-width');
+        setTimeout(function(){bar.style.width=w},100);
+      }
+    }
   });
 },{threshold:0.15});
-sections.forEach(function(s){observer.observe(s)});
+staggerCards.forEach(function(c){cardObserver.observe(c)});
+
+/* ============ CUBE ASSEMBLY ANIMATION ON SCROLL ============ */
+var assembleCubes=document.querySelectorAll('.iso-cube.assemble');
+var cubeObserver=new IntersectionObserver(function(entries){
+  entries.forEach(function(entry){
+    if(entry.isIntersecting){
+      entry.target.classList.add('assembled');
+      /* after assembly, start float animation */
+      setTimeout(function(){
+        var anims=['isoCubeFloat','isoCubeFloatAlt','isoCubeSpin'];
+        var pick=anims[Math.floor(Math.random()*anims.length)];
+        var dur=(6+Math.random()*6).toFixed(1);
+        var delay=(Math.random()*3).toFixed(1);
+        entry.target.style.animation=pick+' '+dur+'s '+delay+'s ease-in-out infinite';
+      },900);
+      cubeObserver.unobserve(entry.target);
+    }
+  });
+},{threshold:0.05,rootMargin:'0px 0px 100px 0px'});
+assembleCubes.forEach(function(c){cubeObserver.observe(c)});
+
+/* ============ FLOATING GRID PARTICLES (canvas) ============ */
+(function(){
+  var canvas=document.getElementById('iso-particles');
+  if(!canvas)return;
+  var ctx=canvas.getContext('2d');
+  var particles=[];
+  var particleCount=50;
+  var colors=['rgba(108,92,231,0.2)','rgba(0,184,148,0.2)','rgba(253,203,110,0.25)','rgba(225,112,85,0.2)'];
+
+  function resize(){
+    canvas.width=window.innerWidth;
+    canvas.height=window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize',resize);
+
+  /* snap particles to isometric grid intersections */
+  var gridW=60,gridH=34.6;
+  for(var i=0;i<particleCount;i++){
+    var gx=Math.floor(Math.random()*(canvas.width/gridW))*gridW;
+    var gy=Math.floor(Math.random()*(canvas.height/gridH))*gridH;
+    /* offset every other row */
+    if(Math.floor(gy/gridH)%2===1)gx+=gridW/2;
+    particles.push({
+      x:gx,y:gy,
+      baseX:gx,baseY:gy,
+      size:1.5+Math.random()*2,
+      color:colors[Math.floor(Math.random()*colors.length)],
+      phase:Math.random()*Math.PI*2,
+      speed:0.3+Math.random()*0.5
+    });
+  }
+
+  var reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    var t=Date.now()*0.001;
+    for(var i=0;i<particles.length;i++){
+      var p=particles[i];
+      if(!reducedMotion){
+        p.x=p.baseX+Math.sin(t*p.speed+p.phase)*8;
+        p.y=p.baseY+Math.cos(t*p.speed*0.7+p.phase)*6;
+      }
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+      ctx.fillStyle=p.color;
+      ctx.fill();
+    }
+    if(!reducedMotion)requestAnimationFrame(draw);
+  }
+  draw();
+  if(reducedMotion){
+    /* static render only */
+    draw();
+  }
+})();
 </script>
 </body>
 </html>
