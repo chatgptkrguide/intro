@@ -1,1028 +1,2449 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Portfolio - Vaporwave</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=VT323&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-/* ============================================
-   RESET & VARIABLES
-   ============================================ */
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-:root{
-  --pink:#FF6AD5;--purple:#C774E8;--lilac:#AD8CFF;--blue:#8795E8;
-  --cyan:#94D0FF;--hot-pink:#FF1493;--teal:#00CED1;
-  --dark:#1a0a2e;--darker:#0d0521;
-  --win-gray:#c0c0c0;--win-blue:#000080;--win-blue-light:#1084d0;
-  --win-highlight:#fff;--win-shadow:#808080;
-}
-html{scroll-behavior:smooth}
-body{font-family:'Inter',sans-serif;background:var(--darker);color:#fff;overflow-x:hidden;min-height:100vh}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio - Vaporwave</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================
+       RESET & VARIABLES
+       ============================================ */
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-/* ============================================
-   SCROLL PROGRESS BAR
-   ============================================ */
-.scroll-progress{position:fixed;top:0;left:0;width:0%;height:3px;background:linear-gradient(90deg,var(--pink),var(--purple),var(--cyan),var(--teal));z-index:10001;transition:width 0.1s linear;box-shadow:0 0 8px var(--pink),0 0 16px var(--purple)}
+    :root {
+      --pink: #FF6AD5;
+      --purple: #C774E8;
+      --lilac: #AD8CFF;
+      --blue: #8795E8;
+      --cyan: #94D0FF;
+      --hot-pink: #FF1493;
+      --teal: #00CED1;
+      --dark: #1a0a2e;
+      --darker: #0d0521;
+      --win-gray: #c0c0c0;
+      --win-blue: #000080;
+      --win-blue-light: #1084d0;
+      --win-highlight: #fff;
+      --win-shadow: #808080;
+    }
 
-/* ============================================
-   SCANLINE + CRT OVERLAYS
-   ============================================ */
-body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.08) 2px,rgba(0,0,0,0.08) 4px)}
-body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9998;box-shadow:inset 0 0 120px rgba(0,0,0,0.5);border-radius:8px}
+    html {
+      scroll-behavior: smooth;
+    }
 
-/* CRT flicker */
-.crt-flicker{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9997;opacity:0;background:rgba(255,255,255,0.03);animation:crtFlicker 8s infinite}
-@keyframes crtFlicker{
-  0%,100%{opacity:0}
-  4%{opacity:1}
-  4.5%{opacity:0}
-  9%{opacity:0.5}
-  9.2%{opacity:0}
-  50%{opacity:0}
-  54%{opacity:0.8}
-  54.3%{opacity:0}
-  78%{opacity:0}
-  78.5%{opacity:0.6}
-  79%{opacity:0}
-}
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--darker);
+      color: #fff;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
 
-/* VHS tracking lines */
-.vhs-tracking{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9996;overflow:hidden}
-.vhs-line{position:absolute;left:0;width:100%;height:2px;background:rgba(255,255,255,0.08);animation:vhsScan 6s linear infinite}
-.vhs-line:nth-child(2){animation-delay:-2s;height:3px;background:rgba(255,255,255,0.05)}
-.vhs-line:nth-child(3){animation-delay:-4s;height:1px;background:rgba(255,255,255,0.1)}
-@keyframes vhsScan{0%{top:-2px}100%{top:100%}}
+    /* ============================================
+       SCROLL PROGRESS BAR
+       ============================================ */
+    .scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0%;
+      height: 3px;
+      background: linear-gradient(90deg, var(--pink), var(--purple), var(--cyan), var(--teal));
+      z-index: 10001;
+      transition: width 0.1s linear;
+      box-shadow: 0 0 8px var(--pink), 0 0 16px var(--purple);
+    }
 
-/* REC indicator */
-.rec-indicator{position:fixed;top:20px;right:20px;z-index:10000;font-family:'VT323',monospace;font-size:18px;color:#ff0000;display:flex;align-items:center;gap:8px;pointer-events:none;opacity:0.7;animation:recBlink 2s ease-in-out infinite}
-.rec-dot{width:10px;height:10px;border-radius:50%;background:#ff0000;box-shadow:0 0 6px #ff0000}
-@keyframes recBlink{0%,100%{opacity:0.7}50%{opacity:0.2}}
+    /* ============================================
+       SCANLINE + CRT OVERLAYS
+       ============================================ */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9999;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.08) 2px,
+        rgba(0, 0, 0, 0.08) 4px
+      );
+    }
 
-/* ============================================
-   NEON CURSOR (desktop only)
-   ============================================ */
-.neon-cursor{position:fixed;width:20px;height:20px;border:2px solid var(--cyan);border-radius:50%;pointer-events:none;z-index:10002;transform:translate(-50%,-50%);transition:width 0.2s,height 0.2s,border-color 0.3s;box-shadow:0 0 10px var(--cyan),0 0 20px var(--cyan),inset 0 0 6px var(--cyan);mix-blend-mode:screen}
-.neon-cursor.hover{width:40px;height:40px;border-color:var(--pink);box-shadow:0 0 15px var(--pink),0 0 30px var(--pink),inset 0 0 10px var(--pink)}
-.cursor-trail{position:fixed;width:6px;height:6px;border-radius:50%;pointer-events:none;z-index:10001;background:var(--cyan);opacity:0.6;transform:translate(-50%,-50%);mix-blend-mode:screen}
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9998;
+      box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.5);
+      border-radius: 8px;
+    }
 
-/* ============================================
-   BACKGROUND
-   ============================================ */
-.bg-gradient{position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(180deg,#0d0521 0%,#1a0a2e 20%,#2d1b69 40%,#C774E8 60%,#FF6AD5 75%,#ff9a56 90%,#ffe066 100%);z-index:-3}
+    /* CRT flicker */
+    .crt-flicker {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9997;
+      opacity: 0;
+      background: rgba(255, 255, 255, 0.03);
+      animation: crtFlicker 8s infinite;
+    }
 
-/* Grid floor */
-.grid-floor{position:fixed;bottom:0;left:0;width:100%;height:60%;z-index:-2;perspective:500px;overflow:hidden}
-.grid-floor::after{content:'';position:absolute;bottom:0;left:-50%;width:200%;height:100%;transform:rotateX(60deg);transform-origin:bottom center;background:repeating-linear-gradient(90deg,transparent,transparent 49px,rgba(148,208,255,0.3) 49px,rgba(148,208,255,0.3) 50px),repeating-linear-gradient(0deg,transparent,transparent 49px,rgba(148,208,255,0.3) 49px,rgba(148,208,255,0.3) 50px);animation:gridScroll 3s linear infinite}
-@keyframes gridScroll{0%{transform:rotateX(60deg) translateY(0)}100%{transform:rotateX(60deg) translateY(50px)}}
+    @keyframes crtFlicker {
+      0%, 100% { opacity: 0; }
+      4% { opacity: 1; }
+      4.5% { opacity: 0; }
+      9% { opacity: 0.5; }
+      9.2% { opacity: 0; }
+      50% { opacity: 0; }
+      54% { opacity: 0.8; }
+      54.3% { opacity: 0; }
+      78% { opacity: 0; }
+      78.5% { opacity: 0.6; }
+      79% { opacity: 0; }
+    }
 
-/* Sunset bands */
-.sunset-bands{position:fixed;top:40%;left:0;width:100%;height:30%;z-index:-1;opacity:0.3}
-.sunset-band{width:100%;height:4px;margin-bottom:8px;border-radius:2px}
-.sunset-band:nth-child(1){background:var(--hot-pink);animation:bandPulse 3s ease-in-out infinite}
-.sunset-band:nth-child(2){background:var(--pink);animation:bandPulse 3s ease-in-out 0.3s infinite}
-.sunset-band:nth-child(3){background:var(--purple);animation:bandPulse 3s ease-in-out 0.6s infinite}
-.sunset-band:nth-child(4){background:var(--lilac);animation:bandPulse 3s ease-in-out 0.9s infinite}
-.sunset-band:nth-child(5){background:var(--cyan);animation:bandPulse 3s ease-in-out 1.2s infinite}
-@keyframes bandPulse{0%,100%{opacity:0.5;transform:scaleX(0.9)}50%{opacity:1;transform:scaleX(1)}}
+    /* VHS tracking lines */
+    .vhs-tracking {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9996;
+      overflow: hidden;
+    }
 
-/* ============================================
-   FLOATING SHAPES & DECORATIONS
-   ============================================ */
-.floating-shapes{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;pointer-events:none}
-.shape{position:absolute;opacity:0.4;animation:floatShape 8s ease-in-out infinite}
-.shape.triangle{width:0;height:0;border-left:30px solid transparent;border-right:30px solid transparent;border-bottom:52px solid var(--pink)}
-.shape.circle{width:40px;height:40px;border-radius:50%;border:3px solid var(--cyan)}
-.shape.diamond{width:30px;height:30px;background:var(--lilac);transform:rotate(45deg)}
-.shape.column{width:20px;height:60px;border:2px solid var(--purple);border-radius:3px 3px 0 0;position:relative}
-.shape.column::before{content:'';position:absolute;top:-8px;left:-6px;width:32px;height:8px;background:var(--purple);border-radius:2px}
-.shape.column::after{content:'';position:absolute;bottom:-6px;left:-6px;width:32px;height:6px;background:var(--purple);border-radius:0 0 2px 2px}
-.shape.bust{width:30px;height:40px;border:2px solid var(--pink);border-radius:50% 50% 30% 30%;position:relative;opacity:0.3}
-.shape.bust::before{content:'';position:absolute;top:-12px;left:5px;width:20px;height:20px;border:2px solid var(--pink);border-radius:50%}
-.shape.dolphin{width:40px;height:20px;background:transparent;border-top:3px solid var(--cyan);border-radius:80% 80% 0 0;position:relative;opacity:0.3}
-.shape.dolphin::after{content:'';position:absolute;right:-8px;top:-6px;width:0;height:0;border-left:10px solid var(--cyan);border-top:6px solid transparent;border-bottom:6px solid transparent}
-.shape.jp-text{font-family:'VT323',monospace;font-size:16px;color:var(--pink);writing-mode:vertical-rl;opacity:0.15;letter-spacing:0.3em}
+    .vhs-line {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.08);
+      animation: vhsScan 6s linear infinite;
+    }
 
-.shape:nth-child(1){top:10%;left:5%;animation-delay:0s;animation-duration:7s}
-.shape:nth-child(2){top:20%;right:10%;animation-delay:1s;animation-duration:9s}
-.shape:nth-child(3){top:55%;left:8%;animation-delay:2s;animation-duration:6s}
-.shape:nth-child(4){top:15%;left:50%;animation-delay:0.5s;animation-duration:8s}
-.shape:nth-child(5){top:65%;right:15%;animation-delay:1.5s;animation-duration:10s}
-.shape:nth-child(6){top:40%;left:80%;animation-delay:3s;animation-duration:7s}
-.shape:nth-child(7){top:75%;left:3%;animation-delay:0.8s;animation-duration:9s}
-.shape:nth-child(8){top:30%;right:5%;animation-delay:2.5s;animation-duration:11s}
-.shape:nth-child(9){top:85%;right:8%;animation-delay:1.2s;animation-duration:8s}
-.shape:nth-child(10){top:5%;right:25%;animation-delay:3.5s;animation-duration:10s}
-.shape:nth-child(11){top:50%;left:92%;animation-delay:0.3s;animation-duration:7s}
-.shape:nth-child(12){top:8%;left:35%;animation-delay:4s;animation-duration:12s}
+    .vhs-line:nth-child(2) {
+      animation-delay: -2s;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.05);
+    }
 
-@keyframes floatShape{0%,100%{transform:translateY(0) rotate(0deg)}25%{transform:translateY(-20px) rotate(5deg)}50%{transform:translateY(-10px) rotate(-3deg)}75%{transform:translateY(-25px) rotate(2deg)}}
-.shape.diamond{animation-name:floatDiamond}
-@keyframes floatDiamond{0%,100%{transform:translateY(0) rotate(45deg)}50%{transform:translateY(-20px) rotate(225deg)}}
+    .vhs-line:nth-child(3) {
+      animation-delay: -4s;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.1);
+    }
 
-/* Palm trees */
-.palm{position:fixed;bottom:0;z-index:-1;opacity:0.15}
-.palm-left{left:5%}.palm-right{right:5%}
-.palm .trunk{width:8px;height:120px;background:linear-gradient(90deg,#2d1b69,#1a0a2e);margin:0 auto;border-radius:4px}
-.palm .leaves{position:relative;width:100px;height:60px}
-.palm .leaf{position:absolute;width:50px;height:20px;background:var(--teal);border-radius:50% 50% 0 0;top:0;left:25px;transform-origin:bottom center}
-.palm .leaf:nth-child(1){transform:rotate(-40deg) scaleY(1.5)}
-.palm .leaf:nth-child(2){transform:rotate(-10deg) scaleY(1.3)}
-.palm .leaf:nth-child(3){transform:rotate(20deg) scaleY(1.5)}
-.palm .leaf:nth-child(4){transform:rotate(50deg) scaleY(1.2)}
+    @keyframes vhsScan {
+      0% { top: -2px; }
+      100% { top: 100%; }
+    }
 
-/* Cassette tape decoration */
-.cassette-deco{position:fixed;bottom:30px;left:30px;z-index:100;opacity:0.2;pointer-events:none;font-family:'VT323',monospace;color:var(--cyan);font-size:12px;line-height:1.4}
-.cassette-deco .tape-label{border:1px solid var(--cyan);padding:6px 12px;display:inline-block;margin-bottom:4px}
-.cassette-deco .tape-reels{display:flex;gap:20px;justify-content:center;margin:4px 0}
-.cassette-reel{width:16px;height:16px;border:2px solid var(--cyan);border-radius:50%;animation:reelSpin 3s linear infinite}
-.cassette-reel:nth-child(2){animation-direction:reverse}
-@keyframes reelSpin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+    /* REC indicator */
+    .rec-indicator {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 10000;
+      font-family: 'VT323', monospace;
+      font-size: 18px;
+      color: #ff0000;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      pointer-events: none;
+      opacity: 0.7;
+      animation: recBlink 2s ease-in-out infinite;
+    }
 
-/* ============================================
-   NAVIGATION
-   ============================================ */
-.nav{position:fixed;top:0;left:0;width:100%;padding:20px 40px;display:flex;justify-content:space-between;align-items:center;z-index:100;background:linear-gradient(180deg,rgba(13,5,33,0.9),transparent)}
-.nav-left{display:flex;align-items:center;gap:20px}
-.gallery-link{font-family:'VT323',monospace;color:var(--pink);text-decoration:none;font-size:18px;text-shadow:0 0 10px var(--pink);transition:all 0.3s}
-.gallery-link:hover{color:var(--cyan);text-shadow:0 0 15px var(--cyan)}
-.lang-switcher{display:flex;gap:6px}
-.lang-btn{background:rgba(255,255,255,0.05);border:1px solid rgba(148,208,255,0.3);color:var(--cyan);padding:6px 12px;cursor:pointer;font-family:'VT323',monospace;font-size:16px;transition:all 0.3s;border-radius:2px}
-.lang-btn:hover,.lang-btn.active{background:var(--cyan);color:var(--darker);box-shadow:0 0 10px var(--cyan)}
+    .rec-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #ff0000;
+      box-shadow: 0 0 6px #ff0000;
+    }
 
-/* ============================================
-   MAIN CONTENT
-   ============================================ */
-.content{position:relative;z-index:10;max-width:1100px;margin:0 auto;padding:120px 24px 80px}
+    @keyframes recBlink {
+      0%, 100% { opacity: 0.7; }
+      50% { opacity: 0.2; }
+    }
 
-/* ============================================
-   HERO
-   ============================================ */
-.hero{text-align:center;padding:80px 0 120px;position:relative}
-.hero-title{font-family:'VT323',monospace;font-size:72px;letter-spacing:0.4em;text-transform:uppercase;background:linear-gradient(90deg,var(--pink),var(--purple),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:20px;position:relative;display:inline-block}
-.hero-title::before,.hero-title::after{content:attr(data-text);position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(90deg,var(--pink),var(--purple),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero-title::before{animation:glitchBefore 4s infinite;clip-path:polygon(0 0,100% 0,100% 35%,0 35%)}
-.hero-title::after{animation:glitchAfter 4s infinite;clip-path:polygon(0 65%,100% 65%,100% 100%,0 100%)}
+    /* ============================================
+       NEON CURSOR (desktop only)
+       ============================================ */
+    .neon-cursor {
+      position: fixed;
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--cyan);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 10002;
+      transform: translate(-50%, -50%);
+      transition: width 0.2s, height 0.2s, border-color 0.3s;
+      box-shadow: 0 0 10px var(--cyan), 0 0 20px var(--cyan), inset 0 0 6px var(--cyan);
+      mix-blend-mode: screen;
+    }
 
-/* Enhanced glitch with RGB split */
-@keyframes glitchBefore{
-  0%,93%,100%{transform:translate(0);filter:hue-rotate(0deg)}
-  94%{transform:translate(4px,-2px);filter:hue-rotate(-30deg)}
-  95%{transform:translate(-3px,1px);filter:hue-rotate(30deg)}
-  96%{transform:translate(2px,-1px) skewX(2deg);filter:hue-rotate(-60deg)}
-  97%{transform:translate(-4px,2px);filter:hue-rotate(60deg)}
-  98%{transform:translate(1px,0);filter:hue-rotate(0deg)}
-}
-@keyframes glitchAfter{
-  0%,92%,100%{transform:translate(0);filter:hue-rotate(0deg)}
-  93%{transform:translate(-3px,2px);filter:hue-rotate(40deg)}
-  94%{transform:translate(4px,-1px) skewX(-3deg);filter:hue-rotate(-40deg)}
-  95%{transform:translate(-2px,1px);filter:hue-rotate(20deg)}
-  96%{transform:translate(3px,-2px);filter:hue-rotate(-80deg)}
-  97%{transform:translate(0)}
-}
+    .neon-cursor.hover {
+      width: 40px;
+      height: 40px;
+      border-color: var(--pink);
+      box-shadow: 0 0 15px var(--pink), 0 0 30px var(--pink), inset 0 0 10px var(--pink);
+    }
 
-/* Random scroll glitch overlay */
-.glitch-overlay{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9995;opacity:0;transition:opacity 0.1s}
-.glitch-overlay.active{opacity:1}
-.glitch-overlay::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(transparent 0%,rgba(255,106,213,0.04) 50%,transparent 100%);animation:glitchBar 0.3s steps(2) infinite}
-@keyframes glitchBar{0%{transform:translateY(-30%)}100%{transform:translateY(30%)}}
+    .cursor-trail {
+      position: fixed;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 10001;
+      background: var(--cyan);
+      opacity: 0.6;
+      transform: translate(-50%, -50%);
+      mix-blend-mode: screen;
+    }
 
-.hero-subtitle{font-family:'VT323',monospace;font-size:28px;color:var(--cyan);text-shadow:0 0 10px var(--cyan);letter-spacing:0.1em}
-.hero-deco{font-family:'VT323',monospace;font-size:18px;color:var(--lilac);margin-top:20px;opacity:0.6;letter-spacing:0.3em}
-.hero-japanese{font-size:14px;color:var(--pink);opacity:0.5;margin-top:12px;letter-spacing:0.5em;font-family:'VT323',monospace}
-.hero-timestamp{font-family:'VT323',monospace;font-size:14px;color:var(--cyan);opacity:0.3;margin-top:16px;letter-spacing:0.2em}
+    /* ============================================
+       BACKGROUND
+       ============================================ */
+    .bg-gradient {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        180deg,
+        #0d0521 0%,
+        #1a0a2e 20%,
+        #2d1b69 40%,
+        #C774E8 60%,
+        #FF6AD5 75%,
+        #ff9a56 90%,
+        #ffe066 100%
+      );
+      z-index: -3;
+    }
 
-/* ============================================
-   SECTION STYLING
-   ============================================ */
-.section{margin-bottom:100px;opacity:0;transform:translateY(40px);transition:all 0.8s cubic-bezier(0.25,0.46,0.45,0.94)}
-.section.visible{opacity:1;transform:translateY(0)}
-.section-title{font-family:'VT323',monospace;font-size:42px;letter-spacing:0.3em;text-transform:uppercase;color:var(--pink);text-shadow:0 0 15px var(--pink);margin-bottom:40px;text-align:center;position:relative}
-.section-title::before,.section-title::after{content:'//';color:var(--cyan);opacity:0.5}
-.section-title::before{margin-right:16px}
-.section-title::after{margin-left:16px}
+    /* Grid floor */
+    .grid-floor {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 60%;
+      z-index: -2;
+      perspective: 500px;
+      overflow: hidden;
+    }
 
-/* ============================================
-   ABOUT
-   ============================================ */
-.about-content{background:linear-gradient(135deg,rgba(26,10,46,0.8),rgba(45,27,105,0.6));border:1px solid rgba(199,116,232,0.3);padding:40px;border-radius:4px;position:relative;overflow:hidden}
-.about-content::before{content:'';position:absolute;top:0;left:0;width:100%;height:2px;background:linear-gradient(90deg,var(--pink),var(--purple),var(--cyan));animation:scanLine 3s linear infinite}
-@keyframes scanLine{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
-.about-text{font-size:18px;line-height:1.8;color:rgba(255,255,255,0.85)}
-.about-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:32px;padding-top:32px;border-top:1px solid rgba(148,208,255,0.15)}
-.stat-item{text-align:center;font-family:'VT323',monospace}
-.stat-value{font-size:36px;color:var(--cyan);text-shadow:0 0 10px var(--cyan);display:block}
-.stat-label{font-size:16px;color:var(--lilac);opacity:0.7;margin-top:4px;display:block}
+    .grid-floor::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: -50%;
+      width: 200%;
+      height: 100%;
+      transform: rotateX(60deg);
+      transform-origin: bottom center;
+      background:
+        repeating-linear-gradient(
+          90deg,
+          transparent,
+          transparent 49px,
+          rgba(148, 208, 255, 0.3) 49px,
+          rgba(148, 208, 255, 0.3) 50px
+        ),
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 49px,
+          rgba(148, 208, 255, 0.3) 49px,
+          rgba(148, 208, 255, 0.3) 50px
+        );
+      animation: gridScroll 3s linear infinite;
+    }
 
-/* ============================================
-   WIN95 WINDOWS (enhanced)
-   ============================================ */
-.win95-window{background:var(--win-gray);border:2px solid;border-color:var(--win-highlight) var(--win-shadow) var(--win-shadow) var(--win-highlight);padding:0;font-family:'VT323',monospace;transition:transform 0.3s,box-shadow 0.3s;position:relative}
-.win95-window:hover{transform:translateY(-4px);box-shadow:4px 4px 0 rgba(0,0,0,0.3)}
-.win95-menubar{background:var(--win-gray);padding:2px 4px;display:flex;gap:12px;border-bottom:1px solid var(--win-shadow);font-size:14px;color:#000}
-.win95-menubar span{padding:1px 4px;cursor:default}
-.win95-menubar span:first-child{text-decoration:underline}
-.win95-menubar span:hover{background:var(--win-blue);color:#fff}
-.win95-titlebar{background:linear-gradient(90deg,var(--win-blue),var(--win-blue-light));padding:4px 6px;display:flex;justify-content:space-between;align-items:center}
-.win95-titlebar span{color:#fff;font-size:16px}
-.win95-titlebar .title-icon{margin-right:4px;font-size:14px}
-.win95-buttons{display:flex;gap:2px}
-.win95-btn{width:18px;height:18px;background:var(--win-gray);border:2px solid;border-color:var(--win-highlight) var(--win-shadow) var(--win-shadow) var(--win-highlight);display:flex;align-items:center;justify-content:center;font-size:10px;color:#000;cursor:pointer;transition:all 0.15s}
-.win95-btn:active{border-color:var(--win-shadow) var(--win-highlight) var(--win-highlight) var(--win-shadow)}
-.win95-body{padding:16px;color:#000}
-.win95-statusbar{background:var(--win-gray);padding:2px 6px;border-top:2px solid;border-color:var(--win-shadow) var(--win-highlight) var(--win-highlight) var(--win-shadow);font-size:13px;color:#000;display:flex;justify-content:space-between}
-.win95-statusbar .status-section{border:1px solid;border-color:var(--win-shadow) var(--win-highlight) var(--win-highlight) var(--win-shadow);padding:0 6px;flex:1}
-.win95-statusbar .status-section:last-child{flex:none;width:80px;text-align:center}
-.win95-resize{position:absolute;bottom:0;right:0;width:16px;height:16px;cursor:nwse-resize;background:linear-gradient(135deg,transparent 30%,var(--win-shadow) 30%,var(--win-shadow) 40%,transparent 40%,transparent 55%,var(--win-shadow) 55%,var(--win-shadow) 65%,transparent 65%,transparent 80%,var(--win-shadow) 80%)}
+    @keyframes gridScroll {
+      0% { transform: rotateX(60deg) translateY(0); }
+      100% { transform: rotateX(60deg) translateY(50px); }
+    }
 
-/* ============================================
-   SKILLS
-   ============================================ */
-.skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
-.win95-body .skill-name{font-size:20px;margin-bottom:8px;color:var(--win-blue)}
-.win95-body .skill-bar-container{background:#fff;border:2px solid;border-color:var(--win-shadow) var(--win-highlight) var(--win-highlight) var(--win-shadow);height:20px;position:relative;overflow:hidden}
-.win95-body .skill-bar{height:100%;background:repeating-linear-gradient(90deg,var(--win-blue) 0px,var(--win-blue) 8px,var(--win-blue-light) 8px,var(--win-blue-light) 10px);transition:width 1.2s cubic-bezier(0.25,0.46,0.45,0.94);width:0}
-.win95-body .skill-level{font-size:14px;margin-top:4px;color:var(--win-shadow)}
-.win95-body .skill-desc{font-size:13px;color:#444;margin-top:6px;font-family:'Inter',sans-serif;line-height:1.4}
+    /* Sunset bands */
+    .sunset-bands {
+      position: fixed;
+      top: 40%;
+      left: 0;
+      width: 100%;
+      height: 30%;
+      z-index: -1;
+      opacity: 0.3;
+    }
 
-/* ============================================
-   PROJECTS (Win95 dialog style + VHS hover)
-   ============================================ */
-.projects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:28px}
-.project-window{position:relative;overflow:hidden}
-.project-window .win95-body{min-height:160px;position:relative}
-.project-preview{width:100%;height:120px;background:linear-gradient(135deg,#1a0a2e,#2d1b69);border:2px solid;border-color:var(--win-shadow) var(--win-highlight) var(--win-highlight) var(--win-shadow);margin-bottom:12px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
-.project-preview-text{font-family:'VT323',monospace;font-size:48px;color:var(--cyan);opacity:0.5;text-shadow:0 0 20px var(--cyan)}
-/* VHS tracking effect on hover */
-.project-window:hover .project-preview::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(255,255,255,0.05) 3px,rgba(255,255,255,0.05) 4px);animation:vhsTrack 0.5s steps(4) infinite}
-.project-window:hover .project-preview::after{content:'';position:absolute;top:0;left:-10%;width:120%;height:6px;background:rgba(255,255,255,0.15);animation:vhsBar 0.8s ease-in-out infinite}
-@keyframes vhsTrack{0%{transform:translateX(0)}25%{transform:translateX(2px)}50%{transform:translateX(-1px)}75%{transform:translateX(3px)}100%{transform:translateX(0)}}
-@keyframes vhsBar{0%{top:-6px}100%{top:100%}}
-.project-title{font-size:18px;color:var(--win-blue);margin-bottom:4px}
-.project-tech{font-size:13px;color:var(--win-shadow);margin-bottom:8px}
-.project-desc{font-size:14px;color:#333;font-family:'Inter',sans-serif;line-height:1.5}
-.project-links{display:flex;gap:8px;margin-top:10px}
-.project-link-btn{background:var(--win-gray);border:2px solid;border-color:var(--win-highlight) var(--win-shadow) var(--win-shadow) var(--win-highlight);padding:3px 12px;font-family:'VT323',monospace;font-size:14px;color:#000;cursor:pointer;text-decoration:none;transition:all 0.15s}
-.project-link-btn:active{border-color:var(--win-shadow) var(--win-highlight) var(--win-highlight) var(--win-shadow)}
-.project-link-btn:hover{background:#d0d0d0}
+    .sunset-band {
+      width: 100%;
+      height: 4px;
+      margin-bottom: 8px;
+      border-radius: 2px;
+    }
 
-/* ============================================
-   CONTACT
-   ============================================ */
-.contact-box{text-align:center;padding:60px 40px;background:linear-gradient(135deg,rgba(26,10,46,0.8),rgba(45,27,105,0.6));border:1px solid rgba(255,106,213,0.3);position:relative;overflow:hidden}
-.contact-box::before{content:'';position:absolute;inset:4px;border:1px dashed rgba(148,208,255,0.2);pointer-events:none}
-.contact-box::after{content:'SYSTEM READY_';position:absolute;bottom:12px;right:16px;font-family:'VT323',monospace;font-size:14px;color:var(--cyan);opacity:0.2;animation:blink 1.5s step-end infinite}
-@keyframes blink{0%,100%{opacity:0.2}50%{opacity:0}}
-.contact-heading{font-family:'VT323',monospace;font-size:48px;color:var(--pink);text-shadow:0 0 20px var(--pink);margin-bottom:12px}
-.contact-sub{font-family:'VT323',monospace;font-size:22px;color:var(--cyan);text-shadow:0 0 10px var(--cyan)}
-.contact-links{display:flex;gap:20px;justify-content:center;margin-top:32px;flex-wrap:wrap}
-.contact-link{font-family:'VT323',monospace;font-size:20px;color:var(--lilac);text-decoration:none;padding:10px 24px;border:1px solid var(--lilac);transition:all 0.3s;position:relative;overflow:hidden}
-.contact-link::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(173,140,255,0.2),transparent);transition:left 0.5s}
-.contact-link:hover::before{left:100%}
-.contact-link:hover{background:rgba(173,140,255,0.15);box-shadow:0 0 15px rgba(173,140,255,0.3);text-shadow:0 0 8px var(--lilac)}
+    .sunset-band:nth-child(1) {
+      background: var(--hot-pink);
+      animation: bandPulse 3s ease-in-out infinite;
+    }
 
-/* ============================================
-   FOOTER
-   ============================================ */
-.footer{text-align:center;padding:40px 20px;font-family:'VT323',monospace;color:var(--lilac);opacity:0.5;font-size:18px}
-.footer-jp{margin-top:8px;letter-spacing:0.3em;color:var(--pink);opacity:0.4}
+    .sunset-band:nth-child(2) {
+      background: var(--pink);
+      animation: bandPulse 3s ease-in-out 0.3s infinite;
+    }
 
-/* ============================================
-   RESPONSIVE
-   ============================================ */
-@media(max-width:768px){
-  .hero-title{font-size:42px;letter-spacing:0.2em}
-  .hero-subtitle{font-size:22px}
-  .section-title{font-size:32px;letter-spacing:0.15em}
-  .nav{padding:16px 20px}
-  .content{padding:100px 16px 60px}
-  .skills-grid,.projects-grid{grid-template-columns:1fr}
-  .about-content{padding:24px}
-  .about-stats{grid-template-columns:repeat(3,1fr);gap:12px}
-  .stat-value{font-size:28px}
-  .contact-heading{font-size:36px}
-  .palm{display:none}
-  .cassette-deco{display:none}
-  .rec-indicator{top:auto;bottom:16px;right:16px;font-size:14px}
-  .neon-cursor,.cursor-trail{display:none !important}
-}
-@media(max-width:375px){
-  .hero-title{font-size:28px;letter-spacing:0.1em}
-  .hero-subtitle{font-size:18px}
-  .section-title{font-size:24px;letter-spacing:0.1em}
-  .lang-btn{padding:4px 8px;font-size:14px}
-  .contact-links{flex-direction:column;align-items:center}
-  .about-stats{grid-template-columns:1fr}
-  .projects-grid{grid-template-columns:1fr}
-}
-@media(min-width:1440px){
-  .content{max-width:1200px}
-  .projects-grid{grid-template-columns:repeat(2,1fr)}
-}
+    .sunset-band:nth-child(3) {
+      background: var(--purple);
+      animation: bandPulse 3s ease-in-out 0.6s infinite;
+    }
 
-/* ============================================
-   REDUCED MOTION
-   ============================================ */
-@media(prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation-duration:0.01ms !important;animation-iteration-count:1 !important;transition-duration:0.01ms !important}
-  .grid-floor::after{animation:none}
-  .crt-flicker{display:none}
-  .vhs-tracking{display:none}
-  .glitch-overlay{display:none}
-  .hero-title::before,.hero-title::after{animation:none;clip-path:none;display:none}
-  .neon-cursor,.cursor-trail{display:none !important}
-  .scroll-progress{transition:none}
-  .section{opacity:1;transform:none}
-  .cassette-reel{animation:none}
-}
-</style>
+    .sunset-band:nth-child(4) {
+      background: var(--lilac);
+      animation: bandPulse 3s ease-in-out 0.9s infinite;
+    }
+
+    .sunset-band:nth-child(5) {
+      background: var(--cyan);
+      animation: bandPulse 3s ease-in-out 1.2s infinite;
+    }
+
+    @keyframes bandPulse {
+      0%, 100% {
+        opacity: 0.5;
+        transform: scaleX(0.9);
+      }
+      50% {
+        opacity: 1;
+        transform: scaleX(1);
+      }
+    }
+
+    /* ============================================
+       FLOATING SHAPES & DECORATIONS
+       ============================================ */
+    .floating-shapes {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .shape {
+      position: absolute;
+      opacity: 0.4;
+      animation: floatShape 8s ease-in-out infinite;
+    }
+
+    .shape.triangle {
+      width: 0;
+      height: 0;
+      border-left: 30px solid transparent;
+      border-right: 30px solid transparent;
+      border-bottom: 52px solid var(--pink);
+    }
+
+    .shape.circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 3px solid var(--cyan);
+    }
+
+    .shape.diamond {
+      width: 30px;
+      height: 30px;
+      background: var(--lilac);
+      transform: rotate(45deg);
+    }
+
+    .shape.column {
+      width: 20px;
+      height: 60px;
+      border: 2px solid var(--purple);
+      border-radius: 3px 3px 0 0;
+      position: relative;
+    }
+
+    .shape.column::before {
+      content: '';
+      position: absolute;
+      top: -8px;
+      left: -6px;
+      width: 32px;
+      height: 8px;
+      background: var(--purple);
+      border-radius: 2px;
+    }
+
+    .shape.column::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: -6px;
+      width: 32px;
+      height: 6px;
+      background: var(--purple);
+      border-radius: 0 0 2px 2px;
+    }
+
+    .shape.bust {
+      width: 30px;
+      height: 40px;
+      border: 2px solid var(--pink);
+      border-radius: 50% 50% 30% 30%;
+      position: relative;
+      opacity: 0.3;
+    }
+
+    .shape.bust::before {
+      content: '';
+      position: absolute;
+      top: -12px;
+      left: 5px;
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--pink);
+      border-radius: 50%;
+    }
+
+    .shape.dolphin {
+      width: 40px;
+      height: 20px;
+      background: transparent;
+      border-top: 3px solid var(--cyan);
+      border-radius: 80% 80% 0 0;
+      position: relative;
+      opacity: 0.3;
+    }
+
+    .shape.dolphin::after {
+      content: '';
+      position: absolute;
+      right: -8px;
+      top: -6px;
+      width: 0;
+      height: 0;
+      border-left: 10px solid var(--cyan);
+      border-top: 6px solid transparent;
+      border-bottom: 6px solid transparent;
+    }
+
+    .shape.jp-text {
+      font-family: 'VT323', monospace;
+      font-size: 16px;
+      color: var(--pink);
+      writing-mode: vertical-rl;
+      opacity: 0.15;
+      letter-spacing: 0.3em;
+    }
+
+    .shape:nth-child(1) {
+      top: 10%;
+      left: 5%;
+      animation-delay: 0s;
+      animation-duration: 7s;
+    }
+
+    .shape:nth-child(2) {
+      top: 20%;
+      right: 10%;
+      animation-delay: 1s;
+      animation-duration: 9s;
+    }
+
+    .shape:nth-child(3) {
+      top: 55%;
+      left: 8%;
+      animation-delay: 2s;
+      animation-duration: 6s;
+    }
+
+    .shape:nth-child(4) {
+      top: 15%;
+      left: 50%;
+      animation-delay: 0.5s;
+      animation-duration: 8s;
+    }
+
+    .shape:nth-child(5) {
+      top: 65%;
+      right: 15%;
+      animation-delay: 1.5s;
+      animation-duration: 10s;
+    }
+
+    .shape:nth-child(6) {
+      top: 40%;
+      left: 80%;
+      animation-delay: 3s;
+      animation-duration: 7s;
+    }
+
+    .shape:nth-child(7) {
+      top: 75%;
+      left: 3%;
+      animation-delay: 0.8s;
+      animation-duration: 9s;
+    }
+
+    .shape:nth-child(8) {
+      top: 30%;
+      right: 5%;
+      animation-delay: 2.5s;
+      animation-duration: 11s;
+    }
+
+    .shape:nth-child(9) {
+      top: 85%;
+      right: 8%;
+      animation-delay: 1.2s;
+      animation-duration: 8s;
+    }
+
+    .shape:nth-child(10) {
+      top: 5%;
+      right: 25%;
+      animation-delay: 3.5s;
+      animation-duration: 10s;
+    }
+
+    .shape:nth-child(11) {
+      top: 50%;
+      left: 92%;
+      animation-delay: 0.3s;
+      animation-duration: 7s;
+    }
+
+    .shape:nth-child(12) {
+      top: 8%;
+      left: 35%;
+      animation-delay: 4s;
+      animation-duration: 12s;
+    }
+
+    @keyframes floatShape {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      25% { transform: translateY(-20px) rotate(5deg); }
+      50% { transform: translateY(-10px) rotate(-3deg); }
+      75% { transform: translateY(-25px) rotate(2deg); }
+    }
+
+    .shape.diamond {
+      animation-name: floatDiamond;
+    }
+
+    @keyframes floatDiamond {
+      0%, 100% { transform: translateY(0) rotate(45deg); }
+      50% { transform: translateY(-20px) rotate(225deg); }
+    }
+
+    /* Palm trees */
+    .palm {
+      position: fixed;
+      bottom: 0;
+      z-index: -1;
+      opacity: 0.15;
+    }
+
+    .palm-left {
+      left: 5%;
+    }
+
+    .palm-right {
+      right: 5%;
+    }
+
+    .palm .trunk {
+      width: 8px;
+      height: 120px;
+      background: linear-gradient(90deg, #2d1b69, #1a0a2e);
+      margin: 0 auto;
+      border-radius: 4px;
+    }
+
+    .palm .leaves {
+      position: relative;
+      width: 100px;
+      height: 60px;
+    }
+
+    .palm .leaf {
+      position: absolute;
+      width: 50px;
+      height: 20px;
+      background: var(--teal);
+      border-radius: 50% 50% 0 0;
+      top: 0;
+      left: 25px;
+      transform-origin: bottom center;
+    }
+
+    .palm .leaf:nth-child(1) {
+      transform: rotate(-40deg) scaleY(1.5);
+    }
+
+    .palm .leaf:nth-child(2) {
+      transform: rotate(-10deg) scaleY(1.3);
+    }
+
+    .palm .leaf:nth-child(3) {
+      transform: rotate(20deg) scaleY(1.5);
+    }
+
+    .palm .leaf:nth-child(4) {
+      transform: rotate(50deg) scaleY(1.2);
+    }
+
+    /* Cassette tape decoration */
+    .cassette-deco {
+      position: fixed;
+      bottom: 30px;
+      left: 30px;
+      z-index: 100;
+      opacity: 0.2;
+      pointer-events: none;
+      font-family: 'VT323', monospace;
+      color: var(--cyan);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .cassette-deco .tape-label {
+      border: 1px solid var(--cyan);
+      padding: 6px 12px;
+      display: inline-block;
+      margin-bottom: 4px;
+    }
+
+    .cassette-deco .tape-reels {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin: 4px 0;
+    }
+
+    .cassette-reel {
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--cyan);
+      border-radius: 50%;
+      animation: reelSpin 3s linear infinite;
+    }
+
+    .cassette-reel:nth-child(2) {
+      animation-direction: reverse;
+    }
+
+    @keyframes reelSpin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* ============================================
+       NAVIGATION
+       ============================================ */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      background: linear-gradient(180deg, rgba(13, 5, 33, 0.9), transparent);
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .gallery-link {
+      font-family: 'VT323', monospace;
+      color: var(--pink);
+      text-decoration: none;
+      font-size: 18px;
+      text-shadow: 0 0 10px var(--pink);
+      transition: all 0.3s;
+    }
+
+    .gallery-link:hover {
+      color: var(--cyan);
+      text-shadow: 0 0 15px var(--cyan);
+    }
+
+    .lang-switcher {
+      display: flex;
+      gap: 6px;
+    }
+
+    .lang-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(148, 208, 255, 0.3);
+      color: var(--cyan);
+      padding: 6px 12px;
+      cursor: pointer;
+      font-family: 'VT323', monospace;
+      font-size: 16px;
+      transition: all 0.3s;
+      border-radius: 2px;
+    }
+
+    .lang-btn:hover,
+    .lang-btn.active {
+      background: var(--cyan);
+      color: var(--darker);
+      box-shadow: 0 0 10px var(--cyan);
+    }
+
+    /* ============================================
+       MAIN CONTENT
+       ============================================ */
+    .content {
+      position: relative;
+      z-index: 10;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 120px 24px 80px;
+    }
+
+    /* ============================================
+       HERO
+       ============================================ */
+    .hero {
+      text-align: center;
+      padding: 80px 0 120px;
+      position: relative;
+    }
+
+    .hero-title {
+      font-family: 'VT323', monospace;
+      font-size: 72px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      background: linear-gradient(90deg, var(--pink), var(--purple), var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 20px;
+      position: relative;
+      display: inline-block;
+    }
+
+    .hero-title::before,
+    .hero-title::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--pink), var(--purple), var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-title::before {
+      animation: glitchBefore 4s infinite;
+      clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+    }
+
+    .hero-title::after {
+      animation: glitchAfter 4s infinite;
+      clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+    }
+
+    /* Enhanced glitch with RGB split */
+    @keyframes glitchBefore {
+      0%, 93%, 100% { transform: translate(0); filter: hue-rotate(0deg); }
+      94% { transform: translate(4px, -2px); filter: hue-rotate(-30deg); }
+      95% { transform: translate(-3px, 1px); filter: hue-rotate(30deg); }
+      96% { transform: translate(2px, -1px) skewX(2deg); filter: hue-rotate(-60deg); }
+      97% { transform: translate(-4px, 2px); filter: hue-rotate(60deg); }
+      98% { transform: translate(1px, 0); filter: hue-rotate(0deg); }
+    }
+
+    @keyframes glitchAfter {
+      0%, 92%, 100% { transform: translate(0); filter: hue-rotate(0deg); }
+      93% { transform: translate(-3px, 2px); filter: hue-rotate(40deg); }
+      94% { transform: translate(4px, -1px) skewX(-3deg); filter: hue-rotate(-40deg); }
+      95% { transform: translate(-2px, 1px); filter: hue-rotate(20deg); }
+      96% { transform: translate(3px, -2px); filter: hue-rotate(-80deg); }
+      97% { transform: translate(0); }
+    }
+
+    /* Random scroll glitch overlay */
+    .glitch-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9995;
+      opacity: 0;
+      transition: opacity 0.1s;
+    }
+
+    .glitch-overlay.active {
+      opacity: 1;
+    }
+
+    .glitch-overlay::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        transparent 0%,
+        rgba(255, 106, 213, 0.04) 50%,
+        transparent 100%
+      );
+      animation: glitchBar 0.3s steps(2) infinite;
+    }
+
+    @keyframes glitchBar {
+      0% { transform: translateY(-30%); }
+      100% { transform: translateY(30%); }
+    }
+
+    .hero-subtitle {
+      font-family: 'VT323', monospace;
+      font-size: 28px;
+      color: var(--cyan);
+      text-shadow: 0 0 10px var(--cyan);
+      letter-spacing: 0.1em;
+    }
+
+    .hero-deco {
+      font-family: 'VT323', monospace;
+      font-size: 18px;
+      color: var(--lilac);
+      margin-top: 20px;
+      opacity: 0.6;
+      letter-spacing: 0.3em;
+    }
+
+    .hero-japanese {
+      font-size: 14px;
+      color: var(--pink);
+      opacity: 0.5;
+      margin-top: 12px;
+      letter-spacing: 0.5em;
+      font-family: 'VT323', monospace;
+    }
+
+    .hero-timestamp {
+      font-family: 'VT323', monospace;
+      font-size: 14px;
+      color: var(--cyan);
+      opacity: 0.3;
+      margin-top: 16px;
+      letter-spacing: 0.2em;
+    }
+
+    /* ============================================
+       SECTION STYLING
+       ============================================ */
+    .section {
+      margin-bottom: 100px;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .section-title {
+      font-family: 'VT323', monospace;
+      font-size: 42px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--pink);
+      text-shadow: 0 0 15px var(--pink);
+      margin-bottom: 40px;
+      text-align: center;
+      position: relative;
+    }
+
+    .section-title::before,
+    .section-title::after {
+      content: '//';
+      color: var(--cyan);
+      opacity: 0.5;
+    }
+
+    .section-title::before {
+      margin-right: 16px;
+    }
+
+    .section-title::after {
+      margin-left: 16px;
+    }
+
+    /* ============================================
+       ABOUT
+       ============================================ */
+    .about-content {
+      background: linear-gradient(135deg, rgba(26, 10, 46, 0.8), rgba(45, 27, 105, 0.6));
+      border: 1px solid rgba(199, 116, 232, 0.3);
+      padding: 40px;
+      border-radius: 4px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .about-content::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--pink), var(--purple), var(--cyan));
+      animation: scanLine 3s linear infinite;
+    }
+
+    @keyframes scanLine {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    .about-text {
+      font-size: 18px;
+      line-height: 1.8;
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .about-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 32px;
+      padding-top: 32px;
+      border-top: 1px solid rgba(148, 208, 255, 0.15);
+    }
+
+    .stat-item {
+      text-align: center;
+      font-family: 'VT323', monospace;
+    }
+
+    .stat-value {
+      font-size: 36px;
+      color: var(--cyan);
+      text-shadow: 0 0 10px var(--cyan);
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 16px;
+      color: var(--lilac);
+      opacity: 0.7;
+      margin-top: 4px;
+      display: block;
+    }
+
+    /* ============================================
+       WIN95 WINDOWS (enhanced)
+       ============================================ */
+    .win95-window {
+      background: var(--win-gray);
+      border: 2px solid;
+      border-color: var(--win-highlight) var(--win-shadow) var(--win-shadow) var(--win-highlight);
+      padding: 0;
+      font-family: 'VT323', monospace;
+      transition: transform 0.3s, box-shadow 0.3s;
+      position: relative;
+    }
+
+    .win95-window:hover {
+      transform: translateY(-4px);
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    .win95-menubar {
+      background: var(--win-gray);
+      padding: 2px 4px;
+      display: flex;
+      gap: 12px;
+      border-bottom: 1px solid var(--win-shadow);
+      font-size: 14px;
+      color: #000;
+    }
+
+    .win95-menubar span {
+      padding: 1px 4px;
+      cursor: default;
+    }
+
+    .win95-menubar span:first-child {
+      text-decoration: underline;
+    }
+
+    .win95-menubar span:hover {
+      background: var(--win-blue);
+      color: #fff;
+    }
+
+    .win95-titlebar {
+      background: linear-gradient(90deg, var(--win-blue), var(--win-blue-light));
+      padding: 4px 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .win95-titlebar span {
+      color: #fff;
+      font-size: 16px;
+    }
+
+    .win95-titlebar .title-icon {
+      margin-right: 4px;
+      font-size: 14px;
+    }
+
+    .win95-buttons {
+      display: flex;
+      gap: 2px;
+    }
+
+    .win95-btn {
+      width: 18px;
+      height: 18px;
+      background: var(--win-gray);
+      border: 2px solid;
+      border-color: var(--win-highlight) var(--win-shadow) var(--win-shadow) var(--win-highlight);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      color: #000;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .win95-btn:active {
+      border-color: var(--win-shadow) var(--win-highlight) var(--win-highlight) var(--win-shadow);
+    }
+
+    .win95-body {
+      padding: 16px;
+      color: #000;
+    }
+
+    .win95-statusbar {
+      background: var(--win-gray);
+      padding: 2px 6px;
+      border-top: 2px solid;
+      border-color: var(--win-shadow) var(--win-highlight) var(--win-highlight) var(--win-shadow);
+      font-size: 13px;
+      color: #000;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .win95-statusbar .status-section {
+      border: 1px solid;
+      border-color: var(--win-shadow) var(--win-highlight) var(--win-highlight) var(--win-shadow);
+      padding: 0 6px;
+      flex: 1;
+    }
+
+    .win95-statusbar .status-section:last-child {
+      flex: none;
+      width: 80px;
+      text-align: center;
+    }
+
+    .win95-resize {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 16px;
+      height: 16px;
+      cursor: nwse-resize;
+      background: linear-gradient(
+        135deg,
+        transparent 30%,
+        var(--win-shadow) 30%,
+        var(--win-shadow) 40%,
+        transparent 40%,
+        transparent 55%,
+        var(--win-shadow) 55%,
+        var(--win-shadow) 65%,
+        transparent 65%,
+        transparent 80%,
+        var(--win-shadow) 80%
+      );
+    }
+
+    /* ============================================
+       SKILLS
+       ============================================ */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    .win95-body .skill-name {
+      font-size: 20px;
+      margin-bottom: 8px;
+      color: var(--win-blue);
+    }
+
+    .win95-body .skill-bar-container {
+      background: #fff;
+      border: 2px solid;
+      border-color: var(--win-shadow) var(--win-highlight) var(--win-highlight) var(--win-shadow);
+      height: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .win95-body .skill-bar {
+      height: 100%;
+      background: repeating-linear-gradient(
+        90deg,
+        var(--win-blue) 0px,
+        var(--win-blue) 8px,
+        var(--win-blue-light) 8px,
+        var(--win-blue-light) 10px
+      );
+      transition: width 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      width: 0;
+    }
+
+    .win95-body .skill-level {
+      font-size: 14px;
+      margin-top: 4px;
+      color: var(--win-shadow);
+    }
+
+    .win95-body .skill-desc {
+      font-size: 13px;
+      color: #444;
+      margin-top: 6px;
+      font-family: 'Inter', sans-serif;
+      line-height: 1.4;
+    }
+
+    /* ============================================
+       PROJECTS (Win95 dialog style + VHS hover)
+       ============================================ */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 28px;
+    }
+
+    .project-window {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .project-window .win95-body {
+      min-height: 160px;
+      position: relative;
+    }
+
+    .project-preview {
+      width: 100%;
+      height: 120px;
+      background: linear-gradient(135deg, #1a0a2e, #2d1b69);
+      border: 2px solid;
+      border-color: var(--win-shadow) var(--win-highlight) var(--win-highlight) var(--win-shadow);
+      margin-bottom: 12px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .project-preview-text {
+      font-family: 'VT323', monospace;
+      font-size: 48px;
+      color: var(--cyan);
+      opacity: 0.5;
+      text-shadow: 0 0 20px var(--cyan);
+    }
+
+    /* VHS tracking effect on hover */
+    .project-window:hover .project-preview::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 3px,
+        rgba(255, 255, 255, 0.05) 3px,
+        rgba(255, 255, 255, 0.05) 4px
+      );
+      animation: vhsTrack 0.5s steps(4) infinite;
+    }
+
+    .project-window:hover .project-preview::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -10%;
+      width: 120%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.15);
+      animation: vhsBar 0.8s ease-in-out infinite;
+    }
+
+    @keyframes vhsTrack {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(2px); }
+      50% { transform: translateX(-1px); }
+      75% { transform: translateX(3px); }
+      100% { transform: translateX(0); }
+    }
+
+    @keyframes vhsBar {
+      0% { top: -6px; }
+      100% { top: 100%; }
+    }
+
+    .project-title {
+      font-size: 18px;
+      color: var(--win-blue);
+      margin-bottom: 4px;
+    }
+
+    .project-tech {
+      font-size: 13px;
+      color: var(--win-shadow);
+      margin-bottom: 8px;
+    }
+
+    .project-desc {
+      font-size: 14px;
+      color: #333;
+      font-family: 'Inter', sans-serif;
+      line-height: 1.5;
+    }
+
+    .project-links {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .project-link-btn {
+      background: var(--win-gray);
+      border: 2px solid;
+      border-color: var(--win-highlight) var(--win-shadow) var(--win-shadow) var(--win-highlight);
+      padding: 3px 12px;
+      font-family: 'VT323', monospace;
+      font-size: 14px;
+      color: #000;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.15s;
+    }
+
+    .project-link-btn:active {
+      border-color: var(--win-shadow) var(--win-highlight) var(--win-highlight) var(--win-shadow);
+    }
+
+    .project-link-btn:hover {
+      background: #d0d0d0;
+    }
+
+    /* ============================================
+       CONTACT
+       ============================================ */
+    .contact-box {
+      text-align: center;
+      padding: 60px 40px;
+      background: linear-gradient(135deg, rgba(26, 10, 46, 0.8), rgba(45, 27, 105, 0.6));
+      border: 1px solid rgba(255, 106, 213, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .contact-box::before {
+      content: '';
+      position: absolute;
+      inset: 4px;
+      border: 1px dashed rgba(148, 208, 255, 0.2);
+      pointer-events: none;
+    }
+
+    .contact-box::after {
+      content: 'SYSTEM READY_';
+      position: absolute;
+      bottom: 12px;
+      right: 16px;
+      font-family: 'VT323', monospace;
+      font-size: 14px;
+      color: var(--cyan);
+      opacity: 0.2;
+      animation: blink 1.5s step-end infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 0.2; }
+      50% { opacity: 0; }
+    }
+
+    .contact-heading {
+      font-family: 'VT323', monospace;
+      font-size: 48px;
+      color: var(--pink);
+      text-shadow: 0 0 20px var(--pink);
+      margin-bottom: 12px;
+    }
+
+    .contact-sub {
+      font-family: 'VT323', monospace;
+      font-size: 22px;
+      color: var(--cyan);
+      text-shadow: 0 0 10px var(--cyan);
+    }
+
+    .contact-links {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 32px;
+      flex-wrap: wrap;
+    }
+
+    .contact-link {
+      font-family: 'VT323', monospace;
+      font-size: 20px;
+      color: var(--lilac);
+      text-decoration: none;
+      padding: 10px 24px;
+      border: 1px solid var(--lilac);
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .contact-link::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(173, 140, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .contact-link:hover::before {
+      left: 100%;
+    }
+
+    .contact-link:hover {
+      background: rgba(173, 140, 255, 0.15);
+      box-shadow: 0 0 15px rgba(173, 140, 255, 0.3);
+      text-shadow: 0 0 8px var(--lilac);
+    }
+
+    /* ============================================
+       FOOTER
+       ============================================ */
+    .footer {
+      text-align: center;
+      padding: 40px 20px;
+      font-family: 'VT323', monospace;
+      color: var(--lilac);
+      opacity: 0.5;
+      font-size: 18px;
+    }
+
+    .footer-jp {
+      margin-top: 8px;
+      letter-spacing: 0.3em;
+      color: var(--pink);
+      opacity: 0.4;
+    }
+
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 42px;
+        letter-spacing: 0.2em;
+      }
+
+      .hero-subtitle {
+        font-size: 22px;
+      }
+
+      .section-title {
+        font-size: 32px;
+        letter-spacing: 0.15em;
+      }
+
+      .nav {
+        padding: 16px 20px;
+      }
+
+      .content {
+        padding: 100px 16px 60px;
+      }
+
+      .skills-grid,
+      .projects-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .about-content {
+        padding: 24px;
+      }
+
+      .about-stats {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+      }
+
+      .stat-value {
+        font-size: 28px;
+      }
+
+      .contact-heading {
+        font-size: 36px;
+      }
+
+      .palm {
+        display: none;
+      }
+
+      .cassette-deco {
+        display: none;
+      }
+
+      .rec-indicator {
+        top: auto;
+        bottom: 16px;
+        right: 16px;
+        font-size: 14px;
+      }
+
+      .neon-cursor,
+      .cursor-trail {
+        display: none !important;
+      }
+    }
+
+    @media (max-width: 375px) {
+      .hero-title {
+        font-size: 28px;
+        letter-spacing: 0.1em;
+      }
+
+      .hero-subtitle {
+        font-size: 18px;
+      }
+
+      .section-title {
+        font-size: 24px;
+        letter-spacing: 0.1em;
+      }
+
+      .lang-btn {
+        padding: 4px 8px;
+        font-size: 14px;
+      }
+
+      .contact-links {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .about-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .projects-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (min-width: 1440px) {
+      .content {
+        max-width: 1200px;
+      }
+
+      .projects-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    /* ============================================
+       REDUCED MOTION
+       ============================================ */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+
+      .grid-floor::after {
+        animation: none;
+      }
+
+      .crt-flicker {
+        display: none;
+      }
+
+      .vhs-tracking {
+        display: none;
+      }
+
+      .glitch-overlay {
+        display: none;
+      }
+
+      .hero-title::before,
+      .hero-title::after {
+        animation: none;
+        clip-path: none;
+        display: none;
+      }
+
+      .neon-cursor,
+      .cursor-trail {
+        display: none !important;
+      }
+
+      .scroll-progress {
+        transition: none;
+      }
+
+      .section {
+        opacity: 1;
+        transform: none;
+      }
+
+      .cassette-reel {
+        animation: none;
+      }
+    }
+  </style>
 </head>
 <body>
 
-<div class="scroll-progress" id="scrollProgress"></div>
-<div class="crt-flicker"></div>
-<div class="glitch-overlay" id="glitchOverlay"></div>
+  <div class="scroll-progress" id="scrollProgress"></div>
+  <div class="crt-flicker"></div>
+  <div class="glitch-overlay" id="glitchOverlay"></div>
 
-<div class="vhs-tracking">
-  <div class="vhs-line"></div>
-  <div class="vhs-line"></div>
-  <div class="vhs-line"></div>
-</div>
-
-<div class="rec-indicator">
-  <span class="rec-dot"></span>
-  <span>REC 00:00:00</span>
-</div>
-
-<div class="neon-cursor" id="neonCursor"></div>
-
-<div class="bg-gradient"></div>
-<div class="grid-floor"></div>
-
-<div class="sunset-bands">
-  <div class="sunset-band"></div>
-  <div class="sunset-band"></div>
-  <div class="sunset-band"></div>
-  <div class="sunset-band"></div>
-  <div class="sunset-band"></div>
-</div>
-
-<div class="floating-shapes">
-  <div class="shape triangle"></div>
-  <div class="shape circle"></div>
-  <div class="shape diamond"></div>
-  <div class="shape column"></div>
-  <div class="shape triangle"></div>
-  <div class="shape circle"></div>
-  <div class="shape bust"></div>
-  <div class="shape dolphin"></div>
-  <div class="shape diamond"></div>
-  <div class="shape column"></div>
-  <div class="shape bust"></div>
-  <div class="shape jp-text">&#26410;&#26469;&#12398;&#32654;&#23398;&#12487;&#12472;&#12479;&#12523;</div>
-</div>
-
-<div class="palm palm-left">
-  <div class="leaves">
-    <div class="leaf"></div><div class="leaf"></div><div class="leaf"></div><div class="leaf"></div>
+  <div class="vhs-tracking">
+    <div class="vhs-line"></div>
+    <div class="vhs-line"></div>
+    <div class="vhs-line"></div>
   </div>
-  <div class="trunk"></div>
-</div>
-<div class="palm palm-right">
-  <div class="leaves">
-    <div class="leaf"></div><div class="leaf"></div><div class="leaf"></div><div class="leaf"></div>
-  </div>
-  <div class="trunk"></div>
-</div>
 
-<div class="cassette-deco">
-  <div class="tape-label">SIDE A // PORTFOLIO MIX</div>
-  <div class="tape-reels">
-    <div class="cassette-reel"></div>
-    <div class="cassette-reel"></div>
+  <div class="rec-indicator">
+    <span class="rec-dot"></span>
+    <span>REC 00:00:00</span>
   </div>
-  <div>C-90 // CHROME // DOLBY NR</div>
-</div>
 
-<nav class="nav">
-  <div class="nav-left">
-    <a href="../index.html" class="gallery-link" data-i18n="gallery_link">&#8592; Gallery</a>
+  <div class="neon-cursor" id="neonCursor"></div>
+
+  <div class="bg-gradient"></div>
+  <div class="grid-floor"></div>
+
+  <div class="sunset-bands">
+    <div class="sunset-band"></div>
+    <div class="sunset-band"></div>
+    <div class="sunset-band"></div>
+    <div class="sunset-band"></div>
+    <div class="sunset-band"></div>
   </div>
-  <div class="lang-switcher">
-    <button class="lang-btn active" data-lang="en" onclick="setLanguage('en')">EN</button>
-    <button class="lang-btn" data-lang="ko" onclick="setLanguage('ko')">&#54620;&#44397;&#50612;</button>
-    <button class="lang-btn" data-lang="ja" onclick="setLanguage('ja')">&#26085;&#26412;&#35486;</button>
-    <button class="lang-btn" data-lang="zh" onclick="setLanguage('zh')">&#20013;&#25991;</button>
+
+  <div class="floating-shapes">
+    <div class="shape triangle"></div>
+    <div class="shape circle"></div>
+    <div class="shape diamond"></div>
+    <div class="shape column"></div>
+    <div class="shape triangle"></div>
+    <div class="shape circle"></div>
+    <div class="shape bust"></div>
+    <div class="shape dolphin"></div>
+    <div class="shape diamond"></div>
+    <div class="shape column"></div>
+    <div class="shape bust"></div>
+    <div class="shape jp-text">&#26410;&#26469;&#12398;&#32654;&#23398;&#12487;&#12472;&#12479;&#12523;</div>
   </div>
-</nav>
 
-<div class="content">
-  <!-- Hero -->
-  <section class="hero">
-    <div class="hero-japanese">&#12487;&#12472;&#12479;&#12523; &#12489;&#12522;&#12540;&#12512;</div>
-    <h1 class="hero-title" data-text="Your Name" data-i18n="name">Your Name</h1>
-    <p class="hero-subtitle" data-i18n="title">Creative Developer &amp; Designer</p>
-    <div class="hero-deco">&#9650; &#9679; &#9632; &#9670; &#9651; &#9675;</div>
-    <div class="hero-japanese">&#26410;&#26469;&#12398;&#32654;&#23398; &bull; &#12487;&#12472;&#12479;&#12523;&#12450;&#12540;&#12488;</div>
-    <div class="hero-timestamp" id="heroTimestamp">BOOT SEQUENCE INITIATED...</div>
-  </section>
-
-  <!-- About -->
-  <section class="section" id="about">
-    <h2 class="section-title" data-i18n="about_label">About</h2>
-    <div class="about-content">
-      <p class="about-text" data-i18n="about_text">A creative developer crafting digital experiences at the intersection of design and technology. Building beautiful and functional products through clean code and thoughtful interfaces.</p>
-      <div class="about-stats">
-        <div class="stat-item">
-          <span class="stat-value" data-count="5">0</span>
-          <span class="stat-label" data-i18n="stat_years">Years Exp</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-value" data-count="50">0</span>
-          <span class="stat-label" data-i18n="stat_projects">Projects</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-value" data-count="30">0</span>
-          <span class="stat-label" data-i18n="stat_clients">Clients</span>
-        </div>
-      </div>
+  <div class="palm palm-left">
+    <div class="leaves">
+      <div class="leaf"></div>
+      <div class="leaf"></div>
+      <div class="leaf"></div>
+      <div class="leaf"></div>
     </div>
-  </section>
-
-  <!-- Skills -->
-  <section class="section" id="skills">
-    <h2 class="section-title" data-i18n="skills_label">Expertise</h2>
-    <div class="skills-grid">
-      <div class="win95-window">
-        <div class="win95-titlebar">
-          <span><span class="title-icon">&#128190;</span> frontend.exe</span>
-          <div class="win95-buttons"><div class="win95-btn">_</div><div class="win95-btn">&#9633;</div><div class="win95-btn">X</div></div>
-        </div>
-        <div class="win95-menubar"><span>File</span><span>Edit</span><span>View</span><span>Help</span></div>
-        <div class="win95-body">
-          <div class="skill-name">Frontend Dev</div>
-          <div class="skill-bar-container"><div class="skill-bar" data-width="92"></div></div>
-          <div class="skill-level">React / Vue / TypeScript</div>
-          <div class="skill-desc">Building responsive, performant web interfaces with modern frameworks and tooling.</div>
-        </div>
-        <div class="win95-statusbar"><span class="status-section">Ready</span><span class="status-section">92%</span></div>
-        <div class="win95-resize"></div>
-      </div>
-      <div class="win95-window">
-        <div class="win95-titlebar">
-          <span><span class="title-icon">&#127912;</span> design.exe</span>
-          <div class="win95-buttons"><div class="win95-btn">_</div><div class="win95-btn">&#9633;</div><div class="win95-btn">X</div></div>
-        </div>
-        <div class="win95-menubar"><span>File</span><span>Edit</span><span>View</span><span>Help</span></div>
-        <div class="win95-body">
-          <div class="skill-name">UI/UX Design</div>
-          <div class="skill-bar-container"><div class="skill-bar" data-width="88"></div></div>
-          <div class="skill-level">Figma / Prototyping</div>
-          <div class="skill-desc">Creating intuitive user experiences with pixel-perfect designs and interactive prototypes.</div>
-        </div>
-        <div class="win95-statusbar"><span class="status-section">Ready</span><span class="status-section">88%</span></div>
-        <div class="win95-resize"></div>
-      </div>
-      <div class="win95-window">
-        <div class="win95-titlebar">
-          <span><span class="title-icon">&#9881;</span> backend.exe</span>
-          <div class="win95-buttons"><div class="win95-btn">_</div><div class="win95-btn">&#9633;</div><div class="win95-btn">X</div></div>
-        </div>
-        <div class="win95-menubar"><span>File</span><span>Edit</span><span>View</span><span>Help</span></div>
-        <div class="win95-body">
-          <div class="skill-name">Backend Dev</div>
-          <div class="skill-bar-container"><div class="skill-bar" data-width="80"></div></div>
-          <div class="skill-level">Node.js / Python / APIs</div>
-          <div class="skill-desc">Designing scalable server architectures with RESTful and GraphQL API endpoints.</div>
-        </div>
-        <div class="win95-statusbar"><span class="status-section">Ready</span><span class="status-section">80%</span></div>
-        <div class="win95-resize"></div>
-      </div>
-      <div class="win95-window">
-        <div class="win95-titlebar">
-          <span><span class="title-icon">&#10024;</span> creative.exe</span>
-          <div class="win95-buttons"><div class="win95-btn">_</div><div class="win95-btn">&#9633;</div><div class="win95-btn">X</div></div>
-        </div>
-        <div class="win95-menubar"><span>File</span><span>Edit</span><span>View</span><span>Help</span></div>
-        <div class="win95-body">
-          <div class="skill-name">Creative Coding</div>
-          <div class="skill-bar-container"><div class="skill-bar" data-width="85"></div></div>
-          <div class="skill-level">Canvas / WebGL / GSAP</div>
-          <div class="skill-desc">Crafting immersive visual experiences with generative art and animation libraries.</div>
-        </div>
-        <div class="win95-statusbar"><span class="status-section">Ready</span><span class="status-section">85%</span></div>
-        <div class="win95-resize"></div>
-      </div>
-      <div class="win95-window">
-        <div class="win95-titlebar">
-          <span><span class="title-icon">&#128241;</span> mobile.exe</span>
-          <div class="win95-buttons"><div class="win95-btn">_</div><div class="win95-btn">&#9633;</div><div class="win95-btn">X</div></div>
-        </div>
-        <div class="win95-menubar"><span>File</span><span>Edit</span><span>View</span><span>Help</span></div>
-        <div class="win95-body">
-          <div class="skill-name">Mobile Dev</div>
-          <div class="skill-bar-container"><div class="skill-bar" data-width="78"></div></div>
-          <div class="skill-level">React Native / Flutter</div>
-          <div class="skill-desc">Developing cross-platform mobile applications with native-like performance.</div>
-        </div>
-        <div class="win95-statusbar"><span class="status-section">Ready</span><span class="status-section">78%</span></div>
-        <div class="win95-resize"></div>
-      </div>
-      <div class="win95-window">
-        <div class="win95-titlebar">
-          <span><span class="title-icon">&#9729;</span> devops.exe</span>
-          <div class="win95-buttons"><div class="win95-btn">_</div><div class="win95-btn">&#9633;</div><div class="win95-btn">X</div></div>
-        </div>
-        <div class="win95-menubar"><span>File</span><span>Edit</span><span>View</span><span>Help</span></div>
-        <div class="win95-body">
-          <div class="skill-name">DevOps</div>
-          <div class="skill-bar-container"><div class="skill-bar" data-width="75"></div></div>
-          <div class="skill-level">Docker / CI/CD / AWS</div>
-          <div class="skill-desc">Automating deployment pipelines and managing cloud infrastructure at scale.</div>
-        </div>
-        <div class="win95-statusbar"><span class="status-section">Ready</span><span class="status-section">75%</span></div>
-        <div class="win95-resize"></div>
-      </div>
+    <div class="trunk"></div>
+  </div>
+  <div class="palm palm-right">
+    <div class="leaves">
+      <div class="leaf"></div>
+      <div class="leaf"></div>
+      <div class="leaf"></div>
+      <div class="leaf"></div>
     </div>
-  </section>
+    <div class="trunk"></div>
+  </div>
 
-  <!-- Projects -->
-  <section class="section" id="projects">
-    <h2 class="section-title" data-i18n="projects_label">Projects</h2>
-    <div class="projects-grid">
-      <div class="win95-window project-window">
-        <div class="win95-titlebar">
-          <span><span class="title-icon">&#128193;</span> project_01.exe</span>
-          <div class="win95-buttons"><div class="win95-btn">_</div><div class="win95-btn">&#9633;</div><div class="win95-btn">X</div></div>
-        </div>
-        <div class="win95-menubar"><span>File</span><span>Edit</span><span>View</span><span>Help</span></div>
-        <div class="win95-body">
-          <div class="project-preview"><span class="project-preview-text">01</span></div>
-          <div class="project-title" data-i18n="project1_title">E-Commerce Platform</div>
-          <div class="project-tech">React / Node.js / PostgreSQL</div>
-          <div class="project-desc" data-i18n="project1_desc">Full-stack e-commerce solution with real-time inventory management, payment processing, and an admin dashboard.</div>
-          <div class="project-links">
-            <a href="#" class="project-link-btn">View Demo</a>
-            <a href="#" class="project-link-btn">Source</a>
+  <div class="cassette-deco">
+    <div class="tape-label">SIDE A // PORTFOLIO MIX</div>
+    <div class="tape-reels">
+      <div class="cassette-reel"></div>
+      <div class="cassette-reel"></div>
+    </div>
+    <div>C-90 // CHROME // DOLBY NR</div>
+  </div>
+
+  <nav class="nav">
+    <div class="nav-left">
+      <a href="../index.html" class="gallery-link" data-i18n="gallery_link">&#8592; Gallery</a>
+    </div>
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en" onclick="setLanguage('en')">EN</button>
+      <button class="lang-btn" data-lang="ko" onclick="setLanguage('ko')">&#54620;&#44397;&#50612;</button>
+      <button class="lang-btn" data-lang="ja" onclick="setLanguage('ja')">&#26085;&#26412;&#35486;</button>
+      <button class="lang-btn" data-lang="zh" onclick="setLanguage('zh')">&#20013;&#25991;</button>
+    </div>
+  </nav>
+
+  <div class="content">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-japanese">&#12487;&#12472;&#12479;&#12523; &#12489;&#12522;&#12540;&#12512;</div>
+      <h1 class="hero-title" data-text="Your Name" data-i18n="name">Your Name</h1>
+      <p class="hero-subtitle" data-i18n="title">Creative Developer &amp; Designer</p>
+      <div class="hero-deco">&#9650; &#9679; &#9632; &#9670; &#9651; &#9675;</div>
+      <div class="hero-japanese">&#26410;&#26469;&#12398;&#32654;&#23398; &bull; &#12487;&#12472;&#12479;&#12523;&#12450;&#12540;&#12488;</div>
+      <div class="hero-timestamp" id="heroTimestamp">BOOT SEQUENCE INITIATED...</div>
+    </section>
+
+    <!-- About -->
+    <section class="section" id="about">
+      <h2 class="section-title" data-i18n="about_label">About</h2>
+      <div class="about-content">
+        <p class="about-text" data-i18n="about_text">A creative developer crafting digital experiences at the intersection of design and technology. Building beautiful and functional products through clean code and thoughtful interfaces.</p>
+        <div class="about-stats">
+          <div class="stat-item">
+            <span class="stat-value" data-count="5">0</span>
+            <span class="stat-label" data-i18n="stat_years">Years Exp</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value" data-count="50">0</span>
+            <span class="stat-label" data-i18n="stat_projects">Projects</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value" data-count="30">0</span>
+            <span class="stat-label" data-i18n="stat_clients">Clients</span>
           </div>
         </div>
-        <div class="win95-statusbar"><span class="status-section" data-i18n="project_status_complete">Completed</span><span class="status-section">2024</span></div>
-        <div class="win95-resize"></div>
       </div>
-      <div class="win95-window project-window">
-        <div class="win95-titlebar">
-          <span><span class="title-icon">&#128193;</span> project_02.exe</span>
-          <div class="win95-buttons"><div class="win95-btn">_</div><div class="win95-btn">&#9633;</div><div class="win95-btn">X</div></div>
-        </div>
-        <div class="win95-menubar"><span>File</span><span>Edit</span><span>View</span><span>Help</span></div>
-        <div class="win95-body">
-          <div class="project-preview"><span class="project-preview-text">02</span></div>
-          <div class="project-title" data-i18n="project2_title">Creative Portfolio</div>
-          <div class="project-tech">Three.js / GSAP / WebGL</div>
-          <div class="project-desc" data-i18n="project2_desc">An interactive 3D portfolio featuring custom shaders, physics-based animations, and immersive storytelling elements.</div>
-          <div class="project-links">
-            <a href="#" class="project-link-btn">View Demo</a>
-            <a href="#" class="project-link-btn">Source</a>
+    </section>
+
+    <!-- Skills -->
+    <section class="section" id="skills">
+      <h2 class="section-title" data-i18n="skills_label">Expertise</h2>
+      <div class="skills-grid">
+        <div class="win95-window">
+          <div class="win95-titlebar">
+            <span><span class="title-icon">&#128190;</span> frontend.exe</span>
+            <div class="win95-buttons">
+              <div class="win95-btn">_</div>
+              <div class="win95-btn">&#9633;</div>
+              <div class="win95-btn">X</div>
+            </div>
           </div>
-        </div>
-        <div class="win95-statusbar"><span class="status-section" data-i18n="project_status_complete">Completed</span><span class="status-section">2024</span></div>
-        <div class="win95-resize"></div>
-      </div>
-      <div class="win95-window project-window">
-        <div class="win95-titlebar">
-          <span><span class="title-icon">&#128193;</span> project_03.exe</span>
-          <div class="win95-buttons"><div class="win95-btn">_</div><div class="win95-btn">&#9633;</div><div class="win95-btn">X</div></div>
-        </div>
-        <div class="win95-menubar"><span>File</span><span>Edit</span><span>View</span><span>Help</span></div>
-        <div class="win95-body">
-          <div class="project-preview"><span class="project-preview-text">03</span></div>
-          <div class="project-title" data-i18n="project3_title">AI Dashboard</div>
-          <div class="project-tech">Python / FastAPI / React</div>
-          <div class="project-desc" data-i18n="project3_desc">Machine learning analytics dashboard with real-time data visualization, model training pipelines, and predictive insights.</div>
-          <div class="project-links">
-            <a href="#" class="project-link-btn">View Demo</a>
-            <a href="#" class="project-link-btn">Source</a>
+          <div class="win95-menubar">
+            <span>File</span>
+            <span>Edit</span>
+            <span>View</span>
+            <span>Help</span>
           </div>
-        </div>
-        <div class="win95-statusbar"><span class="status-section" data-i18n="project_status_complete">Completed</span><span class="status-section">2023</span></div>
-        <div class="win95-resize"></div>
-      </div>
-      <div class="win95-window project-window">
-        <div class="win95-titlebar">
-          <span><span class="title-icon">&#128193;</span> project_04.exe</span>
-          <div class="win95-buttons"><div class="win95-btn">_</div><div class="win95-btn">&#9633;</div><div class="win95-btn">X</div></div>
-        </div>
-        <div class="win95-menubar"><span>File</span><span>Edit</span><span>View</span><span>Help</span></div>
-        <div class="win95-body">
-          <div class="project-preview"><span class="project-preview-text">04</span></div>
-          <div class="project-title" data-i18n="project4_title">Mobile Fitness App</div>
-          <div class="project-tech">React Native / Firebase / Redux</div>
-          <div class="project-desc" data-i18n="project4_desc">Cross-platform fitness tracking app with workout plans, progress charts, social features, and wearable device integration.</div>
-          <div class="project-links">
-            <a href="#" class="project-link-btn">View Demo</a>
-            <a href="#" class="project-link-btn">Source</a>
+          <div class="win95-body">
+            <div class="skill-name">Frontend Dev</div>
+            <div class="skill-bar-container">
+              <div class="skill-bar" data-width="92"></div>
+            </div>
+            <div class="skill-level">React / Vue / TypeScript</div>
+            <div class="skill-desc">Building responsive, performant web interfaces with modern frameworks and tooling.</div>
           </div>
+          <div class="win95-statusbar">
+            <span class="status-section">Ready</span>
+            <span class="status-section">92%</span>
+          </div>
+          <div class="win95-resize"></div>
         </div>
-        <div class="win95-statusbar"><span class="status-section" data-i18n="project_status_complete">Completed</span><span class="status-section">2023</span></div>
-        <div class="win95-resize"></div>
+
+        <div class="win95-window">
+          <div class="win95-titlebar">
+            <span><span class="title-icon">&#127912;</span> design.exe</span>
+            <div class="win95-buttons">
+              <div class="win95-btn">_</div>
+              <div class="win95-btn">&#9633;</div>
+              <div class="win95-btn">X</div>
+            </div>
+          </div>
+          <div class="win95-menubar">
+            <span>File</span>
+            <span>Edit</span>
+            <span>View</span>
+            <span>Help</span>
+          </div>
+          <div class="win95-body">
+            <div class="skill-name">UI/UX Design</div>
+            <div class="skill-bar-container">
+              <div class="skill-bar" data-width="88"></div>
+            </div>
+            <div class="skill-level">Figma / Prototyping</div>
+            <div class="skill-desc">Creating intuitive user experiences with pixel-perfect designs and interactive prototypes.</div>
+          </div>
+          <div class="win95-statusbar">
+            <span class="status-section">Ready</span>
+            <span class="status-section">88%</span>
+          </div>
+          <div class="win95-resize"></div>
+        </div>
+
+        <div class="win95-window">
+          <div class="win95-titlebar">
+            <span><span class="title-icon">&#9881;</span> backend.exe</span>
+            <div class="win95-buttons">
+              <div class="win95-btn">_</div>
+              <div class="win95-btn">&#9633;</div>
+              <div class="win95-btn">X</div>
+            </div>
+          </div>
+          <div class="win95-menubar">
+            <span>File</span>
+            <span>Edit</span>
+            <span>View</span>
+            <span>Help</span>
+          </div>
+          <div class="win95-body">
+            <div class="skill-name">Backend Dev</div>
+            <div class="skill-bar-container">
+              <div class="skill-bar" data-width="80"></div>
+            </div>
+            <div class="skill-level">Node.js / Python / APIs</div>
+            <div class="skill-desc">Designing scalable server architectures with RESTful and GraphQL API endpoints.</div>
+          </div>
+          <div class="win95-statusbar">
+            <span class="status-section">Ready</span>
+            <span class="status-section">80%</span>
+          </div>
+          <div class="win95-resize"></div>
+        </div>
+
+        <div class="win95-window">
+          <div class="win95-titlebar">
+            <span><span class="title-icon">&#10024;</span> creative.exe</span>
+            <div class="win95-buttons">
+              <div class="win95-btn">_</div>
+              <div class="win95-btn">&#9633;</div>
+              <div class="win95-btn">X</div>
+            </div>
+          </div>
+          <div class="win95-menubar">
+            <span>File</span>
+            <span>Edit</span>
+            <span>View</span>
+            <span>Help</span>
+          </div>
+          <div class="win95-body">
+            <div class="skill-name">Creative Coding</div>
+            <div class="skill-bar-container">
+              <div class="skill-bar" data-width="85"></div>
+            </div>
+            <div class="skill-level">Canvas / WebGL / GSAP</div>
+            <div class="skill-desc">Crafting immersive visual experiences with generative art and animation libraries.</div>
+          </div>
+          <div class="win95-statusbar">
+            <span class="status-section">Ready</span>
+            <span class="status-section">85%</span>
+          </div>
+          <div class="win95-resize"></div>
+        </div>
+
+        <div class="win95-window">
+          <div class="win95-titlebar">
+            <span><span class="title-icon">&#128241;</span> mobile.exe</span>
+            <div class="win95-buttons">
+              <div class="win95-btn">_</div>
+              <div class="win95-btn">&#9633;</div>
+              <div class="win95-btn">X</div>
+            </div>
+          </div>
+          <div class="win95-menubar">
+            <span>File</span>
+            <span>Edit</span>
+            <span>View</span>
+            <span>Help</span>
+          </div>
+          <div class="win95-body">
+            <div class="skill-name">Mobile Dev</div>
+            <div class="skill-bar-container">
+              <div class="skill-bar" data-width="78"></div>
+            </div>
+            <div class="skill-level">React Native / Flutter</div>
+            <div class="skill-desc">Developing cross-platform mobile applications with native-like performance.</div>
+          </div>
+          <div class="win95-statusbar">
+            <span class="status-section">Ready</span>
+            <span class="status-section">78%</span>
+          </div>
+          <div class="win95-resize"></div>
+        </div>
+
+        <div class="win95-window">
+          <div class="win95-titlebar">
+            <span><span class="title-icon">&#9729;</span> devops.exe</span>
+            <div class="win95-buttons">
+              <div class="win95-btn">_</div>
+              <div class="win95-btn">&#9633;</div>
+              <div class="win95-btn">X</div>
+            </div>
+          </div>
+          <div class="win95-menubar">
+            <span>File</span>
+            <span>Edit</span>
+            <span>View</span>
+            <span>Help</span>
+          </div>
+          <div class="win95-body">
+            <div class="skill-name">DevOps</div>
+            <div class="skill-bar-container">
+              <div class="skill-bar" data-width="75"></div>
+            </div>
+            <div class="skill-level">Docker / CI/CD / AWS</div>
+            <div class="skill-desc">Automating deployment pipelines and managing cloud infrastructure at scale.</div>
+          </div>
+          <div class="win95-statusbar">
+            <span class="status-section">Ready</span>
+            <span class="status-section">75%</span>
+          </div>
+          <div class="win95-resize"></div>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Contact -->
-  <section class="section" id="contact">
-    <h2 class="section-title" data-i18n="contact_label">Get in Touch</h2>
-    <div class="contact-box">
-      <h3 class="contact-heading" data-i18n="contact_heading">Let's Work Together</h3>
-      <p class="contact-sub" data-i18n="contact_sub">Available for freelance projects</p>
-      <div class="contact-links">
-        <a href="mailto:hello@example.com" class="contact-link">EMAIL.exe</a>
-        <a href="#" class="contact-link">GITHUB.exe</a>
-        <a href="#" class="contact-link">LINKEDIN.exe</a>
-        <a href="#" class="contact-link">TWITTER.exe</a>
+    <!-- Projects -->
+    <section class="section" id="projects">
+      <h2 class="section-title" data-i18n="projects_label">Projects</h2>
+      <div class="projects-grid">
+        <div class="win95-window project-window">
+          <div class="win95-titlebar">
+            <span><span class="title-icon">&#128193;</span> project_01.exe</span>
+            <div class="win95-buttons">
+              <div class="win95-btn">_</div>
+              <div class="win95-btn">&#9633;</div>
+              <div class="win95-btn">X</div>
+            </div>
+          </div>
+          <div class="win95-menubar">
+            <span>File</span>
+            <span>Edit</span>
+            <span>View</span>
+            <span>Help</span>
+          </div>
+          <div class="win95-body">
+            <div class="project-preview">
+              <span class="project-preview-text">01</span>
+            </div>
+            <div class="project-title" data-i18n="project1_title">E-Commerce Platform</div>
+            <div class="project-tech">React / Node.js / PostgreSQL</div>
+            <div class="project-desc" data-i18n="project1_desc">Full-stack e-commerce solution with real-time inventory management, payment processing, and an admin dashboard.</div>
+            <div class="project-links">
+              <a href="#" class="project-link-btn">View Demo</a>
+              <a href="#" class="project-link-btn">Source</a>
+            </div>
+          </div>
+          <div class="win95-statusbar">
+            <span class="status-section" data-i18n="project_status_complete">Completed</span>
+            <span class="status-section">2024</span>
+          </div>
+          <div class="win95-resize"></div>
+        </div>
+
+        <div class="win95-window project-window">
+          <div class="win95-titlebar">
+            <span><span class="title-icon">&#128193;</span> project_02.exe</span>
+            <div class="win95-buttons">
+              <div class="win95-btn">_</div>
+              <div class="win95-btn">&#9633;</div>
+              <div class="win95-btn">X</div>
+            </div>
+          </div>
+          <div class="win95-menubar">
+            <span>File</span>
+            <span>Edit</span>
+            <span>View</span>
+            <span>Help</span>
+          </div>
+          <div class="win95-body">
+            <div class="project-preview">
+              <span class="project-preview-text">02</span>
+            </div>
+            <div class="project-title" data-i18n="project2_title">Creative Portfolio</div>
+            <div class="project-tech">Three.js / GSAP / WebGL</div>
+            <div class="project-desc" data-i18n="project2_desc">An interactive 3D portfolio featuring custom shaders, physics-based animations, and immersive storytelling elements.</div>
+            <div class="project-links">
+              <a href="#" class="project-link-btn">View Demo</a>
+              <a href="#" class="project-link-btn">Source</a>
+            </div>
+          </div>
+          <div class="win95-statusbar">
+            <span class="status-section" data-i18n="project_status_complete">Completed</span>
+            <span class="status-section">2024</span>
+          </div>
+          <div class="win95-resize"></div>
+        </div>
+
+        <div class="win95-window project-window">
+          <div class="win95-titlebar">
+            <span><span class="title-icon">&#128193;</span> project_03.exe</span>
+            <div class="win95-buttons">
+              <div class="win95-btn">_</div>
+              <div class="win95-btn">&#9633;</div>
+              <div class="win95-btn">X</div>
+            </div>
+          </div>
+          <div class="win95-menubar">
+            <span>File</span>
+            <span>Edit</span>
+            <span>View</span>
+            <span>Help</span>
+          </div>
+          <div class="win95-body">
+            <div class="project-preview">
+              <span class="project-preview-text">03</span>
+            </div>
+            <div class="project-title" data-i18n="project3_title">AI Dashboard</div>
+            <div class="project-tech">Python / FastAPI / React</div>
+            <div class="project-desc" data-i18n="project3_desc">Machine learning analytics dashboard with real-time data visualization, model training pipelines, and predictive insights.</div>
+            <div class="project-links">
+              <a href="#" class="project-link-btn">View Demo</a>
+              <a href="#" class="project-link-btn">Source</a>
+            </div>
+          </div>
+          <div class="win95-statusbar">
+            <span class="status-section" data-i18n="project_status_complete">Completed</span>
+            <span class="status-section">2023</span>
+          </div>
+          <div class="win95-resize"></div>
+        </div>
+
+        <div class="win95-window project-window">
+          <div class="win95-titlebar">
+            <span><span class="title-icon">&#128193;</span> project_04.exe</span>
+            <div class="win95-buttons">
+              <div class="win95-btn">_</div>
+              <div class="win95-btn">&#9633;</div>
+              <div class="win95-btn">X</div>
+            </div>
+          </div>
+          <div class="win95-menubar">
+            <span>File</span>
+            <span>Edit</span>
+            <span>View</span>
+            <span>Help</span>
+          </div>
+          <div class="win95-body">
+            <div class="project-preview">
+              <span class="project-preview-text">04</span>
+            </div>
+            <div class="project-title" data-i18n="project4_title">Mobile Fitness App</div>
+            <div class="project-tech">React Native / Firebase / Redux</div>
+            <div class="project-desc" data-i18n="project4_desc">Cross-platform fitness tracking app with workout plans, progress charts, social features, and wearable device integration.</div>
+            <div class="project-links">
+              <a href="#" class="project-link-btn">View Demo</a>
+              <a href="#" class="project-link-btn">Source</a>
+            </div>
+          </div>
+          <div class="win95-statusbar">
+            <span class="status-section" data-i18n="project_status_complete">Completed</span>
+            <span class="status-section">2023</span>
+          </div>
+          <div class="win95-resize"></div>
+        </div>
       </div>
-    </div>
-  </section>
-</div>
+    </section>
 
-<footer class="footer">
-  <p>&copy; 2025 // PORTFOLIO v2.0 // ALL RIGHTS RESERVED</p>
-  <p class="footer-jp">&#26410;&#26469; &#12539; &#32654;&#23398; &#12539; &#22818;</p>
-</footer>
+    <!-- Contact -->
+    <section class="section" id="contact">
+      <h2 class="section-title" data-i18n="contact_label">Get in Touch</h2>
+      <div class="contact-box">
+        <h3 class="contact-heading" data-i18n="contact_heading">Let's Work Together</h3>
+        <p class="contact-sub" data-i18n="contact_sub">Available for freelance projects</p>
+        <div class="contact-links">
+          <a href="mailto:hello@example.com" class="contact-link">EMAIL.exe</a>
+          <a href="#" class="contact-link">GITHUB.exe</a>
+          <a href="#" class="contact-link">LINKEDIN.exe</a>
+          <a href="#" class="contact-link">TWITTER.exe</a>
+        </div>
+      </div>
+    </section>
+  </div>
 
-<script>
-/* ============================================
-   TRANSLATIONS
-   ============================================ */
-var TRANSLATIONS={
-  ko:{
-    name:'\uD64D\uAE38\uB3D9',
-    title:'\uD06C\uB9AC\uC5D0\uC774\uD2F0\uBE0C \uAC1C\uBC1C\uC790 & \uB514\uC790\uC774\uB108',
-    about_label:'\uC18C\uAC1C',
-    about_text:'\uB514\uC790\uC778\uACFC \uAE30\uC220\uC758 \uAD50\uCC28\uC810\uC5D0\uC11C \uB514\uC9C0\uD138 \uACBD\uD5D8\uC744 \uB9CC\uB4DC\uB294 \uD06C\uB9AC\uC5D0\uC774\uD2F0\uBE0C \uAC1C\uBC1C\uC790\uC785\uB2C8\uB2E4. \uAE54\uB054\uD55C \uCF54\uB4DC\uC640 \uC138\uC2EC\uD55C \uC778\uD130\uD398\uC774\uC2A4\uB97C \uD1B5\uD574 \uC544\uB984\uB2F5\uACE0 \uAE30\uB2A5\uC801\uC778 \uC81C\uD488\uC744 \uB9CC\uB4ED\uB2C8\uB2E4.',
-    skills_label:'\uC804\uBB38 \uBD84\uC57C',
-    projects_label:'\uD504\uB85C\uC81D\uD2B8',
-    project1_title:'E-\uCEE4\uBA38\uC2A4 \uD50C\uB7AB\uD3FC',
-    project1_desc:'\uC2E4\uC2DC\uAC04 \uC7AC\uACE0 \uAD00\uB9AC, \uACB0\uC81C \uCC98\uB9AC, \uAD00\uB9AC\uC790 \uB300\uC2DC\uBCF4\uB4DC\uB97C \uAC16\uCD98 \uD480\uC2A4\uD0DD \uC804\uC790\uC0C1\uAC70\uB798 \uC194\uB8E8\uC158.',
-    project2_title:'\uD06C\uB9AC\uC5D0\uC774\uD2F0\uBE0C \uD3EC\uD2B8\uD3F4\uB9AC\uC624',
-    project2_desc:'\uCEE4\uC2A4\uD140 \uC170\uC774\uB354, \uBB3C\uB9AC \uAE30\uBC18 \uC560\uB2C8\uBA54\uC774\uC158, \uBAB0\uC785\uD615 \uC2A4\uD1A0\uB9AC\uD154\uB9C1 \uC694\uC18C\uB97C \uD2B9\uC9D5\uC73C\uB85C \uD558\uB294 \uC778\uD130\uB799\uD2F0\uBE0C 3D \uD3EC\uD2B8\uD3F4\uB9AC\uC624.',
-    project3_title:'AI \uB300\uC2DC\uBCF4\uB4DC',
-    project3_desc:'\uC2E4\uC2DC\uAC04 \uB370\uC774\uD130 \uC2DC\uAC01\uD654, \uBAA8\uB378 \uD559\uC2B5 \uD30C\uC774\uD504\uB77C\uC778, \uC608\uCE21 \uC778\uC0AC\uC774\uD2B8\uB97C \uAC16\uCD98 \uBA38\uC2E0\uB7EC\uB2DD \uBD84\uC11D \uB300\uC2DC\uBCF4\uB4DC.',
-    project4_title:'\uBAA8\uBC14\uC77C \uD53C\uD2B8\uB2C8\uC2A4 \uC571',
-    project4_desc:'\uC6B4\uB3D9 \uACC4\uD68D, \uC9C4\uD589 \uCC28\uD2B8, \uC18C\uC15C \uAE30\uB2A5, \uC6E8\uC5B4\uB7EC\uBE14 \uAE30\uAE30 \uC5F0\uB3D9\uC744 \uAC16\uCD98 \uD06C\uB85C\uC2A4 \uD50C\uB7AB\uD3FC \uD53C\uD2B8\uB2C8\uC2A4 \uCD94\uC801 \uC571.',
-    project_status_complete:'\uC644\uB8CC',
-    stat_years:'\uACBD\uB825',
-    stat_projects:'\uD504\uB85C\uC81D\uD2B8',
-    stat_clients:'\uD074\uB77C\uC774\uC5B8\uD2B8',
-    contact_label:'\uC5F0\uB77D\uD558\uAE30',
-    contact_heading:'\uD568\uAED8 \uC77C\uD574\uC694',
-    contact_sub:'\uD504\uB9AC\uB79C\uC11C \uD504\uB85C\uC81D\uD2B8 \uAC00\uB2A5',
-    gallery_link:'\u2190 \uAC24\uB7EC\uB9AC'
-  },
-  en:{
-    name:'Your Name',
-    title:'Creative Developer & Designer',
-    about_label:'About',
-    about_text:'A creative developer crafting digital experiences at the intersection of design and technology. Building beautiful and functional products through clean code and thoughtful interfaces.',
-    skills_label:'Expertise',
-    projects_label:'Projects',
-    project1_title:'E-Commerce Platform',
-    project1_desc:'Full-stack e-commerce solution with real-time inventory management, payment processing, and an admin dashboard.',
-    project2_title:'Creative Portfolio',
-    project2_desc:'An interactive 3D portfolio featuring custom shaders, physics-based animations, and immersive storytelling elements.',
-    project3_title:'AI Dashboard',
-    project3_desc:'Machine learning analytics dashboard with real-time data visualization, model training pipelines, and predictive insights.',
-    project4_title:'Mobile Fitness App',
-    project4_desc:'Cross-platform fitness tracking app with workout plans, progress charts, social features, and wearable device integration.',
-    project_status_complete:'Completed',
-    stat_years:'Years Exp',
-    stat_projects:'Projects',
-    stat_clients:'Clients',
-    contact_label:'Get in Touch',
-    contact_heading:"Let's Work Together",
-    contact_sub:'Available for freelance projects',
-    gallery_link:'\u2190 Gallery'
-  },
-  ja:{
-    name:'\u3042\u306A\u305F\u306E\u540D\u524D',
-    title:'\u30AF\u30EA\u30A8\u30A4\u30C6\u30A3\u30D6\u30C7\u30D9\u30ED\u30C3\u30D1\u30FC & \u30C7\u30B6\u30A4\u30CA\u30FC',
-    about_label:'\u7D39\u4ECB',
-    about_text:'\u30C7\u30B6\u30A4\u30F3\u3068\u30C6\u30AF\u30CE\u30ED\u30B8\u30FC\u306E\u4EA4\u5DEE\u70B9\u3067\u30C7\u30B8\u30BF\u30EB\u4F53\u9A13\u3092\u751F\u307F\u51FA\u3059\u30AF\u30EA\u30A8\u30A4\u30C6\u30A3\u30D6\u30C7\u30D9\u30ED\u30C3\u30D1\u30FC\u3067\u3059\u3002\u30AF\u30EA\u30FC\u30F3\u306A\u30B3\u30FC\u30C9\u3068\u601D\u616E\u6DF1\u3044\u30A4\u30F3\u30BF\u30FC\u30D5\u30A7\u30FC\u30B9\u3067\u7F8E\u3057\u304F\u6A5F\u80FD\u7684\u306A\u88FD\u54C1\u3092\u69CB\u7BC9\u3057\u307E\u3059\u3002',
-    skills_label:'\u5C02\u9580\u5206\u91CE',
-    projects_label:'\u30D7\u30ED\u30B8\u30A7\u30AF\u30C8',
-    project1_title:'E\u30B3\u30DE\u30FC\u30B9\u30D7\u30E9\u30C3\u30C8\u30D5\u30A9\u30FC\u30E0',
-    project1_desc:'\u30EA\u30A2\u30EB\u30BF\u30A4\u30E0\u5728\u5EAB\u7BA1\u7406\u3001\u6C7A\u6E08\u51E6\u7406\u3001\u7BA1\u7406\u30C0\u30C3\u30B7\u30E5\u30DC\u30FC\u30C9\u3092\u5099\u3048\u305F\u30D5\u30EB\u30B9\u30BF\u30C3\u30AF\u96FB\u5B50\u5546\u53D6\u5F15\u30BD\u30EA\u30E5\u30FC\u30B7\u30E7\u30F3\u3002',
-    project2_title:'\u30AF\u30EA\u30A8\u30A4\u30C6\u30A3\u30D6\u30DD\u30FC\u30C8\u30D5\u30A9\u30EA\u30AA',
-    project2_desc:'\u30AB\u30B9\u30BF\u30E0\u30B7\u30A7\u30FC\u30C0\u30FC\u3001\u7269\u7406\u30D9\u30FC\u30B9\u306E\u30A2\u30CB\u30E1\u30FC\u30B7\u30E7\u30F3\u3001\u6CA1\u5165\u578B\u30B9\u30C8\u30FC\u30EA\u30FC\u30C6\u30EA\u30F3\u30B0\u8981\u7D20\u3092\u7279\u5FB4\u3068\u3059\u308B\u30A4\u30F3\u30BF\u30E9\u30AF\u30C6\u30A3\u30D63D\u30DD\u30FC\u30C8\u30D5\u30A9\u30EA\u30AA\u3002',
-    project3_title:'AI\u30C0\u30C3\u30B7\u30E5\u30DC\u30FC\u30C9',
-    project3_desc:'\u30EA\u30A2\u30EB\u30BF\u30A4\u30E0\u30C7\u30FC\u30BF\u53EF\u8996\u5316\u3001\u30E2\u30C7\u30EB\u30C8\u30EC\u30FC\u30CB\u30F3\u30B0\u30D1\u30A4\u30D7\u30E9\u30A4\u30F3\u3001\u4E88\u6E2C\u30A4\u30F3\u30B5\u30A4\u30C8\u3092\u5099\u3048\u305F\u6A5F\u68B0\u5B66\u7FD2\u5206\u6790\u30C0\u30C3\u30B7\u30E5\u30DC\u30FC\u30C9\u3002',
-    project4_title:'\u30E2\u30D0\u30A4\u30EB\u30D5\u30A3\u30C3\u30C8\u30CD\u30B9\u30A2\u30D7\u30EA',
-    project4_desc:'\u30EF\u30FC\u30AF\u30A2\u30A6\u30C8\u30D7\u30E9\u30F3\u3001\u9032\u6357\u30C1\u30E3\u30FC\u30C8\u3001\u30BD\u30FC\u30B7\u30E3\u30EB\u6A5F\u80FD\u3001\u30A6\u30A7\u30A2\u30E9\u30D6\u30EB\u30C7\u30D0\u30A4\u30B9\u9023\u643A\u3092\u5099\u3048\u305F\u30AF\u30ED\u30B9\u30D7\u30E9\u30C3\u30C8\u30D5\u30A9\u30FC\u30E0\u30D5\u30A3\u30C3\u30C8\u30CD\u30B9\u30C8\u30E9\u30C3\u30AD\u30F3\u30B0\u30A2\u30D7\u30EA\u3002',
-    project_status_complete:'\u5B8C\u4E86',
-    stat_years:'\u7D4C\u9A13\u5E74\u6570',
-    stat_projects:'\u30D7\u30ED\u30B8\u30A7\u30AF\u30C8',
-    stat_clients:'\u30AF\u30E9\u30A4\u30A2\u30F3\u30C8',
-    contact_label:'\u304A\u554F\u3044\u5408\u308F\u305B',
-    contact_heading:'\u4E00\u7DD2\u306B\u50CD\u304D\u307E\u3057\u3087\u3046',
-    contact_sub:'\u30D5\u30EA\u30FC\u30E9\u30F3\u30B9\u30D7\u30ED\u30B8\u30A7\u30AF\u30C8\u5BFE\u5FDC\u53EF\u80FD',
-    gallery_link:'\u2190 \u30AE\u30E3\u30E9\u30EA\u30FC'
-  },
-  zh:{
-    name:'\u4F60\u7684\u540D\u5B57',
-    title:'\u521B\u610F\u5F00\u53D1\u8005 & \u8BBE\u8BA1\u5E08',
-    about_label:'\u5173\u4E8E',
-    about_text:'\u5728\u8BBE\u8BA1\u4E0E\u6280\u672F\u7684\u4EA4\u6C47\u5904\u521B\u9020\u6570\u5B57\u4F53\u9A8C\u7684\u521B\u610F\u5F00\u53D1\u8005\u3002\u901A\u8FC7\u7B80\u6D01\u7684\u4EE3\u7801\u548C\u7CBE\u5FC3\u8BBE\u8BA1\u7684\u754C\u9762\uFF0C\u6784\u5EFA\u65E2\u7F8E\u89C2\u53C8\u5B9E\u7528\u7684\u4EA7\u54C1\u3002',
-    skills_label:'\u4E13\u4E1A\u9886\u57DF',
-    projects_label:'\u9879\u76EE',
-    project1_title:'\u7535\u5B50\u5546\u52A1\u5E73\u53F0',
-    project1_desc:'\u5177\u5907\u5B9E\u65F6\u5E93\u5B58\u7BA1\u7406\u3001\u652F\u4ED8\u5904\u7406\u548C\u7BA1\u7406\u540E\u53F0\u7684\u5168\u6808\u7535\u5B50\u5546\u52A1\u89E3\u51B3\u65B9\u6848\u3002',
-    project2_title:'\u521B\u610F\u4F5C\u54C1\u96C6',
-    project2_desc:'\u5177\u6709\u81EA\u5B9A\u4E49\u7740\u8272\u5668\u3001\u57FA\u4E8E\u7269\u7406\u7684\u52A8\u753B\u548C\u6C89\u6D78\u5F0F\u53D9\u4E8B\u5143\u7D20\u7684\u4EA4\u4E92\u5F0F3D\u4F5C\u54C1\u96C6\u3002',
-    project3_title:'AI\u4EEA\u8868\u76D8',
-    project3_desc:'\u5177\u5907\u5B9E\u65F6\u6570\u636E\u53EF\u89C6\u5316\u3001\u6A21\u578B\u8BAD\u7EC3\u7BA1\u9053\u548C\u9884\u6D4B\u6D1E\u5BDF\u7684\u673A\u5668\u5B66\u4E60\u5206\u6790\u4EEA\u8868\u76D8\u3002',
-    project4_title:'\u79FB\u52A8\u5065\u8EAB\u5E94\u7528',
-    project4_desc:'\u5177\u5907\u8BAD\u7EC3\u8BA1\u5212\u3001\u8FDB\u5EA6\u56FE\u8868\u3001\u793E\u4EA4\u529F\u80FD\u548C\u53EF\u7A7F\u6234\u8BBE\u5907\u96C6\u6210\u7684\u8DE8\u5E73\u53F0\u5065\u8EAB\u8FFD\u8E2A\u5E94\u7528\u3002',
-    project_status_complete:'\u5DF2\u5B8C\u6210',
-    stat_years:'\u7ECF\u9A8C',
-    stat_projects:'\u9879\u76EE',
-    stat_clients:'\u5BA2\u6237',
-    contact_label:'\u8054\u7CFB\u6211',
-    contact_heading:'\u4E00\u8D77\u5408\u4F5C\u5427',
-    contact_sub:'\u53EF\u63A5\u53D7\u81EA\u7531\u804C\u4E1A\u9879\u76EE',
-    gallery_link:'\u2190 \u753B\u5ECA'
-  }
-};
+  <footer class="footer">
+    <p>&copy; 2025 // PORTFOLIO v2.0 // ALL RIGHTS RESERVED</p>
+    <p class="footer-jp">&#26410;&#26469; &#12539; &#32654;&#23398; &#12539; &#22818;</p>
+  </footer>
 
-/* ============================================
-   LANGUAGE SWITCHER
-   ============================================ */
-function setLanguage(lang){
-  document.querySelectorAll('[data-i18n]').forEach(function(el){
-    var key=el.getAttribute('data-i18n');
-    if(TRANSLATIONS[lang]&&TRANSLATIONS[lang][key]){
-      el.textContent=TRANSLATIONS[lang][key];
-      if(el.hasAttribute('data-text'))el.setAttribute('data-text',TRANSLATIONS[lang][key]);
-    }
-  });
-  document.querySelectorAll('.lang-btn').forEach(function(btn){
-    btn.classList.toggle('active',btn.getAttribute('data-lang')===lang);
-  });
-  try{localStorage.setItem('preferred-lang',lang)}catch(e){}
-  document.documentElement.lang=lang==='ko'?'ko':lang==='ja'?'ja':lang==='zh'?'zh':'en';
-}
-(function(){
-  var params=new URLSearchParams(window.location.search);
-  var lang=params.get('lang')||(function(){try{return localStorage.getItem('preferred-lang')}catch(e){return null}})() ||'en';
-  if(lang!=='en')setLanguage(lang);
-  else document.querySelectorAll('.lang-btn').forEach(function(btn){btn.classList.toggle('active',btn.getAttribute('data-lang')==='en')});
-})();
-
-/* ============================================
-   SCROLL REVEAL (IntersectionObserver)
-   ============================================ */
-var sections=document.querySelectorAll('.section');
-var revealObserver=new IntersectionObserver(function(entries){
-  entries.forEach(function(entry){
-    if(entry.isIntersecting){
-      entry.target.classList.add('visible');
-      /* Animate skill bars when skills section appears */
-      if(entry.target.id==='skills'){
-        entry.target.querySelectorAll('.skill-bar').forEach(function(bar){
-          bar.style.width=bar.getAttribute('data-width')+'%';
-        });
+  <script>
+    /* ============================================
+       TRANSLATIONS
+       ============================================ */
+    var TRANSLATIONS = {
+      ko: {
+        name: '\uD64D\uAE38\uB3D9',
+        title: '\uD06C\uB9AC\uC5D0\uC774\uD2F0\uBE0C \uAC1C\uBC1C\uC790 & \uB514\uC790\uC774\uB108',
+        about_label: '\uC18C\uAC1C',
+        about_text: '\uB514\uC790\uC778\uACFC \uAE30\uC220\uC758 \uAD50\uCC28\uC810\uC5D0\uC11C \uB514\uC9C0\uD138 \uACBD\uD5D8\uC744 \uB9CC\uB4DC\uB294 \uD06C\uB9AC\uC5D0\uC774\uD2F0\uBE0C \uAC1C\uBC1C\uC790\uC785\uB2C8\uB2E4. \uAE54\uB054\uD55C \uCF54\uB4DC\uC640 \uC138\uC2EC\uD55C \uC778\uD130\uD398\uC774\uC2A4\uB97C \uD1B5\uD574 \uC544\uB984\uB2F5\uACE0 \uAE30\uB2A5\uC801\uC778 \uC81C\uD488\uC744 \uB9CC\uB4ED\uB2C8\uB2E4.',
+        skills_label: '\uC804\uBB38 \uBD84\uC57C',
+        projects_label: '\uD504\uB85C\uC81D\uD2B8',
+        project1_title: 'E-\uCEE4\uBA38\uC2A4 \uD50C\uB7AB\uD3FC',
+        project1_desc: '\uC2E4\uC2DC\uAC04 \uC7AC\uACE0 \uAD00\uB9AC, \uACB0\uC81C \uCC98\uB9AC, \uAD00\uB9AC\uC790 \uB300\uC2DC\uBCF4\uB4DC\uB97C \uAC16\uCD98 \uD480\uC2A4\uD0DD \uC804\uC790\uC0C1\uAC70\uB798 \uC194\uB8E8\uC158.',
+        project2_title: '\uD06C\uB9AC\uC5D0\uC774\uD2F0\uBE0C \uD3EC\uD2B8\uD3F4\uB9AC\uC624',
+        project2_desc: '\uCEE4\uC2A4\uD140 \uC170\uC774\uB354, \uBB3C\uB9AC \uAE30\uBC18 \uC560\uB2C8\uBA54\uC774\uC158, \uBAB0\uC785\uD615 \uC2A4\uD1A0\uB9AC\uD154\uB9C1 \uC694\uC18C\uB97C \uD2B9\uC9D5\uC73C\uB85C \uD558\uB294 \uC778\uD130\uB799\uD2F0\uBE0C 3D \uD3EC\uD2B8\uD3F4\uB9AC\uC624.',
+        project3_title: 'AI \uB300\uC2DC\uBCF4\uB4DC',
+        project3_desc: '\uC2E4\uC2DC\uAC04 \uB370\uC774\uD130 \uC2DC\uAC01\uD654, \uBAA8\uB378 \uD559\uC2B5 \uD30C\uC774\uD504\uB77C\uC778, \uC608\uCE21 \uC778\uC0AC\uC774\uD2B8\uB97C \uAC16\uCD98 \uBA38\uC2E0\uB7EC\uB2DD \uBD84\uC11D \uB300\uC2DC\uBCF4\uB4DC.',
+        project4_title: '\uBAA8\uBC14\uC77C \uD53C\uD2B8\uB2C8\uC2A4 \uC571',
+        project4_desc: '\uC6B4\uB3D9 \uACC4\uD68D, \uC9C4\uD589 \uCC28\uD2B8, \uC18C\uC15C \uAE30\uB2A5, \uC6E8\uC5B4\uB7EC\uBE14 \uAE30\uAE30 \uC5F0\uB3D9\uC744 \uAC16\uCD98 \uD06C\uB85C\uC2A4 \uD50C\uB7AB\uD3FC \uD53C\uD2B8\uB2C8\uC2A4 \uCD94\uC801 \uC571.',
+        project_status_complete: '\uC644\uB8CC',
+        stat_years: '\uACBD\uB825',
+        stat_projects: '\uD504\uB85C\uC81D\uD2B8',
+        stat_clients: '\uD074\uB77C\uC774\uC5B8\uD2B8',
+        contact_label: '\uC5F0\uB77D\uD558\uAE30',
+        contact_heading: '\uD568\uAED8 \uC77C\uD574\uC694',
+        contact_sub: '\uD504\uB9AC\uB79C\uC11C \uD504\uB85C\uC81D\uD2B8 \uAC00\uB2A5',
+        gallery_link: '\u2190 \uAC24\uB7EC\uB9AC'
+      },
+      en: {
+        name: 'Your Name',
+        title: 'Creative Developer & Designer',
+        about_label: 'About',
+        about_text: 'A creative developer crafting digital experiences at the intersection of design and technology. Building beautiful and functional products through clean code and thoughtful interfaces.',
+        skills_label: 'Expertise',
+        projects_label: 'Projects',
+        project1_title: 'E-Commerce Platform',
+        project1_desc: 'Full-stack e-commerce solution with real-time inventory management, payment processing, and an admin dashboard.',
+        project2_title: 'Creative Portfolio',
+        project2_desc: 'An interactive 3D portfolio featuring custom shaders, physics-based animations, and immersive storytelling elements.',
+        project3_title: 'AI Dashboard',
+        project3_desc: 'Machine learning analytics dashboard with real-time data visualization, model training pipelines, and predictive insights.',
+        project4_title: 'Mobile Fitness App',
+        project4_desc: 'Cross-platform fitness tracking app with workout plans, progress charts, social features, and wearable device integration.',
+        project_status_complete: 'Completed',
+        stat_years: 'Years Exp',
+        stat_projects: 'Projects',
+        stat_clients: 'Clients',
+        contact_label: 'Get in Touch',
+        contact_heading: "Let's Work Together",
+        contact_sub: 'Available for freelance projects',
+        gallery_link: '\u2190 Gallery'
+      },
+      ja: {
+        name: '\u3042\u306A\u305F\u306E\u540D\u524D',
+        title: '\u30AF\u30EA\u30A8\u30A4\u30C6\u30A3\u30D6\u30C7\u30D9\u30ED\u30C3\u30D1\u30FC & \u30C7\u30B6\u30A4\u30CA\u30FC',
+        about_label: '\u7D39\u4ECB',
+        about_text: '\u30C7\u30B6\u30A4\u30F3\u3068\u30C6\u30AF\u30CE\u30ED\u30B8\u30FC\u306E\u4EA4\u5DEE\u70B9\u3067\u30C7\u30B8\u30BF\u30EB\u4F53\u9A13\u3092\u751F\u307F\u51FA\u3059\u30AF\u30EA\u30A8\u30A4\u30C6\u30A3\u30D6\u30C7\u30D9\u30ED\u30C3\u30D1\u30FC\u3067\u3059\u3002\u30AF\u30EA\u30FC\u30F3\u306A\u30B3\u30FC\u30C9\u3068\u601D\u616E\u6DF1\u3044\u30A4\u30F3\u30BF\u30FC\u30D5\u30A7\u30FC\u30B9\u3067\u7F8E\u3057\u304F\u6A5F\u80FD\u7684\u306A\u88FD\u54C1\u3092\u69CB\u7BC9\u3057\u307E\u3059\u3002',
+        skills_label: '\u5C02\u9580\u5206\u91CE',
+        projects_label: '\u30D7\u30ED\u30B8\u30A7\u30AF\u30C8',
+        project1_title: 'E\u30B3\u30DE\u30FC\u30B9\u30D7\u30E9\u30C3\u30C8\u30D5\u30A9\u30FC\u30E0',
+        project1_desc: '\u30EA\u30A2\u30EB\u30BF\u30A4\u30E0\u5728\u5EAB\u7BA1\u7406\u3001\u6C7A\u6E08\u51E6\u7406\u3001\u7BA1\u7406\u30C0\u30C3\u30B7\u30E5\u30DC\u30FC\u30C9\u3092\u5099\u3048\u305F\u30D5\u30EB\u30B9\u30BF\u30C3\u30AF\u96FB\u5B50\u5546\u53D6\u5F15\u30BD\u30EA\u30E5\u30FC\u30B7\u30E7\u30F3\u3002',
+        project2_title: '\u30AF\u30EA\u30A8\u30A4\u30C6\u30A3\u30D6\u30DD\u30FC\u30C8\u30D5\u30A9\u30EA\u30AA',
+        project2_desc: '\u30AB\u30B9\u30BF\u30E0\u30B7\u30A7\u30FC\u30C0\u30FC\u3001\u7269\u7406\u30D9\u30FC\u30B9\u306E\u30A2\u30CB\u30E1\u30FC\u30B7\u30E7\u30F3\u3001\u6CA1\u5165\u578B\u30B9\u30C8\u30FC\u30EA\u30FC\u30C6\u30EA\u30F3\u30B0\u8981\u7D20\u3092\u7279\u5FB4\u3068\u3059\u308B\u30A4\u30F3\u30BF\u30E9\u30AF\u30C6\u30A3\u30D63D\u30DD\u30FC\u30C8\u30D5\u30A9\u30EA\u30AA\u3002',
+        project3_title: 'AI\u30C0\u30C3\u30B7\u30E5\u30DC\u30FC\u30C9',
+        project3_desc: '\u30EA\u30A2\u30EB\u30BF\u30A4\u30E0\u30C7\u30FC\u30BF\u53EF\u8996\u5316\u3001\u30E2\u30C7\u30EB\u30C8\u30EC\u30FC\u30CB\u30F3\u30B0\u30D1\u30A4\u30D7\u30E9\u30A4\u30F3\u3001\u4E88\u6E2C\u30A4\u30F3\u30B5\u30A4\u30C8\u3092\u5099\u3048\u305F\u6A5F\u68B0\u5B66\u7FD2\u5206\u6790\u30C0\u30C3\u30B7\u30E5\u30DC\u30FC\u30C9\u3002',
+        project4_title: '\u30E2\u30D0\u30A4\u30EB\u30D5\u30A3\u30C3\u30C8\u30CD\u30B9\u30A2\u30D7\u30EA',
+        project4_desc: '\u30EF\u30FC\u30AF\u30A2\u30A6\u30C8\u30D7\u30E9\u30F3\u3001\u9032\u6357\u30C1\u30E3\u30FC\u30C8\u3001\u30BD\u30FC\u30B7\u30E3\u30EB\u6A5F\u80FD\u3001\u30A6\u30A7\u30A2\u30E9\u30D6\u30EB\u30C7\u30D0\u30A4\u30B9\u9023\u643A\u3092\u5099\u3048\u305F\u30AF\u30ED\u30B9\u30D7\u30E9\u30C3\u30C8\u30D5\u30A9\u30FC\u30E0\u30D5\u30A3\u30C3\u30C8\u30CD\u30B9\u30C8\u30E9\u30C3\u30AD\u30F3\u30B0\u30A2\u30D7\u30EA\u3002',
+        project_status_complete: '\u5B8C\u4E86',
+        stat_years: '\u7D4C\u9A13\u5E74\u6570',
+        stat_projects: '\u30D7\u30ED\u30B8\u30A7\u30AF\u30C8',
+        stat_clients: '\u30AF\u30E9\u30A4\u30A2\u30F3\u30C8',
+        contact_label: '\u304A\u554F\u3044\u5408\u308F\u305B',
+        contact_heading: '\u4E00\u7DD2\u306B\u50CD\u304D\u307E\u3057\u3087\u3046',
+        contact_sub: '\u30D5\u30EA\u30FC\u30E9\u30F3\u30B9\u30D7\u30ED\u30B8\u30A7\u30AF\u30C8\u5BFE\u5FDC\u53EF\u80FD',
+        gallery_link: '\u2190 \u30AE\u30E3\u30E9\u30EA\u30FC'
+      },
+      zh: {
+        name: '\u4F60\u7684\u540D\u5B57',
+        title: '\u521B\u610F\u5F00\u53D1\u8005 & \u8BBE\u8BA1\u5E08',
+        about_label: '\u5173\u4E8E',
+        about_text: '\u5728\u8BBE\u8BA1\u4E0E\u6280\u672F\u7684\u4EA4\u6C47\u5904\u521B\u9020\u6570\u5B57\u4F53\u9A8C\u7684\u521B\u610F\u5F00\u53D1\u8005\u3002\u901A\u8FC7\u7B80\u6D01\u7684\u4EE3\u7801\u548C\u7CBE\u5FC3\u8BBE\u8BA1\u7684\u754C\u9762\uFF0C\u6784\u5EFA\u65E2\u7F8E\u89C2\u53C8\u5B9E\u7528\u7684\u4EA7\u54C1\u3002',
+        skills_label: '\u4E13\u4E1A\u9886\u57DF',
+        projects_label: '\u9879\u76EE',
+        project1_title: '\u7535\u5B50\u5546\u52A1\u5E73\u53F0',
+        project1_desc: '\u5177\u5907\u5B9E\u65F6\u5E93\u5B58\u7BA1\u7406\u3001\u652F\u4ED8\u5904\u7406\u548C\u7BA1\u7406\u540E\u53F0\u7684\u5168\u6808\u7535\u5B50\u5546\u52A1\u89E3\u51B3\u65B9\u6848\u3002',
+        project2_title: '\u521B\u610F\u4F5C\u54C1\u96C6',
+        project2_desc: '\u5177\u6709\u81EA\u5B9A\u4E49\u7740\u8272\u5668\u3001\u57FA\u4E8E\u7269\u7406\u7684\u52A8\u753B\u548C\u6C89\u6D78\u5F0F\u53D9\u4E8B\u5143\u7D20\u7684\u4EA4\u4E92\u5F0F3D\u4F5C\u54C1\u96C6\u3002',
+        project3_title: 'AI\u4EEA\u8868\u76D8',
+        project3_desc: '\u5177\u5907\u5B9E\u65F6\u6570\u636E\u53EF\u89C6\u5316\u3001\u6A21\u578B\u8BAD\u7EC3\u7BA1\u9053\u548C\u9884\u6D4B\u6D1E\u5BDF\u7684\u673A\u5668\u5B66\u4E60\u5206\u6790\u4EEA\u8868\u76D8\u3002',
+        project4_title: '\u79FB\u52A8\u5065\u8EAB\u5E94\u7528',
+        project4_desc: '\u5177\u5907\u8BAD\u7EC3\u8BA1\u5212\u3001\u8FDB\u5EA6\u56FE\u8868\u3001\u793E\u4EA4\u529F\u80FD\u548C\u53EF\u7A7F\u6234\u8BBE\u5907\u96C6\u6210\u7684\u8DE8\u5E73\u53F0\u5065\u8EAB\u8FFD\u8E2A\u5E94\u7528\u3002',
+        project_status_complete: '\u5DF2\u5B8C\u6210',
+        stat_years: '\u7ECF\u9A8C',
+        stat_projects: '\u9879\u76EE',
+        stat_clients: '\u5BA2\u6237',
+        contact_label: '\u8054\u7CFB\u6211',
+        contact_heading: '\u4E00\u8D77\u5408\u4F5C\u5427',
+        contact_sub: '\u53EF\u63A5\u53D7\u81EA\u7531\u804C\u4E1A\u9879\u76EE',
+        gallery_link: '\u2190 \u753B\u5ECA'
       }
-      /* Animate stat counters when about section appears */
-      if(entry.target.id==='about'){
-        entry.target.querySelectorAll('[data-count]').forEach(function(el){
-          animateCounter(el,0,parseInt(el.getAttribute('data-count')),1200);
-        });
-      }
-      revealObserver.unobserve(entry.target);
-    }
-  });
-},{threshold:0.15});
-sections.forEach(function(s){revealObserver.observe(s)});
+    };
 
-/* ============================================
-   COUNTER ANIMATION
-   ============================================ */
-function animateCounter(el,start,end,duration){
-  var startTime=null;
-  function step(timestamp){
-    if(!startTime)startTime=timestamp;
-    var progress=Math.min((timestamp-startTime)/duration,1);
-    var eased=1-Math.pow(1-progress,3);
-    el.textContent=Math.floor(eased*(end-start)+start)+'+';
-    if(progress<1)requestAnimationFrame(step);
-  }
-  requestAnimationFrame(step);
-}
-
-/* ============================================
-   SCROLL PROGRESS BAR
-   ============================================ */
-var scrollProgress=document.getElementById('scrollProgress');
-function updateScrollProgress(){
-  var scrollTop=window.pageYOffset||document.documentElement.scrollTop;
-  var scrollHeight=document.documentElement.scrollHeight-document.documentElement.clientHeight;
-  var progress=scrollHeight>0?(scrollTop/scrollHeight)*100:0;
-  scrollProgress.style.width=progress+'%';
-}
-window.addEventListener('scroll',updateScrollProgress,{passive:true});
-
-/* ============================================
-   GLITCH ON SCROLL
-   ============================================ */
-var glitchOverlay=document.getElementById('glitchOverlay');
-var lastScrollY=0;
-var glitchTimeout=null;
-window.addEventListener('scroll',function(){
-  var currentScrollY=window.pageYOffset;
-  var delta=Math.abs(currentScrollY-lastScrollY);
-  if(delta>80){
-    glitchOverlay.classList.add('active');
-    clearTimeout(glitchTimeout);
-    glitchTimeout=setTimeout(function(){
-      glitchOverlay.classList.remove('active');
-    },200);
-  }
-  lastScrollY=currentScrollY;
-},{passive:true});
-
-/* Random glitch trigger */
-setInterval(function(){
-  if(Math.random()<0.15){
-    glitchOverlay.classList.add('active');
-    setTimeout(function(){
-      glitchOverlay.classList.remove('active');
-    },150+Math.random()*200);
-  }
-},4000);
-
-/* ============================================
-   NEON CURSOR (desktop only)
-   ============================================ */
-var neonCursor=document.getElementById('neonCursor');
-var cursorTrails=[];
-var isTouch='ontouchstart' in window||navigator.maxTouchPoints>0;
-var prefersReducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-if(!isTouch&&!prefersReducedMotion){
-  /* Create trail elements */
-  for(var t=0;t<6;t++){
-    var trail=document.createElement('div');
-    trail.className='cursor-trail';
-    trail.style.opacity=0.5-(t*0.08);
-    trail.style.width=(6-t)+'px';
-    trail.style.height=(6-t)+'px';
-    document.body.appendChild(trail);
-    cursorTrails.push({el:trail,x:0,y:0});
-  }
-
-  var mouseX=0,mouseY=0;
-  document.addEventListener('mousemove',function(e){
-    mouseX=e.clientX;
-    mouseY=e.clientY;
-    neonCursor.style.left=mouseX+'px';
-    neonCursor.style.top=mouseY+'px';
-  });
-
-  /* Hover state for interactive elements */
-  document.querySelectorAll('a, button, .win95-btn, .contact-link, .project-link-btn').forEach(function(el){
-    el.addEventListener('mouseenter',function(){neonCursor.classList.add('hover')});
-    el.addEventListener('mouseleave',function(){neonCursor.classList.remove('hover')});
-  });
-
-  /* Trail animation */
-  function animateTrails(){
-    var prevX=mouseX,prevY=mouseY;
-    cursorTrails.forEach(function(trail){
-      var dx=prevX-trail.x;
-      var dy=prevY-trail.y;
-      trail.x+=dx*0.3;
-      trail.y+=dy*0.3;
-      trail.el.style.left=trail.x+'px';
-      trail.el.style.top=trail.y+'px';
-      prevX=trail.x;
-      prevY=trail.y;
-    });
-    requestAnimationFrame(animateTrails);
-  }
-  animateTrails();
-} else {
-  /* Hide cursor elements on touch devices */
-  neonCursor.style.display='none';
-}
-
-/* ============================================
-   REC TIMER
-   ============================================ */
-var recStartTime=Date.now();
-var recEl=document.querySelector('.rec-indicator span:last-child');
-function updateRec(){
-  var elapsed=Date.now()-recStartTime;
-  var s=Math.floor(elapsed/1000);
-  var m=Math.floor(s/60);
-  var h=Math.floor(m/60);
-  recEl.textContent='REC '+
-    String(h).padStart(2,'0')+':'+
-    String(m%60).padStart(2,'0')+':'+
-    String(s%60).padStart(2,'0');
-  requestAnimationFrame(updateRec);
-}
-updateRec();
-
-/* ============================================
-   HERO TIMESTAMP
-   ============================================ */
-var heroTs=document.getElementById('heroTimestamp');
-function updateHeroTimestamp(){
-  var now=new Date();
-  heroTs.textContent='SYS://'+
-    now.getFullYear()+'.'+
-    String(now.getMonth()+1).padStart(2,'0')+'.'+
-    String(now.getDate()).padStart(2,'0')+' '+
-    String(now.getHours()).padStart(2,'0')+':'+
-    String(now.getMinutes()).padStart(2,'0')+':'+
-    String(now.getSeconds()).padStart(2,'0')+
-    ' // STATUS: ONLINE';
-}
-setInterval(updateHeroTimestamp,1000);
-updateHeroTimestamp();
-
-/* ============================================
-   HOVER MICRO-INTERACTIONS
-   ============================================ */
-/* Win95 window title flash on hover */
-document.querySelectorAll('.win95-window').forEach(function(win){
-  win.addEventListener('mouseenter',function(){
-    var titlebar=win.querySelector('.win95-titlebar');
-    if(titlebar){
-      titlebar.style.background='linear-gradient(90deg, #1084d0, #000080, #1084d0)';
-      titlebar.style.backgroundSize='200% 100%';
-    }
-  });
-  win.addEventListener('mouseleave',function(){
-    var titlebar=win.querySelector('.win95-titlebar');
-    if(titlebar){
-      titlebar.style.background='linear-gradient(90deg, #000080, #1084d0)';
-      titlebar.style.backgroundSize='100% 100%';
-    }
-  });
-});
-
-/* Contact link glitch on hover */
-document.querySelectorAll('.contact-link').forEach(function(link){
-  var originalText=link.textContent;
-  var glitchChars='!@#$%^&*<>{}[]|/\\';
-  link.addEventListener('mouseenter',function(){
-    var iterations=0;
-    var maxIterations=6;
-    var interval=setInterval(function(){
-      link.textContent=originalText.split('').map(function(char,i){
-        if(i<iterations)return originalText[i];
-        return glitchChars[Math.floor(Math.random()*glitchChars.length)];
-      }).join('');
-      iterations++;
-      if(iterations>maxIterations){
-        clearInterval(interval);
-        link.textContent=originalText;
-      }
-    },40);
-  });
-  link.addEventListener('mouseleave',function(){
-    link.textContent=originalText;
-  });
-});
-
-/* Section title glitch on scroll into view */
-var titleObserver=new IntersectionObserver(function(entries){
-  entries.forEach(function(entry){
-    if(entry.isIntersecting){
-      var title=entry.target;
-      var text=title.textContent;
-      var glitchChars='!@#$%^&*<>';
-      var i=0;
-      var interval=setInterval(function(){
-        title.textContent=text.split('').map(function(c,idx){
-          if(idx<i)return text[idx];
-          if(c===' '||c==='/')return c;
-          return glitchChars[Math.floor(Math.random()*glitchChars.length)];
-        }).join('');
-        i+=2;
-        if(i>text.length){
-          clearInterval(interval);
-          title.textContent=text;
+    /* ============================================
+       LANGUAGE SWITCHER
+       ============================================ */
+    function setLanguage(lang) {
+      document.querySelectorAll('[data-i18n]').forEach(function (el) {
+        var key = el.getAttribute('data-i18n');
+        if (TRANSLATIONS[lang] && TRANSLATIONS[lang][key]) {
+          el.textContent = TRANSLATIONS[lang][key];
+          if (el.hasAttribute('data-text')) {
+            el.setAttribute('data-text', TRANSLATIONS[lang][key]);
+          }
         }
-      },30);
-      titleObserver.unobserve(title);
+      });
+      document.querySelectorAll('.lang-btn').forEach(function (btn) {
+        btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+      });
+      try {
+        localStorage.setItem('preferred-lang', lang);
+      } catch (e) {}
+      document.documentElement.lang = lang === 'ko' ? 'ko' : lang === 'ja' ? 'ja' : lang === 'zh' ? 'zh' : 'en';
     }
-  });
-},{threshold:0.5});
-document.querySelectorAll('.section-title').forEach(function(t){titleObserver.observe(t)});
-</script>
+
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var lang = params.get('lang') || (function () {
+        try {
+          return localStorage.getItem('preferred-lang');
+        } catch (e) {
+          return null;
+        }
+      })() || 'en';
+      if (lang !== 'en') {
+        setLanguage(lang);
+      } else {
+        document.querySelectorAll('.lang-btn').forEach(function (btn) {
+          btn.classList.toggle('active', btn.getAttribute('data-lang') === 'en');
+        });
+      }
+    })();
+
+    /* ============================================
+       SCROLL REVEAL (IntersectionObserver)
+       ============================================ */
+    var sections = document.querySelectorAll('.section');
+    var revealObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          /* Animate skill bars when skills section appears */
+          if (entry.target.id === 'skills') {
+            entry.target.querySelectorAll('.skill-bar').forEach(function (bar) {
+              bar.style.width = bar.getAttribute('data-width') + '%';
+            });
+          }
+          /* Animate stat counters when about section appears */
+          if (entry.target.id === 'about') {
+            entry.target.querySelectorAll('[data-count]').forEach(function (el) {
+              animateCounter(el, 0, parseInt(el.getAttribute('data-count')), 1200);
+            });
+          }
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    sections.forEach(function (s) {
+      revealObserver.observe(s);
+    });
+
+    /* ============================================
+       COUNTER ANIMATION
+       ============================================ */
+    function animateCounter(el, start, end, duration) {
+      var startTime = null;
+      function step(timestamp) {
+        if (!startTime) startTime = timestamp;
+        var progress = Math.min((timestamp - startTime) / duration, 1);
+        var eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.floor(eased * (end - start) + start) + '+';
+        if (progress < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
+    /* ============================================
+       SCROLL PROGRESS BAR
+       ============================================ */
+    var scrollProgress = document.getElementById('scrollProgress');
+    function updateScrollProgress() {
+      var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      var scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      var progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+      scrollProgress.style.width = progress + '%';
+    }
+    window.addEventListener('scroll', updateScrollProgress, { passive: true });
+
+    /* ============================================
+       GLITCH ON SCROLL
+       ============================================ */
+    var glitchOverlay = document.getElementById('glitchOverlay');
+    var lastScrollY = 0;
+    var glitchTimeout = null;
+    window.addEventListener('scroll', function () {
+      var currentScrollY = window.pageYOffset;
+      var delta = Math.abs(currentScrollY - lastScrollY);
+      if (delta > 80) {
+        glitchOverlay.classList.add('active');
+        clearTimeout(glitchTimeout);
+        glitchTimeout = setTimeout(function () {
+          glitchOverlay.classList.remove('active');
+        }, 200);
+      }
+      lastScrollY = currentScrollY;
+    }, { passive: true });
+
+    /* Random glitch trigger */
+    setInterval(function () {
+      if (Math.random() < 0.15) {
+        glitchOverlay.classList.add('active');
+        setTimeout(function () {
+          glitchOverlay.classList.remove('active');
+        }, 150 + Math.random() * 200);
+      }
+    }, 4000);
+
+    /* ============================================
+       NEON CURSOR (desktop only)
+       ============================================ */
+    var neonCursor = document.getElementById('neonCursor');
+    var cursorTrails = [];
+    var isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (!isTouch && !prefersReducedMotion) {
+      /* Create trail elements */
+      for (var t = 0; t < 6; t++) {
+        var trail = document.createElement('div');
+        trail.className = 'cursor-trail';
+        trail.style.opacity = 0.5 - (t * 0.08);
+        trail.style.width = (6 - t) + 'px';
+        trail.style.height = (6 - t) + 'px';
+        document.body.appendChild(trail);
+        cursorTrails.push({ el: trail, x: 0, y: 0 });
+      }
+
+      var mouseX = 0, mouseY = 0;
+      document.addEventListener('mousemove', function (e) {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        neonCursor.style.left = mouseX + 'px';
+        neonCursor.style.top = mouseY + 'px';
+      });
+
+      /* Hover state for interactive elements */
+      document.querySelectorAll('a, button, .win95-btn, .contact-link, .project-link-btn').forEach(function (el) {
+        el.addEventListener('mouseenter', function () {
+          neonCursor.classList.add('hover');
+        });
+        el.addEventListener('mouseleave', function () {
+          neonCursor.classList.remove('hover');
+        });
+      });
+
+      /* Trail animation */
+      function animateTrails() {
+        var prevX = mouseX, prevY = mouseY;
+        cursorTrails.forEach(function (trail) {
+          var dx = prevX - trail.x;
+          var dy = prevY - trail.y;
+          trail.x += dx * 0.3;
+          trail.y += dy * 0.3;
+          trail.el.style.left = trail.x + 'px';
+          trail.el.style.top = trail.y + 'px';
+          prevX = trail.x;
+          prevY = trail.y;
+        });
+        requestAnimationFrame(animateTrails);
+      }
+      animateTrails();
+    } else {
+      /* Hide cursor elements on touch devices */
+      neonCursor.style.display = 'none';
+    }
+
+    /* ============================================
+       REC TIMER
+       ============================================ */
+    var recStartTime = Date.now();
+    var recEl = document.querySelector('.rec-indicator span:last-child');
+    function updateRec() {
+      var elapsed = Date.now() - recStartTime;
+      var s = Math.floor(elapsed / 1000);
+      var m = Math.floor(s / 60);
+      var h = Math.floor(m / 60);
+      recEl.textContent = 'REC ' +
+        String(h).padStart(2, '0') + ':' +
+        String(m % 60).padStart(2, '0') + ':' +
+        String(s % 60).padStart(2, '0');
+      requestAnimationFrame(updateRec);
+    }
+    updateRec();
+
+    /* ============================================
+       HERO TIMESTAMP
+       ============================================ */
+    var heroTs = document.getElementById('heroTimestamp');
+    function updateHeroTimestamp() {
+      var now = new Date();
+      heroTs.textContent = 'SYS://' +
+        now.getFullYear() + '.' +
+        String(now.getMonth() + 1).padStart(2, '0') + '.' +
+        String(now.getDate()).padStart(2, '0') + ' ' +
+        String(now.getHours()).padStart(2, '0') + ':' +
+        String(now.getMinutes()).padStart(2, '0') + ':' +
+        String(now.getSeconds()).padStart(2, '0') +
+        ' // STATUS: ONLINE';
+    }
+    setInterval(updateHeroTimestamp, 1000);
+    updateHeroTimestamp();
+
+    /* ============================================
+       HOVER MICRO-INTERACTIONS
+       ============================================ */
+    /* Win95 window title flash on hover */
+    document.querySelectorAll('.win95-window').forEach(function (win) {
+      win.addEventListener('mouseenter', function () {
+        var titlebar = win.querySelector('.win95-titlebar');
+        if (titlebar) {
+          titlebar.style.background = 'linear-gradient(90deg, #1084d0, #000080, #1084d0)';
+          titlebar.style.backgroundSize = '200% 100%';
+        }
+      });
+      win.addEventListener('mouseleave', function () {
+        var titlebar = win.querySelector('.win95-titlebar');
+        if (titlebar) {
+          titlebar.style.background = 'linear-gradient(90deg, #000080, #1084d0)';
+          titlebar.style.backgroundSize = '100% 100%';
+        }
+      });
+    });
+
+    /* Contact link glitch on hover */
+    document.querySelectorAll('.contact-link').forEach(function (link) {
+      var originalText = link.textContent;
+      var glitchChars = '!@#$%^&*<>{}[]|/\\';
+      link.addEventListener('mouseenter', function () {
+        var iterations = 0;
+        var maxIterations = 6;
+        var interval = setInterval(function () {
+          link.textContent = originalText.split('').map(function (char, i) {
+            if (i < iterations) return originalText[i];
+            return glitchChars[Math.floor(Math.random() * glitchChars.length)];
+          }).join('');
+          iterations++;
+          if (iterations > maxIterations) {
+            clearInterval(interval);
+            link.textContent = originalText;
+          }
+        }, 40);
+      });
+      link.addEventListener('mouseleave', function () {
+        link.textContent = originalText;
+      });
+    });
+
+    /* Section title glitch on scroll into view */
+    var titleObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          var title = entry.target;
+          var text = title.textContent;
+          var glitchChars = '!@#$%^&*<>';
+          var i = 0;
+          var interval = setInterval(function () {
+            title.textContent = text.split('').map(function (c, idx) {
+              if (idx < i) return text[idx];
+              if (c === ' ' || c === '/') return c;
+              return glitchChars[Math.floor(Math.random() * glitchChars.length)];
+            }).join('');
+            i += 2;
+            if (i > text.length) {
+              clearInterval(interval);
+              title.textContent = text;
+            }
+          }, 30);
+          titleObserver.unobserve(title);
+        }
+      });
+    }, { threshold: 0.5 });
+    document.querySelectorAll('.section-title').forEach(function (t) {
+      titleObserver.observe(t);
+    });
+  </script>
 </body>
 </html>

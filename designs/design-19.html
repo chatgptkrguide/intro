@@ -1,1070 +1,2293 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Portfolio - Line Art Wireframe Blueprint</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<style>
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-:root{
-  --bg:#0D1B2A;--bg-light:#1B2838;--bg-card:rgba(13,27,42,0.6);
-  --line:#7CB9E8;--line-dim:rgba(124,185,232,0.2);--line-faint:rgba(124,185,232,0.06);
-  --text:#E0F0FF;--text-dim:rgba(224,240,255,0.5);--text-faint:rgba(224,240,255,0.2);
-  --accent:#7CB9E8;--accent-bright:#A8D4F0;--accent-glow:rgba(124,185,232,0.15);
-  --scan:#7CB9E8;
-  --grid-major:rgba(124,185,232,0.1);--grid-minor:rgba(124,185,232,0.04);
-  --circuit:rgba(124,185,232,0.12);
-}
-html{scroll-behavior:smooth}
-body{font-family:'IBM Plex Mono',monospace;background:var(--bg);color:var(--text);overflow-x:hidden;min-height:100vh;position:relative}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio - Line Art Wireframe Blueprint</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-/* === BLUEPRINT GRID BACKGROUND === */
-.blueprint-grid{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;overflow:hidden}
-.blueprint-grid svg{width:100%;height:100%}
+    :root {
+      --bg: #0D1B2A;
+      --bg-light: #1B2838;
+      --bg-card: rgba(13, 27, 42, 0.6);
+      --line: #7CB9E8;
+      --line-dim: rgba(124, 185, 232, 0.2);
+      --line-faint: rgba(124, 185, 232, 0.06);
+      --text: #E0F0FF;
+      --text-dim: rgba(224, 240, 255, 0.5);
+      --text-faint: rgba(224, 240, 255, 0.2);
+      --accent: #7CB9E8;
+      --accent-bright: #A8D4F0;
+      --accent-glow: rgba(124, 185, 232, 0.15);
+      --scan: #7CB9E8;
+      --grid-major: rgba(124, 185, 232, 0.1);
+      --grid-minor: rgba(124, 185, 232, 0.04);
+      --circuit: rgba(124, 185, 232, 0.12);
+    }
 
-/* Pixel rulers */
-.ruler-x,.ruler-y{position:fixed;z-index:2;pointer-events:none;opacity:0.35}
-.ruler-x{top:0;left:60px;right:0;height:20px;display:flex;align-items:flex-end;overflow:hidden}
-.ruler-y{top:60px;left:0;width:20px;bottom:0;display:flex;flex-direction:column;align-items:flex-end;overflow:hidden}
-.ruler-tick{font-size:8px;color:var(--accent);letter-spacing:0;font-family:'IBM Plex Mono',monospace;position:relative}
-.ruler-x .ruler-tick{width:100px;text-align:left;border-left:1px solid var(--line-dim);padding-left:3px;padding-bottom:2px;flex-shrink:0}
-.ruler-y .ruler-tick{height:100px;writing-mode:vertical-lr;text-orientation:mixed;border-top:1px solid var(--line-dim);padding-top:3px;padding-right:2px;flex-shrink:0}
+    html {
+      scroll-behavior: smooth;
+    }
 
-/* Origin crosshair */
-.origin-cross{position:fixed;top:0;left:0;width:20px;height:20px;z-index:3;pointer-events:none}
-.origin-cross::before{content:'';position:absolute;top:10px;left:0;width:20px;height:1px;background:var(--accent);opacity:0.4}
-.origin-cross::after{content:'';position:absolute;top:0;left:10px;width:1px;height:20px;background:var(--accent);opacity:0.4}
+    body {
+      font-family: 'IBM Plex Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      min-height: 100vh;
+      position: relative;
+    }
 
-/* Scanning line */
-.scan-line{position:fixed;left:0;width:100%;height:2px;background:linear-gradient(90deg,transparent 0%,var(--scan) 20%,var(--scan) 80%,transparent 100%);opacity:0;z-index:50;pointer-events:none;transition:opacity 0.5s;filter:drop-shadow(0 0 6px var(--accent))}
-.scan-line.active{opacity:0.6}
+    /* === BLUEPRINT GRID BACKGROUND === */
+    .blueprint-grid {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
 
-/* Coordinate display */
-.coord-display{position:fixed;bottom:20px;right:24px;z-index:100;font-size:11px;color:var(--accent);letter-spacing:0.08em;background:rgba(13,27,42,0.85);padding:6px 14px;border:1px solid var(--line-dim);backdrop-filter:blur(8px);pointer-events:none;opacity:0.7;transition:opacity 0.3s}
-.coord-display span{color:var(--text-dim)}
+    .blueprint-grid svg {
+      width: 100%;
+      height: 100%;
+    }
 
-/* Navigation */
-.nav{position:fixed;top:0;left:0;width:100%;padding:20px 40px;display:flex;justify-content:space-between;align-items:center;z-index:100;background:rgba(13,27,42,0.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--line-dim)}
-.gallery-link{color:var(--accent);text-decoration:none;font-weight:500;font-size:14px;letter-spacing:0.05em;transition:all 0.3s;position:relative}
-.gallery-link:hover{color:var(--accent-bright);text-shadow:0 0 12px var(--accent-glow)}
-.gallery-link::before{content:'';position:absolute;bottom:-2px;left:0;width:0;height:1px;background:var(--accent);transition:width 0.3s}
-.gallery-link:hover::before{width:100%}
-.lang-switcher{display:flex;gap:4px}
-.lang-btn{background:transparent;border:1px solid var(--line-dim);color:var(--text-dim);padding:6px 12px;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;transition:all 0.3s;letter-spacing:0.05em}
-.lang-btn:hover{border-color:var(--accent);color:var(--accent);box-shadow:0 0 8px var(--accent-glow)}
-.lang-btn.active{border-color:var(--accent);color:var(--bg);background:var(--accent)}
+    /* Pixel rulers */
+    .ruler-x,
+    .ruler-y {
+      position: fixed;
+      z-index: 2;
+      pointer-events: none;
+      opacity: 0.35;
+    }
 
-/* Content */
-.content{position:relative;z-index:10;max-width:1000px;margin:0 auto;padding:120px 40px 80px}
+    .ruler-x {
+      top: 0;
+      left: 60px;
+      right: 0;
+      height: 20px;
+      display: flex;
+      align-items: flex-end;
+      overflow: hidden;
+    }
 
-/* Watermark */
-.watermark{position:fixed;top:50%;right:40px;transform:rotate(-90deg) translateX(50%);font-size:11px;color:rgba(124,185,232,0.06);letter-spacing:0.3em;text-transform:uppercase;pointer-events:none;z-index:1}
+    .ruler-y {
+      top: 60px;
+      left: 0;
+      width: 20px;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      overflow: hidden;
+    }
 
-/* Circuit trace SVG lines between sections */
-.circuit-traces{position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;overflow:visible}
-.circuit-traces path{fill:none;stroke:var(--circuit);stroke-width:1;stroke-dasharray:6 4}
+    .ruler-tick {
+      font-size: 8px;
+      color: var(--accent);
+      letter-spacing: 0;
+      font-family: 'IBM Plex Mono', monospace;
+      position: relative;
+    }
 
-/* Crosshair marker */
-.crosshair{width:20px;height:20px;position:relative;display:inline-block;margin-right:12px;vertical-align:middle;flex-shrink:0}
-.crosshair::before{content:'';position:absolute;top:50%;left:0;width:100%;height:1px;background:var(--accent)}
-.crosshair::after{content:'';position:absolute;left:50%;top:0;width:1px;height:100%;background:var(--accent)}
+    .ruler-x .ruler-tick {
+      width: 100px;
+      text-align: left;
+      border-left: 1px solid var(--line-dim);
+      padding-left: 3px;
+      padding-bottom: 2px;
+      flex-shrink: 0;
+    }
 
-/* SVG draw animations */
-.draw-line{stroke-dasharray:var(--dash-len,300);stroke-dashoffset:var(--dash-len,300);transition:stroke-dashoffset 1.5s cubic-bezier(0.25,0.46,0.45,0.94)}
-.draw-line.drawn{stroke-dashoffset:0}
+    .ruler-y .ruler-tick {
+      height: 100px;
+      writing-mode: vertical-lr;
+      text-orientation: mixed;
+      border-top: 1px solid var(--line-dim);
+      padding-top: 3px;
+      padding-right: 2px;
+      flex-shrink: 0;
+    }
 
-/* Hero */
-.hero{text-align:center;padding:100px 0 120px;position:relative}
-.hero::before{content:'';position:absolute;top:30px;left:50%;transform:translateX(-50%);width:220px;height:220px;border:1px dashed var(--line-dim);border-radius:50%;animation:heroSpin 30s linear infinite}
-.hero::after{content:'';position:absolute;top:70px;left:50%;transform:translateX(-50%);width:140px;height:140px;border:1px dashed rgba(124,185,232,0.1);border-radius:50%;animation:heroSpin 20s linear infinite reverse}
-@keyframes heroSpin{0%{transform:translateX(-50%) rotate(0deg)}100%{transform:translateX(-50%) rotate(360deg)}}
-.hero-coords{font-size:11px;color:var(--text-dim);letter-spacing:0.1em;margin-bottom:16px}
-.hero-name{font-size:52px;font-weight:700;color:var(--text);letter-spacing:0.05em;margin-bottom:12px;position:relative;display:inline-block}
-.hero-name::before{content:'[';color:var(--accent);margin-right:8px;opacity:0.5}
-.hero-name::after{content:']';color:var(--accent);margin-left:8px;opacity:0.5}
-.hero-title{font-size:16px;color:var(--accent);font-weight:400;letter-spacing:0.15em}
-.hero-spec{font-size:11px;color:var(--text-dim);margin-top:20px;letter-spacing:0.2em}
+    /* Origin crosshair */
+    .origin-cross {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 20px;
+      height: 20px;
+      z-index: 3;
+      pointer-events: none;
+    }
 
-/* Blinking cursor */
-.blink-cursor{display:inline-block;width:10px;height:2px;background:var(--accent);margin-left:8px;vertical-align:middle;animation:cursorBlink 1s step-end infinite}
-@keyframes cursorBlink{0%,100%{opacity:1}50%{opacity:0}}
+    .origin-cross::before {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: 0;
+      width: 20px;
+      height: 1px;
+      background: var(--accent);
+      opacity: 0.4;
+    }
 
-/* Hero SVG drawing ornaments */
-.hero-svg{position:absolute;pointer-events:none}
-.hero-svg-left{top:40px;left:-20px;width:80px;height:200px}
-.hero-svg-right{top:40px;right:-20px;width:80px;height:200px}
+    .origin-cross::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 10px;
+      width: 1px;
+      height: 20px;
+      background: var(--accent);
+      opacity: 0.4;
+    }
 
-/* Hero dimension annotations */
-.hero-dim{position:absolute;font-size:9px;color:var(--text-faint);letter-spacing:0.1em}
-.hero-dim-top{top:10px;left:50%;transform:translateX(-50%)}
-.hero-dim-side{top:50%;right:-60px;transform:rotate(90deg)}
+    /* Scanning line */
+    .scan-line {
+      position: fixed;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent 0%, var(--scan) 20%, var(--scan) 80%, transparent 100%);
+      opacity: 0;
+      z-index: 50;
+      pointer-events: none;
+      transition: opacity 0.5s;
+      filter: drop-shadow(0 0 6px var(--accent));
+    }
 
-/* Dashed connector lines */
-.connector{width:1px;height:60px;margin:0 auto;border-left:1px dashed var(--line-dim);position:relative}
-.connector::after{content:'';position:absolute;bottom:-3px;left:-3px;width:6px;height:6px;border:1px solid var(--accent);border-radius:50%}
-.connector::before{content:'';position:absolute;top:-3px;left:-3px;width:6px;height:6px;border:1px solid var(--line-dim);border-radius:50%}
+    .scan-line.active {
+      opacity: 0.6;
+    }
 
-/* Section */
-.section{margin-bottom:20px;opacity:0;transform:translateY(24px);transition:all 0.8s cubic-bezier(0.25,0.46,0.45,0.94)}
-.section.visible{opacity:1;transform:translateY(0)}
+    /* Coordinate display */
+    .coord-display {
+      position: fixed;
+      bottom: 20px;
+      right: 24px;
+      z-index: 100;
+      font-size: 11px;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      background: rgba(13, 27, 42, 0.85);
+      padding: 6px 14px;
+      border: 1px solid var(--line-dim);
+      backdrop-filter: blur(8px);
+      pointer-events: none;
+      opacity: 0.7;
+      transition: opacity 0.3s;
+    }
 
-/* Wireframe card */
-.wire-card{border:1px solid var(--line-dim);padding:32px;position:relative;background:var(--bg-card);backdrop-filter:blur(4px);transition:border-color 0.4s,box-shadow 0.4s}
-.wire-card:hover{border-color:rgba(124,185,232,0.35);box-shadow:0 0 30px rgba(124,185,232,0.04)}
-.wire-card::before{content:attr(data-label);position:absolute;top:-10px;left:16px;font-size:10px;color:var(--text-dim);letter-spacing:0.05em;background:var(--bg);padding:0 8px}
+    .coord-display span {
+      color: var(--text-dim);
+    }
 
-/* Corner brackets */
-.corner-tl,.corner-tr,.corner-bl,.corner-br{position:absolute;width:12px;height:12px;transition:all 0.3s}
-.corner-tl{top:-1px;left:-1px;border-top:2px solid var(--accent);border-left:2px solid var(--accent)}
-.corner-tr{top:-1px;right:-1px;border-top:2px solid var(--accent);border-right:2px solid var(--accent)}
-.corner-bl{bottom:-1px;left:-1px;border-bottom:2px solid var(--accent);border-left:2px solid var(--accent)}
-.corner-br{bottom:-1px;right:-1px;border-bottom:2px solid var(--accent);border-right:2px solid var(--accent)}
-.wire-card:hover .corner-tl,.wire-card:hover .corner-tr,.wire-card:hover .corner-bl,.wire-card:hover .corner-br{width:18px;height:18px}
+    /* Navigation */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      background: rgba(13, 27, 42, 0.92);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--line-dim);
+    }
 
-/* Section header */
-.section-header{display:flex;align-items:center;margin-bottom:24px}
-.section-title{font-size:20px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent)}
-.section-rev{font-size:11px;color:var(--text-dim);margin-left:auto;letter-spacing:0.1em}
+    .gallery-link {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 14px;
+      letter-spacing: 0.05em;
+      transition: all 0.3s;
+      position: relative;
+    }
 
-/* Measurement lines */
-.measure{display:flex;align-items:center;gap:8px;margin-bottom:16px}
-.measure-line{flex:1;height:1px;background:var(--line-dim);position:relative}
-.measure-line::before,.measure-line::after{content:'';position:absolute;top:-4px;width:1px;height:9px;background:var(--line-dim)}
-.measure-line::before{left:0}
-.measure-line::after{right:0}
-.measure-label{font-size:10px;color:var(--text-dim);letter-spacing:0.1em;white-space:nowrap}
+    .gallery-link:hover {
+      color: var(--accent-bright);
+      text-shadow: 0 0 12px var(--accent-glow);
+    }
 
-/* Spec annotations */
-.spec-annotation{font-size:9px;color:var(--text-faint);letter-spacing:0.08em;padding:4px 8px;border-left:1px solid var(--line-dim);margin-top:8px;line-height:1.8}
-.spec-inline{font-size:9px;color:var(--text-faint);letter-spacing:0.06em}
+    .gallery-link::before {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--accent);
+      transition: width 0.3s;
+    }
 
-/* About */
-.about-text{font-size:15px;line-height:2;color:var(--text);font-weight:300}
-.about-annotation{font-size:11px;color:var(--text-dim);margin-top:16px;padding-top:12px;border-top:1px dashed var(--line-dim);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
-.about-details{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
-.about-detail-item{font-size:12px;color:var(--text-dim);display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--line-faint);transition:border-color 0.3s}
-.about-detail-item:hover{border-color:var(--line-dim)}
-.about-detail-item .detail-label{color:var(--accent);font-size:10px;text-transform:uppercase;letter-spacing:0.1em;min-width:70px}
-.about-detail-item .detail-val{color:var(--text)}
+    .gallery-link:hover::before {
+      width: 100%;
+    }
 
-/* Skills grid */
-.skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
-.skill-box{border:1px solid var(--line-dim);padding:20px;position:relative;transition:all 0.4s;cursor:default}
-.skill-box:hover{border-color:var(--accent);background:rgba(124,185,232,0.03);box-shadow:0 0 20px rgba(124,185,232,0.05);transform:translateY(-2px)}
-.skill-box::before{content:attr(data-id);position:absolute;top:-8px;right:12px;font-size:10px;color:var(--text-dim);background:var(--bg);padding:0 4px}
-.skill-box .corner-tl,.skill-box .corner-tr{width:8px;height:8px}
-.skill-box:hover .corner-tl,.skill-box:hover .corner-tr{width:12px;height:12px}
-.skill-name{font-size:16px;font-weight:600;color:var(--text);margin-bottom:8px;letter-spacing:0.05em}
-.skill-tech{font-size:12px;color:var(--text-dim);line-height:1.6}
-.skill-bar-track{height:2px;background:var(--line-dim);margin-top:12px;position:relative}
-.skill-bar-fill{height:100%;background:var(--accent);transition:width 1.2s ease;box-shadow:0 0 6px var(--accent-glow)}
-.skill-bar-dot{position:absolute;top:-3px;width:8px;height:8px;border:1px solid var(--accent);border-radius:50%;background:var(--bg);transition:right 1.2s ease}
-.skill-percent{position:absolute;top:-16px;right:0;font-size:9px;color:var(--accent);opacity:0;transition:opacity 0.5s 0.8s}
-.section.visible .skill-percent{opacity:1}
+    .lang-switcher {
+      display: flex;
+      gap: 4px;
+    }
 
-/* Dimension indicators */
-.dim-row{display:flex;gap:16px;margin-top:24px;font-size:11px;color:var(--text-dim);flex-wrap:wrap}
-.dim-item{display:flex;align-items:center;gap:6px}
-.dim-dot{width:6px;height:6px;border:1px solid var(--accent)}
+    .lang-btn {
+      background: transparent;
+      border: 1px solid var(--line-dim);
+      color: var(--text-dim);
+      padding: 6px 12px;
+      cursor: pointer;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      transition: all 0.3s;
+      letter-spacing: 0.05em;
+    }
 
-/* Projects section */
-.projects-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-.project-card{border:1px solid var(--line-dim);padding:24px;position:relative;background:var(--bg-card);transition:all 0.4s;cursor:default}
-.project-card:hover{border-color:var(--accent);background:rgba(124,185,232,0.02);box-shadow:0 0 30px rgba(124,185,232,0.06);transform:translateY(-3px)}
-.project-card .corner-tl,.project-card .corner-tr,.project-card .corner-bl,.project-card .corner-br{width:10px;height:10px}
-.project-card:hover .corner-tl,.project-card:hover .corner-tr,.project-card:hover .corner-bl,.project-card:hover .corner-br{width:16px;height:16px}
-.project-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
-.project-num{font-size:9px;color:var(--text-faint);letter-spacing:0.15em}
-.project-dims{font-size:9px;color:var(--text-faint);letter-spacing:0.08em;text-align:right}
-.project-title{font-size:18px;font-weight:600;color:var(--text);letter-spacing:0.05em;margin-bottom:6px}
-.project-desc{font-size:13px;color:var(--text-dim);line-height:1.7;margin-bottom:16px}
-.project-wireframe{width:100%;height:80px;border:1px dashed var(--line-dim);margin-bottom:14px;position:relative;overflow:hidden;background:rgba(124,185,232,0.02)}
-.project-wireframe svg{width:100%;height:100%}
-.project-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
-.project-tag{font-size:10px;color:var(--accent);padding:3px 10px;border:1px solid var(--line-dim);letter-spacing:0.05em;transition:all 0.3s}
-.project-tag:hover{border-color:var(--accent);background:rgba(124,185,232,0.06)}
-.project-meta{font-size:9px;color:var(--text-faint);display:flex;justify-content:space-between;padding-top:10px;border-top:1px dashed var(--line-faint);letter-spacing:0.08em}
+    .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: 0 0 8px var(--accent-glow);
+    }
 
-/* Contact */
-.contact-box{text-align:center;padding:40px}
-.contact-heading{font-size:28px;font-weight:600;color:var(--text);letter-spacing:0.08em;margin-bottom:8px}
-.contact-sub{font-size:14px;color:var(--text-dim);margin-bottom:28px;letter-spacing:0.1em}
-.contact-links{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-.contact-link{padding:10px 24px;border:1px solid var(--line-dim);font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--accent);text-decoration:none;letter-spacing:0.05em;transition:all 0.3s;position:relative}
-.contact-link:hover{border-color:var(--accent);background:rgba(124,185,232,0.05);box-shadow:0 0 16px rgba(124,185,232,0.08);transform:translateY(-2px)}
-.contact-link::before{content:'>';margin-right:6px;color:var(--text-dim);transition:margin-right 0.3s}
-.contact-link:hover::before{margin-right:10px}
-.contact-form{max-width:400px;margin:32px auto 0;text-align:left}
-.form-field{margin-bottom:16px;position:relative}
-.form-label{display:block;font-size:10px;color:var(--text-dim);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:6px}
-.form-input,.form-textarea{width:100%;background:transparent;border:1px solid var(--line-dim);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:13px;padding:10px 14px;letter-spacing:0.03em;transition:border-color 0.3s,box-shadow 0.3s;outline:none}
-.form-input:focus,.form-textarea:focus{border-color:var(--accent);box-shadow:0 0 12px rgba(124,185,232,0.08)}
-.form-textarea{height:100px;resize:vertical}
-.form-field .spec-inline{position:absolute;right:0;top:0}
-.form-submit{width:100%;padding:12px;border:1px solid var(--accent);background:transparent;color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:all 0.3s;position:relative}
-.form-submit:hover{background:var(--accent);color:var(--bg)}
-.form-submit::after{content:'';position:absolute;top:50%;left:50%;width:0;height:0;background:rgba(124,185,232,0.15);border-radius:50%;transform:translate(-50%,-50%);transition:width 0.4s,height 0.4s}
-.form-submit:active::after{width:300px;height:300px}
+    .lang-btn.active {
+      border-color: var(--accent);
+      color: var(--bg);
+      background: var(--accent);
+    }
 
-/* Target marker for sections */
-.target-marker{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:10px;color:var(--text-dim);letter-spacing:0.15em;text-transform:uppercase}
-.target-icon{width:12px;height:12px;border:1px solid var(--accent);border-radius:50%;position:relative;transition:all 0.3s}
-.target-icon::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:4px;height:4px;border-radius:50%;background:var(--accent);transition:all 0.3s}
-.section.visible .target-icon{box-shadow:0 0 8px var(--accent-glow)}
-.section.visible .target-icon::before{width:6px;height:6px}
+    /* Content */
+    .content {
+      position: relative;
+      z-index: 10;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 120px 40px 80px;
+    }
 
-/* Section coordinate labels */
-.section-coords{font-size:9px;color:var(--text-faint);letter-spacing:0.12em;margin-bottom:4px}
+    /* Watermark */
+    .watermark {
+      position: fixed;
+      top: 50%;
+      right: 40px;
+      transform: rotate(-90deg) translateX(50%);
+      font-size: 11px;
+      color: rgba(124, 185, 232, 0.06);
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      pointer-events: none;
+      z-index: 1;
+    }
 
-/* Footer */
-.footer{text-align:center;padding:60px 20px 40px;font-size:12px;color:var(--text-dim);letter-spacing:0.1em;border-top:1px solid var(--line-dim);position:relative;z-index:10}
-.footer-grid{display:flex;justify-content:center;gap:32px;margin-bottom:16px;flex-wrap:wrap}
-.footer-item{font-size:10px;color:var(--text-faint);letter-spacing:0.1em}
+    /* Circuit trace SVG lines between sections */
+    .circuit-traces {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      overflow: visible;
+    }
 
-/* Section draw SVGs */
-.section-draw-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+    .circuit-traces path {
+      fill: none;
+      stroke: var(--circuit);
+      stroke-width: 1;
+      stroke-dasharray: 6 4;
+    }
 
-/* Reduced motion */
-@media(prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation-duration:0.01ms !important;animation-iteration-count:1 !important;transition-duration:0.01ms !important}
-  .scan-line{display:none}
-  .section{opacity:1;transform:none}
-  .draw-line{stroke-dashoffset:0 !important}
-  .hero::before,.hero::after{animation:none}
-}
+    /* Crosshair marker */
+    .crosshair {
+      width: 20px;
+      height: 20px;
+      position: relative;
+      display: inline-block;
+      margin-right: 12px;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
 
-/* Responsive: 375px */
-@media(max-width:480px){
-  .hero-name{font-size:28px}
-  .hero-title{font-size:13px}
-  .section-title{font-size:16px}
-  .nav{padding:14px 16px}
-  .content{padding:90px 16px 50px}
-  .skills-grid{grid-template-columns:1fr}
-  .projects-grid{grid-template-columns:1fr}
-  .wire-card{padding:20px}
-  .watermark{display:none}
-  .hero::before{width:150px;height:150px}
-  .hero::after{width:90px;height:90px}
-  .lang-btn{padding:4px 8px;font-size:11px}
-  .contact-links{flex-direction:column;align-items:center}
-  .dim-row{flex-wrap:wrap}
-  .about-details{grid-template-columns:1fr}
-  .ruler-x,.ruler-y{display:none}
-  .origin-cross{display:none}
-  .coord-display{display:none}
-  .hero-svg{display:none}
-  .hero-dim{display:none}
-  .footer-grid{flex-direction:column;align-items:center;gap:8px}
-}
+    .crosshair::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: var(--accent);
+    }
 
-/* Responsive: 768px */
-@media(min-width:481px) and (max-width:768px){
-  .hero-name{font-size:36px}
-  .section-title{font-size:18px}
-  .nav{padding:16px 24px}
-  .content{padding:100px 20px 60px}
-  .skills-grid{grid-template-columns:repeat(2,1fr)}
-  .projects-grid{grid-template-columns:1fr}
-  .wire-card{padding:24px}
-  .watermark{display:none}
-  .hero::before{width:180px;height:180px}
-  .ruler-y{display:none}
-}
+    .crosshair::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 0;
+      width: 1px;
+      height: 100%;
+      background: var(--accent);
+    }
 
-/* Responsive: 1440px+ */
-@media(min-width:1440px){
-  .content{max-width:1200px}
-  .skills-grid{grid-template-columns:repeat(3,1fr);gap:20px}
-  .projects-grid{grid-template-columns:1fr 1fr;gap:24px}
-  .hero-name{font-size:60px}
-  .hero{padding:120px 0 140px}
-  .wire-card{padding:40px}
-  .about-details{grid-template-columns:1fr 1fr 1fr}
-  .contact-box{padding:60px}
-}
-</style>
+    /* SVG draw animations */
+    .draw-line {
+      stroke-dasharray: var(--dash-len, 300);
+      stroke-dashoffset: var(--dash-len, 300);
+      transition: stroke-dashoffset 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .draw-line.drawn {
+      stroke-dashoffset: 0;
+    }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 100px 0 120px;
+      position: relative;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 220px;
+      height: 220px;
+      border: 1px dashed var(--line-dim);
+      border-radius: 50%;
+      animation: heroSpin 30s linear infinite;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      top: 70px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 140px;
+      height: 140px;
+      border: 1px dashed rgba(124, 185, 232, 0.1);
+      border-radius: 50%;
+      animation: heroSpin 20s linear infinite reverse;
+    }
+
+    @keyframes heroSpin {
+      0% {
+        transform: translateX(-50%) rotate(0deg);
+      }
+      100% {
+        transform: translateX(-50%) rotate(360deg);
+      }
+    }
+
+    .hero-coords {
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+      margin-bottom: 16px;
+    }
+
+    .hero-name {
+      font-size: 52px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+      position: relative;
+      display: inline-block;
+    }
+
+    .hero-name::before {
+      content: '[';
+      color: var(--accent);
+      margin-right: 8px;
+      opacity: 0.5;
+    }
+
+    .hero-name::after {
+      content: ']';
+      color: var(--accent);
+      margin-left: 8px;
+      opacity: 0.5;
+    }
+
+    .hero-title {
+      font-size: 16px;
+      color: var(--accent);
+      font-weight: 400;
+      letter-spacing: 0.15em;
+    }
+
+    .hero-spec {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 20px;
+      letter-spacing: 0.2em;
+    }
+
+    /* Blinking cursor */
+    .blink-cursor {
+      display: inline-block;
+      width: 10px;
+      height: 2px;
+      background: var(--accent);
+      margin-left: 8px;
+      vertical-align: middle;
+      animation: cursorBlink 1s step-end infinite;
+    }
+
+    @keyframes cursorBlink {
+      0%,
+      100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0;
+      }
+    }
+
+    /* Hero SVG drawing ornaments */
+    .hero-svg {
+      position: absolute;
+      pointer-events: none;
+    }
+
+    .hero-svg-left {
+      top: 40px;
+      left: -20px;
+      width: 80px;
+      height: 200px;
+    }
+
+    .hero-svg-right {
+      top: 40px;
+      right: -20px;
+      width: 80px;
+      height: 200px;
+    }
+
+    /* Hero dimension annotations */
+    .hero-dim {
+      position: absolute;
+      font-size: 9px;
+      color: var(--text-faint);
+      letter-spacing: 0.1em;
+    }
+
+    .hero-dim-top {
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .hero-dim-side {
+      top: 50%;
+      right: -60px;
+      transform: rotate(90deg);
+    }
+
+    /* Dashed connector lines */
+    .connector {
+      width: 1px;
+      height: 60px;
+      margin: 0 auto;
+      border-left: 1px dashed var(--line-dim);
+      position: relative;
+    }
+
+    .connector::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: -3px;
+      width: 6px;
+      height: 6px;
+      border: 1px solid var(--accent);
+      border-radius: 50%;
+    }
+
+    .connector::before {
+      content: '';
+      position: absolute;
+      top: -3px;
+      left: -3px;
+      width: 6px;
+      height: 6px;
+      border: 1px solid var(--line-dim);
+      border-radius: 50%;
+    }
+
+    /* Section */
+    .section {
+      margin-bottom: 20px;
+      opacity: 0;
+      transform: translateY(24px);
+      transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Wireframe card */
+    .wire-card {
+      border: 1px solid var(--line-dim);
+      padding: 32px;
+      position: relative;
+      background: var(--bg-card);
+      backdrop-filter: blur(4px);
+      transition: border-color 0.4s, box-shadow 0.4s;
+    }
+
+    .wire-card:hover {
+      border-color: rgba(124, 185, 232, 0.35);
+      box-shadow: 0 0 30px rgba(124, 185, 232, 0.04);
+    }
+
+    .wire-card::before {
+      content: attr(data-label);
+      position: absolute;
+      top: -10px;
+      left: 16px;
+      font-size: 10px;
+      color: var(--text-dim);
+      letter-spacing: 0.05em;
+      background: var(--bg);
+      padding: 0 8px;
+    }
+
+    /* Corner brackets */
+    .corner-tl,
+    .corner-tr,
+    .corner-bl,
+    .corner-br {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      transition: all 0.3s;
+    }
+
+    .corner-tl {
+      top: -1px;
+      left: -1px;
+      border-top: 2px solid var(--accent);
+      border-left: 2px solid var(--accent);
+    }
+
+    .corner-tr {
+      top: -1px;
+      right: -1px;
+      border-top: 2px solid var(--accent);
+      border-right: 2px solid var(--accent);
+    }
+
+    .corner-bl {
+      bottom: -1px;
+      left: -1px;
+      border-bottom: 2px solid var(--accent);
+      border-left: 2px solid var(--accent);
+    }
+
+    .corner-br {
+      bottom: -1px;
+      right: -1px;
+      border-bottom: 2px solid var(--accent);
+      border-right: 2px solid var(--accent);
+    }
+
+    .wire-card:hover .corner-tl,
+    .wire-card:hover .corner-tr,
+    .wire-card:hover .corner-bl,
+    .wire-card:hover .corner-br {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* Section header */
+    .section-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .section-rev {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-left: auto;
+      letter-spacing: 0.1em;
+    }
+
+    /* Measurement lines */
+    .measure {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .measure-line {
+      flex: 1;
+      height: 1px;
+      background: var(--line-dim);
+      position: relative;
+    }
+
+    .measure-line::before,
+    .measure-line::after {
+      content: '';
+      position: absolute;
+      top: -4px;
+      width: 1px;
+      height: 9px;
+      background: var(--line-dim);
+    }
+
+    .measure-line::before {
+      left: 0;
+    }
+
+    .measure-line::after {
+      right: 0;
+    }
+
+    .measure-label {
+      font-size: 10px;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+      white-space: nowrap;
+    }
+
+    /* Spec annotations */
+    .spec-annotation {
+      font-size: 9px;
+      color: var(--text-faint);
+      letter-spacing: 0.08em;
+      padding: 4px 8px;
+      border-left: 1px solid var(--line-dim);
+      margin-top: 8px;
+      line-height: 1.8;
+    }
+
+    .spec-inline {
+      font-size: 9px;
+      color: var(--text-faint);
+      letter-spacing: 0.06em;
+    }
+
+    /* About */
+    .about-text {
+      font-size: 15px;
+      line-height: 2;
+      color: var(--text);
+      font-weight: 300;
+    }
+
+    .about-annotation {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--line-dim);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .about-details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .about-detail-item {
+      font-size: 12px;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1px solid var(--line-faint);
+      transition: border-color 0.3s;
+    }
+
+    .about-detail-item:hover {
+      border-color: var(--line-dim);
+    }
+
+    .about-detail-item .detail-label {
+      color: var(--accent);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      min-width: 70px;
+    }
+
+    .about-detail-item .detail-val {
+      color: var(--text);
+    }
+
+    /* Skills grid */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .skill-box {
+      border: 1px solid var(--line-dim);
+      padding: 20px;
+      position: relative;
+      transition: all 0.4s;
+      cursor: default;
+    }
+
+    .skill-box:hover {
+      border-color: var(--accent);
+      background: rgba(124, 185, 232, 0.03);
+      box-shadow: 0 0 20px rgba(124, 185, 232, 0.05);
+      transform: translateY(-2px);
+    }
+
+    .skill-box::before {
+      content: attr(data-id);
+      position: absolute;
+      top: -8px;
+      right: 12px;
+      font-size: 10px;
+      color: var(--text-dim);
+      background: var(--bg);
+      padding: 0 4px;
+    }
+
+    .skill-box .corner-tl,
+    .skill-box .corner-tr {
+      width: 8px;
+      height: 8px;
+    }
+
+    .skill-box:hover .corner-tl,
+    .skill-box:hover .corner-tr {
+      width: 12px;
+      height: 12px;
+    }
+
+    .skill-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+      letter-spacing: 0.05em;
+    }
+
+    .skill-tech {
+      font-size: 12px;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    .skill-bar-track {
+      height: 2px;
+      background: var(--line-dim);
+      margin-top: 12px;
+      position: relative;
+    }
+
+    .skill-bar-fill {
+      height: 100%;
+      background: var(--accent);
+      transition: width 1.2s ease;
+      box-shadow: 0 0 6px var(--accent-glow);
+    }
+
+    .skill-bar-dot {
+      position: absolute;
+      top: -3px;
+      width: 8px;
+      height: 8px;
+      border: 1px solid var(--accent);
+      border-radius: 50%;
+      background: var(--bg);
+      transition: right 1.2s ease;
+    }
+
+    .skill-percent {
+      position: absolute;
+      top: -16px;
+      right: 0;
+      font-size: 9px;
+      color: var(--accent);
+      opacity: 0;
+      transition: opacity 0.5s 0.8s;
+    }
+
+    .section.visible .skill-percent {
+      opacity: 1;
+    }
+
+    /* Dimension indicators */
+    .dim-row {
+      display: flex;
+      gap: 16px;
+      margin-top: 24px;
+      font-size: 11px;
+      color: var(--text-dim);
+      flex-wrap: wrap;
+    }
+
+    .dim-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dim-dot {
+      width: 6px;
+      height: 6px;
+      border: 1px solid var(--accent);
+    }
+
+    /* Projects section */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .project-card {
+      border: 1px solid var(--line-dim);
+      padding: 24px;
+      position: relative;
+      background: var(--bg-card);
+      transition: all 0.4s;
+      cursor: default;
+    }
+
+    .project-card:hover {
+      border-color: var(--accent);
+      background: rgba(124, 185, 232, 0.02);
+      box-shadow: 0 0 30px rgba(124, 185, 232, 0.06);
+      transform: translateY(-3px);
+    }
+
+    .project-card .corner-tl,
+    .project-card .corner-tr,
+    .project-card .corner-bl,
+    .project-card .corner-br {
+      width: 10px;
+      height: 10px;
+    }
+
+    .project-card:hover .corner-tl,
+    .project-card:hover .corner-tr,
+    .project-card:hover .corner-bl,
+    .project-card:hover .corner-br {
+      width: 16px;
+      height: 16px;
+    }
+
+    .project-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .project-num {
+      font-size: 9px;
+      color: var(--text-faint);
+      letter-spacing: 0.15em;
+    }
+
+    .project-dims {
+      font-size: 9px;
+      color: var(--text-faint);
+      letter-spacing: 0.08em;
+      text-align: right;
+    }
+
+    .project-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+    }
+
+    .project-desc {
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+
+    .project-wireframe {
+      width: 100%;
+      height: 80px;
+      border: 1px dashed var(--line-dim);
+      margin-bottom: 14px;
+      position: relative;
+      overflow: hidden;
+      background: rgba(124, 185, 232, 0.02);
+    }
+
+    .project-wireframe svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .project-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .project-tag {
+      font-size: 10px;
+      color: var(--accent);
+      padding: 3px 10px;
+      border: 1px solid var(--line-dim);
+      letter-spacing: 0.05em;
+      transition: all 0.3s;
+    }
+
+    .project-tag:hover {
+      border-color: var(--accent);
+      background: rgba(124, 185, 232, 0.06);
+    }
+
+    .project-meta {
+      font-size: 9px;
+      color: var(--text-faint);
+      display: flex;
+      justify-content: space-between;
+      padding-top: 10px;
+      border-top: 1px dashed var(--line-faint);
+      letter-spacing: 0.08em;
+    }
+
+    /* Contact */
+    .contact-box {
+      text-align: center;
+      padding: 40px;
+    }
+
+    .contact-heading {
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+
+    .contact-sub {
+      font-size: 14px;
+      color: var(--text-dim);
+      margin-bottom: 28px;
+      letter-spacing: 0.1em;
+    }
+
+    .contact-links {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .contact-link {
+      padding: 10px 24px;
+      border: 1px solid var(--line-dim);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 13px;
+      color: var(--accent);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      transition: all 0.3s;
+      position: relative;
+    }
+
+    .contact-link:hover {
+      border-color: var(--accent);
+      background: rgba(124, 185, 232, 0.05);
+      box-shadow: 0 0 16px rgba(124, 185, 232, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .contact-link::before {
+      content: '>';
+      margin-right: 6px;
+      color: var(--text-dim);
+      transition: margin-right 0.3s;
+    }
+
+    .contact-link:hover::before {
+      margin-right: 10px;
+    }
+
+    .contact-form {
+      max-width: 400px;
+      margin: 32px auto 0;
+      text-align: left;
+    }
+
+    .form-field {
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 10px;
+      color: var(--text-dim);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .form-input,
+    .form-textarea {
+      width: 100%;
+      background: transparent;
+      border: 1px solid var(--line-dim);
+      color: var(--text);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 13px;
+      padding: 10px 14px;
+      letter-spacing: 0.03em;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      outline: none;
+    }
+
+    .form-input:focus,
+    .form-textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 12px rgba(124, 185, 232, 0.08);
+    }
+
+    .form-textarea {
+      height: 100px;
+      resize: vertical;
+    }
+
+    .form-field .spec-inline {
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+
+    .form-submit {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--accent);
+      background: transparent;
+      color: var(--accent);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 13px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+    }
+
+    .form-submit:hover {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    .form-submit::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(124, 185, 232, 0.15);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.4s, height 0.4s;
+    }
+
+    .form-submit:active::after {
+      width: 300px;
+      height: 300px;
+    }
+
+    /* Target marker for sections */
+    .target-marker {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 10px;
+      color: var(--text-dim);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .target-icon {
+      width: 12px;
+      height: 12px;
+      border: 1px solid var(--accent);
+      border-radius: 50%;
+      position: relative;
+      transition: all 0.3s;
+    }
+
+    .target-icon::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--accent);
+      transition: all 0.3s;
+    }
+
+    .section.visible .target-icon {
+      box-shadow: 0 0 8px var(--accent-glow);
+    }
+
+    .section.visible .target-icon::before {
+      width: 6px;
+      height: 6px;
+    }
+
+    /* Section coordinate labels */
+    .section-coords {
+      font-size: 9px;
+      color: var(--text-faint);
+      letter-spacing: 0.12em;
+      margin-bottom: 4px;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 60px 20px 40px;
+      font-size: 12px;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+      border-top: 1px solid var(--line-dim);
+      position: relative;
+      z-index: 10;
+    }
+
+    .footer-grid {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .footer-item {
+      font-size: 10px;
+      color: var(--text-faint);
+      letter-spacing: 0.1em;
+    }
+
+    /* Section draw SVGs */
+    .section-draw-svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: visible;
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+
+      .scan-line {
+        display: none;
+      }
+
+      .section {
+        opacity: 1;
+        transform: none;
+      }
+
+      .draw-line {
+        stroke-dashoffset: 0 !important;
+      }
+
+      .hero::before,
+      .hero::after {
+        animation: none;
+      }
+    }
+
+    /* Responsive: 375px */
+    @media (max-width: 480px) {
+      .hero-name {
+        font-size: 28px;
+      }
+
+      .hero-title {
+        font-size: 13px;
+      }
+
+      .section-title {
+        font-size: 16px;
+      }
+
+      .nav {
+        padding: 14px 16px;
+      }
+
+      .content {
+        padding: 90px 16px 50px;
+      }
+
+      .skills-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .projects-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .wire-card {
+        padding: 20px;
+      }
+
+      .watermark {
+        display: none;
+      }
+
+      .hero::before {
+        width: 150px;
+        height: 150px;
+      }
+
+      .hero::after {
+        width: 90px;
+        height: 90px;
+      }
+
+      .lang-btn {
+        padding: 4px 8px;
+        font-size: 11px;
+      }
+
+      .contact-links {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .dim-row {
+        flex-wrap: wrap;
+      }
+
+      .about-details {
+        grid-template-columns: 1fr;
+      }
+
+      .ruler-x,
+      .ruler-y {
+        display: none;
+      }
+
+      .origin-cross {
+        display: none;
+      }
+
+      .coord-display {
+        display: none;
+      }
+
+      .hero-svg {
+        display: none;
+      }
+
+      .hero-dim {
+        display: none;
+      }
+
+      .footer-grid {
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+      }
+    }
+
+    /* Responsive: 768px */
+    @media (min-width: 481px) and (max-width: 768px) {
+      .hero-name {
+        font-size: 36px;
+      }
+
+      .section-title {
+        font-size: 18px;
+      }
+
+      .nav {
+        padding: 16px 24px;
+      }
+
+      .content {
+        padding: 100px 20px 60px;
+      }
+
+      .skills-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .projects-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .wire-card {
+        padding: 24px;
+      }
+
+      .watermark {
+        display: none;
+      }
+
+      .hero::before {
+        width: 180px;
+        height: 180px;
+      }
+
+      .ruler-y {
+        display: none;
+      }
+    }
+
+    /* Responsive: 1440px+ */
+    @media (min-width: 1440px) {
+      .content {
+        max-width: 1200px;
+      }
+
+      .skills-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+      }
+
+      .projects-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+      }
+
+      .hero-name {
+        font-size: 60px;
+      }
+
+      .hero {
+        padding: 120px 0 140px;
+      }
+
+      .wire-card {
+        padding: 40px;
+      }
+
+      .about-details {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+
+      .contact-box {
+        padding: 60px;
+      }
+    }
+  </style>
 </head>
 <body>
 
-<!-- Blueprint Grid Background -->
-<div class="blueprint-grid">
-<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
-<defs>
-  <pattern id="minor-grid" width="20" height="20" patternUnits="userSpaceOnUse">
-    <path d="M 20 0 L 0 0 0 20" fill="none" stroke="var(--grid-minor)" stroke-width="0.5"/>
-  </pattern>
-  <pattern id="major-grid" width="100" height="100" patternUnits="userSpaceOnUse">
-    <rect width="100" height="100" fill="url(#minor-grid)"/>
-    <path d="M 100 0 L 0 0 0 100" fill="none" stroke="var(--grid-major)" stroke-width="1"/>
-  </pattern>
-</defs>
-<rect width="100%" height="100%" fill="url(#major-grid)"/>
-<!-- Axis labels -->
-<text x="105" y="12" fill="rgba(124,185,232,0.12)" font-size="8" font-family="IBM Plex Mono">100</text>
-<text x="205" y="12" fill="rgba(124,185,232,0.12)" font-size="8" font-family="IBM Plex Mono">200</text>
-<text x="305" y="12" fill="rgba(124,185,232,0.12)" font-size="8" font-family="IBM Plex Mono">300</text>
-<text x="405" y="12" fill="rgba(124,185,232,0.12)" font-size="8" font-family="IBM Plex Mono">400</text>
-<text x="505" y="12" fill="rgba(124,185,232,0.12)" font-size="8" font-family="IBM Plex Mono">500</text>
-<text x="4" y="105" fill="rgba(124,185,232,0.12)" font-size="8" font-family="IBM Plex Mono">100</text>
-<text x="4" y="205" fill="rgba(124,185,232,0.12)" font-size="8" font-family="IBM Plex Mono">200</text>
-<text x="4" y="305" fill="rgba(124,185,232,0.12)" font-size="8" font-family="IBM Plex Mono">300</text>
-<text x="4" y="405" fill="rgba(124,185,232,0.12)" font-size="8" font-family="IBM Plex Mono">400</text>
-</svg>
-</div>
-
-<!-- Pixel Rulers -->
-<div class="ruler-x" aria-hidden="true">
-  <div class="ruler-tick">0</div><div class="ruler-tick">100</div><div class="ruler-tick">200</div>
-  <div class="ruler-tick">300</div><div class="ruler-tick">400</div><div class="ruler-tick">500</div>
-  <div class="ruler-tick">600</div><div class="ruler-tick">700</div><div class="ruler-tick">800</div>
-  <div class="ruler-tick">900</div><div class="ruler-tick">1000</div><div class="ruler-tick">1100</div>
-  <div class="ruler-tick">1200</div><div class="ruler-tick">1300</div><div class="ruler-tick">1400</div>
-</div>
-<div class="ruler-y" aria-hidden="true">
-  <div class="ruler-tick">0</div><div class="ruler-tick">100</div><div class="ruler-tick">200</div>
-  <div class="ruler-tick">300</div><div class="ruler-tick">400</div><div class="ruler-tick">500</div>
-  <div class="ruler-tick">600</div><div class="ruler-tick">700</div><div class="ruler-tick">800</div>
-  <div class="ruler-tick">900</div><div class="ruler-tick">1000</div>
-</div>
-
-<!-- Origin Crosshair -->
-<div class="origin-cross" aria-hidden="true"></div>
-
-<!-- Scanning Line -->
-<div class="scan-line" id="scanLine" aria-hidden="true"></div>
-
-<!-- Coordinate Display -->
-<div class="coord-display" id="coordDisplay" aria-hidden="true">
-  <span>X:</span> <span id="coordX">0</span> &nbsp; <span>Y:</span> <span id="coordY">0</span> &nbsp; <span>SEC:</span> <span id="coordSec">HERO</span>
-</div>
-
-<div class="watermark">SPEC // REV 2.0 // DRAFT // PORTFOLIO BLUEPRINT // CONFIDENTIAL</div>
-
-<nav class="nav">
-  <a href="../index.html" class="gallery-link" data-i18n="gallery_link">&#8592; Gallery</a>
-  <div class="lang-switcher">
-    <button class="lang-btn active" data-lang="en" onclick="setLanguage('en')">EN</button>
-    <button class="lang-btn" data-lang="ko" onclick="setLanguage('ko')">&#54620;&#44397;&#50612;</button>
-    <button class="lang-btn" data-lang="ja" onclick="setLanguage('ja')">&#26085;&#26412;&#35486;</button>
-    <button class="lang-btn" data-lang="zh" onclick="setLanguage('zh')">&#20013;&#25991;</button>
-  </div>
-</nav>
-
-<div class="content">
-  <!-- Circuit Trace SVG -->
-  <svg class="circuit-traces" id="circuitTraces" aria-hidden="true">
-    <path class="draw-line" id="trace1" d="" style="--dash-len:600"/>
-    <path class="draw-line" id="trace2" d="" style="--dash-len:400"/>
-    <path class="draw-line" id="trace3" d="" style="--dash-len:500"/>
-  </svg>
-
-  <!-- Hero Section -->
-  <section class="hero" id="heroSection" data-coord-label="HERO">
-    <!-- Hero SVG ornaments -->
-    <svg class="hero-svg hero-svg-left" aria-hidden="true">
-      <line class="draw-line" x1="60" y1="0" x2="60" y2="180" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:180"/>
-      <line class="draw-line" x1="40" y1="30" x2="80" y2="30" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:40"/>
-      <line class="draw-line" x1="40" y1="80" x2="80" y2="80" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:40"/>
-      <line class="draw-line" x1="40" y1="130" x2="80" y2="130" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:40"/>
-      <circle cx="60" cy="30" r="3" fill="none" stroke="var(--accent)" stroke-width="1" opacity="0.5"/>
-      <circle cx="60" cy="130" r="3" fill="none" stroke="var(--accent)" stroke-width="1" opacity="0.5"/>
+  <!-- Blueprint Grid Background -->
+  <div class="blueprint-grid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+      <defs>
+        <pattern id="minor-grid" width="20" height="20" patternUnits="userSpaceOnUse">
+          <path d="M 20 0 L 0 0 0 20" fill="none" stroke="var(--grid-minor)" stroke-width="0.5"/>
+        </pattern>
+        <pattern id="major-grid" width="100" height="100" patternUnits="userSpaceOnUse">
+          <rect width="100" height="100" fill="url(#minor-grid)"/>
+          <path d="M 100 0 L 0 0 0 100" fill="none" stroke="var(--grid-major)" stroke-width="1"/>
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#major-grid)"/>
+      <!-- Axis labels -->
+      <text x="105" y="12" fill="rgba(124, 185, 232, 0.12)" font-size="8" font-family="IBM Plex Mono">100</text>
+      <text x="205" y="12" fill="rgba(124, 185, 232, 0.12)" font-size="8" font-family="IBM Plex Mono">200</text>
+      <text x="305" y="12" fill="rgba(124, 185, 232, 0.12)" font-size="8" font-family="IBM Plex Mono">300</text>
+      <text x="405" y="12" fill="rgba(124, 185, 232, 0.12)" font-size="8" font-family="IBM Plex Mono">400</text>
+      <text x="505" y="12" fill="rgba(124, 185, 232, 0.12)" font-size="8" font-family="IBM Plex Mono">500</text>
+      <text x="4" y="105" fill="rgba(124, 185, 232, 0.12)" font-size="8" font-family="IBM Plex Mono">100</text>
+      <text x="4" y="205" fill="rgba(124, 185, 232, 0.12)" font-size="8" font-family="IBM Plex Mono">200</text>
+      <text x="4" y="305" fill="rgba(124, 185, 232, 0.12)" font-size="8" font-family="IBM Plex Mono">300</text>
+      <text x="4" y="405" fill="rgba(124, 185, 232, 0.12)" font-size="8" font-family="IBM Plex Mono">400</text>
     </svg>
-    <svg class="hero-svg hero-svg-right" aria-hidden="true">
-      <line class="draw-line" x1="20" y1="0" x2="20" y2="180" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:180"/>
-      <line class="draw-line" x1="0" y1="50" x2="40" y2="50" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:40"/>
-      <line class="draw-line" x1="0" y1="100" x2="40" y2="100" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:40"/>
-      <line class="draw-line" x1="0" y1="150" x2="40" y2="150" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:40"/>
-      <circle cx="20" cy="50" r="3" fill="none" stroke="var(--accent)" stroke-width="1" opacity="0.5"/>
-      <circle cx="20" cy="150" r="3" fill="none" stroke="var(--accent)" stroke-width="1" opacity="0.5"/>
-    </svg>
-    <div class="hero-dim hero-dim-top">W: 1000px MAX / FLUID</div>
-    <div class="hero-coords" data-i18n="hero_coords">X: 0.00 &nbsp; Y: 0.00 &nbsp; Z: 1.00</div>
-    <h1 class="hero-name" data-i18n="name">Your Name</h1><span class="blink-cursor"></span>
-    <p class="hero-title" data-i18n="title">Creative Developer &amp; Designer</p>
-    <div class="hero-spec">SPEC: PORTFOLIO // REV 2.0 // STATUS: ACTIVE // BUILD: 2025.12</div>
-    <div class="spec-annotation" style="display:inline-block;margin-top:24px;text-align:left">
-      FONT: IBM Plex Mono 52px/700<br>
-      COLOR: #E0F0FF / ACCENT: #7CB9E8<br>
-      PADDING-TOP: 100px / PADDING-BOTTOM: 120px
-    </div>
-  </section>
-
-  <div class="connector"></div>
-
-  <!-- About Section -->
-  <section class="section" id="about" data-coord-label="ABOUT">
-    <div class="section-coords">Y: 480 // OFFSET: 120px</div>
-    <div class="target-marker"><div class="target-icon"></div>SECTION_01 // ABOUT</div>
-    <div class="wire-card" data-label="ABOUT">
-      <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
-      <!-- Draw SVG borders -->
-      <svg class="section-draw-svg" aria-hidden="true">
-        <rect class="draw-line" x="0" y="0" width="100%" height="100%" fill="none" stroke="var(--line-faint)" stroke-width="1" style="--dash-len:2000" rx="0"/>
-      </svg>
-      <div class="section-header">
-        <div class="crosshair"></div>
-        <h2 class="section-title" data-i18n="about_label">About</h2>
-        <span class="section-rev">REV 2.0</span>
-      </div>
-      <div class="measure"><span class="measure-label">W: 100%</span><div class="measure-line"></div><span class="measure-label">H: AUTO</span></div>
-      <p class="about-text" data-i18n="about_text">A creative developer crafting digital experiences at the intersection of design and technology. Building beautiful and functional products through clean code and thoughtful interfaces.</p>
-      <div class="about-details">
-        <div class="about-detail-item">
-          <span class="detail-label">Focus</span>
-          <span class="detail-val" data-i18n="about_focus">Web & Mobile</span>
-        </div>
-        <div class="about-detail-item">
-          <span class="detail-label">Stack</span>
-          <span class="detail-val" data-i18n="about_stack">React / Node.js</span>
-        </div>
-        <div class="about-detail-item">
-          <span class="detail-label">Design</span>
-          <span class="detail-val" data-i18n="about_design">Figma / Systems</span>
-        </div>
-        <div class="about-detail-item">
-          <span class="detail-label">Passion</span>
-          <span class="detail-val" data-i18n="about_passion">Creative Code</span>
-        </div>
-      </div>
-      <div class="about-annotation">
-        <span>PADDING: 32px</span>
-        <span>FONT: IBM Plex Mono 15px/2</span>
-        <span>BORDER: 1px SOLID</span>
-        <span>BG: rgba(13,27,42,0.6)</span>
-      </div>
-      <div class="spec-annotation">
-        LINE-HEIGHT: 2.0 // FONT-WEIGHT: 300<br>
-        GRID: 2-COL / GAP: 12px // DETAIL-PADDING: 8px 12px
-      </div>
-    </div>
-  </section>
-
-  <div class="connector"></div>
-
-  <!-- Skills Section -->
-  <section class="section" id="skills" data-coord-label="SKILLS">
-    <div class="section-coords">Y: 960 // OFFSET: 240px</div>
-    <div class="target-marker"><div class="target-icon"></div>SECTION_02 // EXPERTISE</div>
-    <div class="wire-card" data-label="EXPERTISE">
-      <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
-      <svg class="section-draw-svg" aria-hidden="true">
-        <rect class="draw-line" x="0" y="0" width="100%" height="100%" fill="none" stroke="var(--line-faint)" stroke-width="1" style="--dash-len:2000" rx="0"/>
-      </svg>
-      <div class="section-header">
-        <div class="crosshair"></div>
-        <h2 class="section-title" data-i18n="skills_label">Expertise</h2>
-        <span class="section-rev">GRID: AUTO-FIT / MIN: 220px</span>
-      </div>
-      <div class="measure"><span class="measure-label">COLS: AUTO</span><div class="measure-line"></div><span class="measure-label">GAP: 16px</span></div>
-      <div class="skills-grid">
-        <div class="skill-box" data-id="#01">
-          <div class="corner-tl"></div><div class="corner-tr"></div>
-          <div class="skill-name" data-i18n="skill_frontend">Frontend</div>
-          <div class="skill-tech">React / Vue / TypeScript<br>Next.js / Tailwind CSS</div>
-          <div class="skill-bar-track">
-            <div class="skill-bar-fill" style="width:0%" data-width="92%"></div>
-            <div class="skill-bar-dot" style="right:100%" data-right="8%"></div>
-            <span class="skill-percent">92%</span>
-          </div>
-        </div>
-        <div class="skill-box" data-id="#02">
-          <div class="corner-tl"></div><div class="corner-tr"></div>
-          <div class="skill-name" data-i18n="skill_uiux">UI/UX Design</div>
-          <div class="skill-tech">Figma / Prototyping<br>User Research / Systems</div>
-          <div class="skill-bar-track">
-            <div class="skill-bar-fill" style="width:0%" data-width="88%"></div>
-            <div class="skill-bar-dot" style="right:100%" data-right="12%"></div>
-            <span class="skill-percent">88%</span>
-          </div>
-        </div>
-        <div class="skill-box" data-id="#03">
-          <div class="corner-tl"></div><div class="corner-tr"></div>
-          <div class="skill-name" data-i18n="skill_backend">Backend</div>
-          <div class="skill-tech">Node.js / Python<br>REST APIs / GraphQL</div>
-          <div class="skill-bar-track">
-            <div class="skill-bar-fill" style="width:0%" data-width="80%"></div>
-            <div class="skill-bar-dot" style="right:100%" data-right="20%"></div>
-            <span class="skill-percent">80%</span>
-          </div>
-        </div>
-        <div class="skill-box" data-id="#04">
-          <div class="corner-tl"></div><div class="corner-tr"></div>
-          <div class="skill-name" data-i18n="skill_mobile">Mobile</div>
-          <div class="skill-tech">React Native / Flutter<br>iOS / Android</div>
-          <div class="skill-bar-track">
-            <div class="skill-bar-fill" style="width:0%" data-width="78%"></div>
-            <div class="skill-bar-dot" style="right:100%" data-right="22%"></div>
-            <span class="skill-percent">78%</span>
-          </div>
-        </div>
-        <div class="skill-box" data-id="#05">
-          <div class="corner-tl"></div><div class="corner-tr"></div>
-          <div class="skill-name" data-i18n="skill_creative">Creative Code</div>
-          <div class="skill-tech">Canvas / WebGL<br>GSAP / Animations</div>
-          <div class="skill-bar-track">
-            <div class="skill-bar-fill" style="width:0%" data-width="85%"></div>
-            <div class="skill-bar-dot" style="right:100%" data-right="15%"></div>
-            <span class="skill-percent">85%</span>
-          </div>
-        </div>
-        <div class="skill-box" data-id="#06">
-          <div class="corner-tl"></div><div class="corner-tr"></div>
-          <div class="skill-name" data-i18n="skill_devops">DevOps</div>
-          <div class="skill-tech">Docker / CI/CD<br>AWS / Vercel</div>
-          <div class="skill-bar-track">
-            <div class="skill-bar-fill" style="width:0%" data-width="75%"></div>
-            <div class="skill-bar-dot" style="right:100%" data-right="25%"></div>
-            <span class="skill-percent">75%</span>
-          </div>
-        </div>
-      </div>
-      <div class="dim-row">
-        <div class="dim-item"><div class="dim-dot"></div>GRID-GAP: 16px</div>
-        <div class="dim-item"><div class="dim-dot"></div>MIN-COL: 220px</div>
-        <div class="dim-item"><div class="dim-dot"></div>ITEMS: 6</div>
-        <div class="dim-item"><div class="dim-dot"></div>BAR-H: 2px</div>
-      </div>
-      <div class="spec-annotation">
-        SKILL-BOX PADDING: 20px // BORDER: 1px SOLID rgba(124,185,232,0.2)<br>
-        FONT-SIZE: NAME 16px/600 / TECH 12px/400 // TRANSITION: 0.4s ALL
-      </div>
-    </div>
-  </section>
-
-  <div class="connector"></div>
-
-  <!-- Projects Section -->
-  <section class="section" id="projects" data-coord-label="PROJECTS">
-    <div class="section-coords">Y: 1680 // OFFSET: 360px</div>
-    <div class="target-marker"><div class="target-icon"></div>SECTION_03 // PROJECTS</div>
-    <div class="wire-card" data-label="PROJECTS">
-      <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
-      <svg class="section-draw-svg" aria-hidden="true">
-        <rect class="draw-line" x="0" y="0" width="100%" height="100%" fill="none" stroke="var(--line-faint)" stroke-width="1" style="--dash-len:2000" rx="0"/>
-      </svg>
-      <div class="section-header">
-        <div class="crosshair"></div>
-        <h2 class="section-title" data-i18n="projects_label">Projects</h2>
-        <span class="section-rev">GRID: 2-COL / GAP: 20px</span>
-      </div>
-      <div class="measure"><span class="measure-label">LAYOUT: GRID</span><div class="measure-line"></div><span class="measure-label">COLS: 2</span></div>
-      <div class="projects-grid">
-        <!-- Project 1 -->
-        <div class="project-card">
-          <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
-          <div class="project-header">
-            <span class="project-num">PRJ-001</span>
-            <span class="project-dims">W: 480 H: AUTO</span>
-          </div>
-          <div class="project-wireframe" aria-hidden="true">
-            <svg width="100%" height="100%" viewBox="0 0 400 80" preserveAspectRatio="none">
-              <rect class="draw-line" x="10" y="8" width="120" height="12" fill="none" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:270" rx="1"/>
-              <rect class="draw-line" x="10" y="28" width="380" height="6" fill="none" stroke="var(--line-faint)" stroke-width="1" style="--dash-len:780" rx="1"/>
-              <rect class="draw-line" x="10" y="40" width="340" height="6" fill="none" stroke="var(--line-faint)" stroke-width="1" style="--dash-len:700" rx="1"/>
-              <rect class="draw-line" x="10" y="56" width="80" height="16" fill="none" stroke="var(--accent)" stroke-width="1" style="--dash-len:200" rx="1" opacity="0.5"/>
-              <rect class="draw-line" x="100" y="56" width="80" height="16" fill="none" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:200" rx="1"/>
-              <line class="draw-line" x1="280" y1="10" x2="390" y2="10" stroke="var(--line-faint)" stroke-width="1" stroke-dasharray="4 3" style="--dash-len:110"/>
-              <circle cx="290" cy="56" r="8" fill="none" stroke="var(--line-dim)" stroke-width="1" opacity="0.4"/>
-              <circle cx="310" cy="56" r="8" fill="none" stroke="var(--line-dim)" stroke-width="1" opacity="0.4"/>
-            </svg>
-          </div>
-          <h3 class="project-title" data-i18n="project1_title">E-Commerce Platform</h3>
-          <p class="project-desc" data-i18n="project1_desc">Full-stack marketplace with real-time inventory, payment processing, and admin dashboard.</p>
-          <div class="project-tags">
-            <span class="project-tag">React</span>
-            <span class="project-tag">Node.js</span>
-            <span class="project-tag">PostgreSQL</span>
-            <span class="project-tag">Stripe</span>
-          </div>
-          <div class="project-meta">
-            <span>STATUS: DEPLOYED</span>
-            <span>SCALE: 10K+ USERS</span>
-          </div>
-        </div>
-        <!-- Project 2 -->
-        <div class="project-card">
-          <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
-          <div class="project-header">
-            <span class="project-num">PRJ-002</span>
-            <span class="project-dims">W: 480 H: AUTO</span>
-          </div>
-          <div class="project-wireframe" aria-hidden="true">
-            <svg width="100%" height="100%" viewBox="0 0 400 80" preserveAspectRatio="none">
-              <rect class="draw-line" x="10" y="8" width="60" height="60" fill="none" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:250" rx="1"/>
-              <line class="draw-line" x1="80" y1="14" x2="200" y2="14" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:120"/>
-              <line class="draw-line" x1="80" y1="30" x2="260" y2="30" stroke="var(--line-faint)" stroke-width="1" style="--dash-len:180"/>
-              <line class="draw-line" x1="80" y1="42" x2="220" y2="42" stroke="var(--line-faint)" stroke-width="1" style="--dash-len:140"/>
-              <rect class="draw-line" x="280" y="8" width="110" height="60" fill="none" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:350" rx="1"/>
-              <line class="draw-line" x1="290" y1="24" x2="380" y2="24" stroke="var(--line-faint)" stroke-width="1" style="--dash-len:90"/>
-              <line class="draw-line" x1="290" y1="38" x2="360" y2="38" stroke="var(--line-faint)" stroke-width="1" style="--dash-len:70"/>
-            </svg>
-          </div>
-          <h3 class="project-title" data-i18n="project2_title">Design System</h3>
-          <p class="project-desc" data-i18n="project2_desc">Comprehensive component library with tokens, accessibility guidelines, and interactive documentation.</p>
-          <div class="project-tags">
-            <span class="project-tag">TypeScript</span>
-            <span class="project-tag">Storybook</span>
-            <span class="project-tag">Figma</span>
-          </div>
-          <div class="project-meta">
-            <span>STATUS: MAINTAINED</span>
-            <span>COMPONENTS: 80+</span>
-          </div>
-        </div>
-        <!-- Project 3 -->
-        <div class="project-card">
-          <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
-          <div class="project-header">
-            <span class="project-num">PRJ-003</span>
-            <span class="project-dims">W: 480 H: AUTO</span>
-          </div>
-          <div class="project-wireframe" aria-hidden="true">
-            <svg width="100%" height="100%" viewBox="0 0 400 80" preserveAspectRatio="none">
-              <circle class="draw-line" cx="40" cy="40" r="25" fill="none" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:160"/>
-              <line class="draw-line" x1="70" y1="40" x2="150" y2="40" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:80"/>
-              <rect class="draw-line" x="155" y="20" width="100" height="40" fill="none" stroke="var(--accent)" stroke-width="1" style="--dash-len:280" rx="2" opacity="0.5"/>
-              <line class="draw-line" x1="260" y1="40" x2="300" y2="20" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:45"/>
-              <line class="draw-line" x1="260" y1="40" x2="300" y2="40" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:40"/>
-              <line class="draw-line" x1="260" y1="40" x2="300" y2="60" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:45"/>
-              <circle cx="300" cy="20" r="4" fill="none" stroke="var(--line-dim)" stroke-width="1" opacity="0.5"/>
-              <circle cx="300" cy="40" r="4" fill="none" stroke="var(--line-dim)" stroke-width="1" opacity="0.5"/>
-              <circle cx="300" cy="60" r="4" fill="none" stroke="var(--line-dim)" stroke-width="1" opacity="0.5"/>
-            </svg>
-          </div>
-          <h3 class="project-title" data-i18n="project3_title">Analytics Dashboard</h3>
-          <p class="project-desc" data-i18n="project3_desc">Real-time data visualization platform with custom charts, filtering, and PDF report generation.</p>
-          <div class="project-tags">
-            <span class="project-tag">Next.js</span>
-            <span class="project-tag">D3.js</span>
-            <span class="project-tag">WebSocket</span>
-          </div>
-          <div class="project-meta">
-            <span>STATUS: PRODUCTION</span>
-            <span>DATA: REAL-TIME</span>
-          </div>
-        </div>
-        <!-- Project 4 -->
-        <div class="project-card">
-          <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
-          <div class="project-header">
-            <span class="project-num">PRJ-004</span>
-            <span class="project-dims">W: 480 H: AUTO</span>
-          </div>
-          <div class="project-wireframe" aria-hidden="true">
-            <svg width="100%" height="100%" viewBox="0 0 400 80" preserveAspectRatio="none">
-              <rect class="draw-line" x="10" y="8" width="180" height="64" fill="none" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:500" rx="4"/>
-              <rect class="draw-line" x="20" y="16" width="160" height="8" fill="none" stroke="var(--line-faint)" stroke-width="1" style="--dash-len:340" rx="2"/>
-              <rect class="draw-line" x="20" y="32" width="100" height="32" fill="none" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:270" rx="2"/>
-              <rect class="draw-line" x="130" y="32" width="50" height="14" fill="none" stroke="var(--accent)" stroke-width="1" style="--dash-len:130" rx="2" opacity="0.4"/>
-              <rect class="draw-line" x="220" y="8" width="170" height="64" fill="none" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:470" rx="4"/>
-              <line class="draw-line" x1="230" y1="20" x2="380" y2="20" stroke="var(--line-faint)" stroke-width="1" style="--dash-len:150"/>
-              <line class="draw-line" x1="230" y1="36" x2="350" y2="36" stroke="var(--line-faint)" stroke-width="1" style="--dash-len:120"/>
-              <line class="draw-line" x1="230" y1="52" x2="320" y2="52" stroke="var(--line-faint)" stroke-width="1" style="--dash-len:90"/>
-            </svg>
-          </div>
-          <h3 class="project-title" data-i18n="project4_title">Mobile App</h3>
-          <p class="project-desc" data-i18n="project4_desc">Cross-platform mobile application with offline-first architecture and biometric authentication.</p>
-          <div class="project-tags">
-            <span class="project-tag">React Native</span>
-            <span class="project-tag">Redux</span>
-            <span class="project-tag">Firebase</span>
-          </div>
-          <div class="project-meta">
-            <span>STATUS: SHIPPED</span>
-            <span>PLATFORMS: iOS/Android</span>
-          </div>
-        </div>
-      </div>
-      <div class="dim-row">
-        <div class="dim-item"><div class="dim-dot"></div>GRID: 2-COL</div>
-        <div class="dim-item"><div class="dim-dot"></div>GAP: 20px</div>
-        <div class="dim-item"><div class="dim-dot"></div>CARD-PAD: 24px</div>
-        <div class="dim-item"><div class="dim-dot"></div>WIREFRAME-H: 80px</div>
-      </div>
-      <div class="spec-annotation">
-        PROJECT-CARD: BORDER 1px SOLID rgba(124,185,232,0.2) // BG: rgba(13,27,42,0.6)<br>
-        TITLE: 18px/600 // DESC: 13px/1.7 // TAGS: 10px BORDER-BOX
-      </div>
-    </div>
-  </section>
-
-  <div class="connector"></div>
-
-  <!-- Contact Section -->
-  <section class="section" id="contact" data-coord-label="CONTACT">
-    <div class="section-coords">Y: 2880 // OFFSET: 480px</div>
-    <div class="target-marker"><div class="target-icon"></div>SECTION_04 // CONTACT</div>
-    <div class="wire-card" data-label="CONTACT">
-      <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
-      <svg class="section-draw-svg" aria-hidden="true">
-        <rect class="draw-line" x="0" y="0" width="100%" height="100%" fill="none" stroke="var(--line-faint)" stroke-width="1" style="--dash-len:2000" rx="0"/>
-      </svg>
-      <div class="section-header">
-        <div class="crosshair"></div>
-        <h2 class="section-title" data-i18n="contact_label">Get in Touch</h2>
-        <span class="section-rev">ALIGN: CENTER</span>
-      </div>
-      <div class="contact-box">
-        <h3 class="contact-heading" data-i18n="contact_heading">Let's Work Together</h3>
-        <p class="contact-sub" data-i18n="contact_sub">Available for freelance projects</p>
-        <div class="contact-links">
-          <a href="mailto:hello@example.com" class="contact-link" data-i18n="contact_email">email</a>
-          <a href="#" class="contact-link">github</a>
-          <a href="#" class="contact-link">linkedin</a>
-          <a href="#" class="contact-link">twitter</a>
-        </div>
-        <div class="contact-form">
-          <div class="measure" style="margin-top:28px;margin-bottom:20px"><span class="measure-label">FORM: CONTACT</span><div class="measure-line"></div><span class="measure-label">MAX-W: 400px</span></div>
-          <div class="form-field">
-            <label class="form-label" data-i18n="form_name_label">Name</label>
-            <span class="spec-inline">// TYPE: TEXT / REQ</span>
-            <input type="text" class="form-input" placeholder="John Doe" autocomplete="name">
-          </div>
-          <div class="form-field">
-            <label class="form-label" data-i18n="form_email_label">Email</label>
-            <span class="spec-inline">// TYPE: EMAIL / REQ</span>
-            <input type="email" class="form-input" placeholder="john@example.com" autocomplete="email">
-          </div>
-          <div class="form-field">
-            <label class="form-label" data-i18n="form_message_label">Message</label>
-            <span class="spec-inline">// TYPE: TEXTAREA / MIN: 10</span>
-            <textarea class="form-textarea" placeholder="Your message..."></textarea>
-          </div>
-          <button type="button" class="form-submit" data-i18n="form_submit">TRANSMIT &gt;</button>
-        </div>
-      </div>
-      <div class="spec-annotation" style="text-align:center">
-        FORM-INPUT: FONT 13px / PAD 10px 14px / BORDER: 1px SOLID<br>
-        SUBMIT: UPPERCASE / LETTER-SPACING: 0.1em // HOVER: ACCENT-BG
-      </div>
-    </div>
-  </section>
-</div>
-
-<footer class="footer">
-  <div class="footer-grid">
-    <span class="footer-item">BLUEPRINT PORTFOLIO v2.0</span>
-    <span class="footer-item">DRAFTED 2025</span>
-    <span class="footer-item">ALL DIMENSIONS IN PX</span>
-    <span class="footer-item">FONT: IBM PLEX MONO</span>
-    <span class="footer-item">GRID: 20px MINOR / 100px MAJOR</span>
   </div>
-  <p>SPEC REVISION 2.0 // STATUS: FINAL // APPROVED FOR DEPLOYMENT</p>
-</footer>
 
-<script>
-/* === TRANSLATIONS === */
-var TRANSLATIONS={
-  ko:{
-    name:'\uD64D\uAE38\uB3D9',
-    title:'\uD06C\uB9AC\uC5D0\uC774\uD2F0\uBE0C \uAC1C\uBC1C\uC790 & \uB514\uC790\uC774\uB108',
-    about_label:'\uC18C\uAC1C',
-    about_text:'\uB514\uC790\uC778\uACFC \uAE30\uC220\uC758 \uAD50\uCC28\uC810\uC5D0\uC11C \uB514\uC9C0\uD138 \uACBD\uD5D8\uC744 \uB9CC\uB4DC\uB294 \uD06C\uB9AC\uC5D0\uC774\uD2F0\uBE0C \uAC1C\uBC1C\uC790\uC785\uB2C8\uB2E4. \uAE54\uB054\uD55C \uCF54\uB4DC\uC640 \uC138\uC2EC\uD55C \uC778\uD130\uD398\uC774\uC2A4\uB97C \uD1B5\uD574 \uC544\uB984\uB2F5\uACE0 \uAE30\uB2A5\uC801\uC778 \uC81C\uD488\uC744 \uB9CC\uB4ED\uB2C8\uB2E4.',
-    about_focus:'\uC6F9 & \uBAA8\uBC14\uC77C',
-    about_stack:'React / Node.js',
-    about_design:'Figma / \uC2DC\uC2A4\uD15C',
-    about_passion:'\uD06C\uB9AC\uC5D0\uC774\uD2F0\uBE0C \uCF54\uB4DC',
-    skills_label:'\uC804\uBB38 \uBD84\uC57C',
-    projects_label:'\uD504\uB85C\uC81D\uD2B8',
-    project1_title:'\uC804\uC790\uC0C1\uAC70\uB798 \uD50C\uB7AB\uD3FC',
-    project1_desc:'\uC2E4\uC2DC\uAC04 \uC7AC\uACE0 \uAD00\uB9AC, \uACB0\uC81C \uCC98\uB9AC, \uAD00\uB9AC\uC790 \uB300\uC2DC\uBCF4\uB4DC\uB97C \uAC16\uCD98 \uD480\uC2A4\uD0DD \uB9C8\uCF13\uD50C\uB808\uC774\uC2A4.',
-    project2_title:'\uB514\uC790\uC778 \uC2DC\uC2A4\uD15C',
-    project2_desc:'\uD1A0\uD070, \uC811\uADFC\uC131 \uAC00\uC774\uB4DC\uB77C\uC778, \uC778\uD130\uB799\uD2F0\uBE0C \uBB38\uC11C\uB97C \uD3EC\uD568\uD55C \uD3EC\uAD04\uC801\uC778 \uCEF4\uD3EC\uB10C\uD2B8 \uB77C\uC774\uBE0C\uB7EC\uB9AC.',
-    project3_title:'\uBD84\uC11D \uB300\uC2DC\uBCF4\uB4DC',
-    project3_desc:'\uCEE4\uC2A4\uD140 \uCC28\uD2B8, \uD544\uD130\uB9C1, PDF \uBCF4\uACE0\uC11C \uC0DD\uC131 \uAE30\uB2A5\uC758 \uC2E4\uC2DC\uAC04 \uB370\uC774\uD130 \uC2DC\uAC01\uD654 \uD50C\uB7AB\uD3FC.',
-    project4_title:'\uBAA8\uBC14\uC77C \uC571',
-    project4_desc:'\uC624\uD504\uB77C\uC778 \uC6B0\uC120 \uC544\uD0A4\uD14D\uCC98\uC640 \uC0DD\uCCB4 \uC778\uC99D\uC744 \uAC16\uCD98 \uD06C\uB85C\uC2A4 \uD50C\uB7AB\uD3FC \uBAA8\uBC14\uC77C \uC571.',
-    contact_label:'\uC5F0\uB77D\uD558\uAE30',
-    contact_heading:'\uD568\uAED8 \uC77C\uD574\uC694',
-    contact_sub:'\uD504\uB9AC\uB79C\uC11C \uD504\uB85C\uC81D\uD2B8 \uAC00\uB2A5',
-    contact_email:'\uC774\uBA54\uC77C',
-    form_name_label:'\uC774\uB984',
-    form_email_label:'\uC774\uBA54\uC77C',
-    form_message_label:'\uBA54\uC2DC\uC9C0',
-    form_submit:'\uC804\uC1A1 >',
-    gallery_link:'\u2190 \uAC24\uB7EC\uB9AC'
-  },
-  en:{
-    name:'Your Name',
-    title:'Creative Developer & Designer',
-    about_label:'About',
-    about_text:'A creative developer crafting digital experiences at the intersection of design and technology. Building beautiful and functional products through clean code and thoughtful interfaces.',
-    about_focus:'Web & Mobile',
-    about_stack:'React / Node.js',
-    about_design:'Figma / Systems',
-    about_passion:'Creative Code',
-    skills_label:'Expertise',
-    projects_label:'Projects',
-    project1_title:'E-Commerce Platform',
-    project1_desc:'Full-stack marketplace with real-time inventory, payment processing, and admin dashboard.',
-    project2_title:'Design System',
-    project2_desc:'Comprehensive component library with tokens, accessibility guidelines, and interactive documentation.',
-    project3_title:'Analytics Dashboard',
-    project3_desc:'Real-time data visualization platform with custom charts, filtering, and PDF report generation.',
-    project4_title:'Mobile App',
-    project4_desc:'Cross-platform mobile application with offline-first architecture and biometric authentication.',
-    contact_label:'Get in Touch',
-    contact_heading:"Let's Work Together",
-    contact_sub:'Available for freelance projects',
-    contact_email:'email',
-    form_name_label:'Name',
-    form_email_label:'Email',
-    form_message_label:'Message',
-    form_submit:'TRANSMIT >',
-    gallery_link:'\u2190 Gallery'
-  },
-  ja:{
-    name:'\u3042\u306A\u305F\u306E\u540D\u524D',
-    title:'\u30AF\u30EA\u30A8\u30A4\u30C6\u30A3\u30D6\u30C7\u30D9\u30ED\u30C3\u30D1\u30FC & \u30C7\u30B6\u30A4\u30CA\u30FC',
-    about_label:'\u7D39\u4ECB',
-    about_text:'\u30C7\u30B6\u30A4\u30F3\u3068\u30C6\u30AF\u30CE\u30ED\u30B8\u30FC\u306E\u4EA4\u5DEE\u70B9\u3067\u30C7\u30B8\u30BF\u30EB\u4F53\u9A13\u3092\u751F\u307F\u51FA\u3059\u30AF\u30EA\u30A8\u30A4\u30C6\u30A3\u30D6\u30C7\u30D9\u30ED\u30C3\u30D1\u30FC\u3067\u3059\u3002\u30AF\u30EA\u30FC\u30F3\u306A\u30B3\u30FC\u30C9\u3068\u601D\u616E\u6DF1\u3044\u30A4\u30F3\u30BF\u30FC\u30D5\u30A7\u30FC\u30B9\u3067\u7F8E\u3057\u304F\u6A5F\u80FD\u7684\u306A\u88FD\u54C1\u3092\u69CB\u7BC9\u3057\u307E\u3059\u3002',
-    about_focus:'\u30A6\u30A7\u30D6 & \u30E2\u30D0\u30A4\u30EB',
-    about_stack:'React / Node.js',
-    about_design:'Figma / \u30B7\u30B9\u30C6\u30E0',
-    about_passion:'\u30AF\u30EA\u30A8\u30A4\u30C6\u30A3\u30D6\u30B3\u30FC\u30C9',
-    skills_label:'\u5C02\u9580\u5206\u91CE',
-    projects_label:'\u30D7\u30ED\u30B8\u30A7\u30AF\u30C8',
-    project1_title:'E\u30B3\u30DE\u30FC\u30B9\u30D7\u30E9\u30C3\u30C8\u30D5\u30A9\u30FC\u30E0',
-    project1_desc:'\u30EA\u30A2\u30EB\u30BF\u30A4\u30E0\u5728\u5EAB\u7BA1\u7406\u3001\u6C7A\u6E08\u51E6\u7406\u3001\u7BA1\u7406\u30C0\u30C3\u30B7\u30E5\u30DC\u30FC\u30C9\u3092\u5099\u3048\u305F\u30D5\u30EB\u30B9\u30BF\u30C3\u30AF\u30DE\u30FC\u30B1\u30C3\u30C8\u30D7\u30EC\u30A4\u30B9\u3002',
-    project2_title:'\u30C7\u30B6\u30A4\u30F3\u30B7\u30B9\u30C6\u30E0',
-    project2_desc:'\u30C8\u30FC\u30AF\u30F3\u3001\u30A2\u30AF\u30BB\u30B7\u30D3\u30EA\u30C6\u30A3\u30AC\u30A4\u30C9\u30E9\u30A4\u30F3\u3001\u30A4\u30F3\u30BF\u30E9\u30AF\u30C6\u30A3\u30D6\u30C9\u30AD\u30E5\u30E1\u30F3\u30C8\u3092\u542B\u3080\u5305\u62EC\u7684\u306A\u30B3\u30F3\u30DD\u30FC\u30CD\u30F3\u30C8\u30E9\u30A4\u30D6\u30E9\u30EA\u3002',
-    project3_title:'\u5206\u6790\u30C0\u30C3\u30B7\u30E5\u30DC\u30FC\u30C9',
-    project3_desc:'\u30AB\u30B9\u30BF\u30E0\u30C1\u30E3\u30FC\u30C8\u3001\u30D5\u30A3\u30EB\u30BF\u30EA\u30F3\u30B0\u3001PDF\u30EC\u30DD\u30FC\u30C8\u751F\u6210\u6A5F\u80FD\u306E\u30EA\u30A2\u30EB\u30BF\u30A4\u30E0\u30C7\u30FC\u30BF\u53EF\u8996\u5316\u30D7\u30E9\u30C3\u30C8\u30D5\u30A9\u30FC\u30E0\u3002',
-    project4_title:'\u30E2\u30D0\u30A4\u30EB\u30A2\u30D7\u30EA',
-    project4_desc:'\u30AA\u30D5\u30E9\u30A4\u30F3\u30D5\u30A1\u30FC\u30B9\u30C8\u30A2\u30FC\u30AD\u30C6\u30AF\u30C1\u30E3\u3068\u751F\u4F53\u8A8D\u8A3C\u3092\u5099\u3048\u305F\u30AF\u30ED\u30B9\u30D7\u30E9\u30C3\u30C8\u30D5\u30A9\u30FC\u30E0\u30E2\u30D0\u30A4\u30EB\u30A2\u30D7\u30EA\u3002',
-    contact_label:'\u304A\u554F\u3044\u5408\u308F\u305B',
-    contact_heading:'\u4E00\u7DD2\u306B\u50CD\u304D\u307E\u3057\u3087\u3046',
-    contact_sub:'\u30D5\u30EA\u30FC\u30E9\u30F3\u30B9\u30D7\u30ED\u30B8\u30A7\u30AF\u30C8\u5BFE\u5FDC\u53EF\u80FD',
-    contact_email:'\u30E1\u30FC\u30EB',
-    form_name_label:'\u540D\u524D',
-    form_email_label:'\u30E1\u30FC\u30EB',
-    form_message_label:'\u30E1\u30C3\u30BB\u30FC\u30B8',
-    form_submit:'\u9001\u4FE1 >',
-    gallery_link:'\u2190 \u30AE\u30E3\u30E9\u30EA\u30FC'
-  },
-  zh:{
-    name:'\u4F60\u7684\u540D\u5B57',
-    title:'\u521B\u610F\u5F00\u53D1\u8005 & \u8BBE\u8BA1\u5E08',
-    about_label:'\u5173\u4E8E',
-    about_text:'\u5728\u8BBE\u8BA1\u4E0E\u6280\u672F\u7684\u4EA4\u6C47\u5904\u521B\u9020\u6570\u5B57\u4F53\u9A8C\u7684\u521B\u610F\u5F00\u53D1\u8005\u3002\u901A\u8FC7\u7B80\u6D01\u7684\u4EE3\u7801\u548C\u7CBE\u5FC3\u8BBE\u8BA1\u7684\u754C\u9762\uFF0C\u6784\u5EFA\u65E2\u7F8E\u89C2\u53C8\u5B9E\u7528\u7684\u4EA7\u54C1\u3002',
-    about_focus:'\u7F51\u9875 & \u79FB\u52A8\u7AEF',
-    about_stack:'React / Node.js',
-    about_design:'Figma / \u7CFB\u7EDF',
-    about_passion:'\u521B\u610F\u7F16\u7801',
-    skills_label:'\u4E13\u4E1A\u9886\u57DF',
-    projects_label:'\u9879\u76EE',
-    project1_title:'\u7535\u5B50\u5546\u52A1\u5E73\u53F0',
-    project1_desc:'\u5177\u5907\u5B9E\u65F6\u5E93\u5B58\u7BA1\u7406\u3001\u652F\u4ED8\u5904\u7406\u548C\u7BA1\u7406\u540E\u53F0\u7684\u5168\u6808\u5E02\u573A\u3002',
-    project2_title:'\u8BBE\u8BA1\u7CFB\u7EDF',
-    project2_desc:'\u5305\u542B\u4EE4\u724C\u3001\u65E0\u969C\u788D\u6307\u5357\u548C\u4EA4\u4E92\u5F0F\u6587\u6863\u7684\u7EFC\u5408\u7EC4\u4EF6\u5E93\u3002',
-    project3_title:'\u5206\u6790\u4EEA\u8868\u677F',
-    project3_desc:'\u5177\u5907\u81EA\u5B9A\u4E49\u56FE\u8868\u3001\u7B5B\u9009\u548CPDF\u62A5\u544A\u751F\u6210\u529F\u80FD\u7684\u5B9E\u65F6\u6570\u636E\u53EF\u89C6\u5316\u5E73\u53F0\u3002',
-    project4_title:'\u79FB\u52A8\u5E94\u7528',
-    project4_desc:'\u5177\u5907\u79BB\u7EBF\u4F18\u5148\u67B6\u6784\u548C\u751F\u7269\u8BC6\u522B\u8BA4\u8BC1\u7684\u8DE8\u5E73\u53F0\u79FB\u52A8\u5E94\u7528\u3002',
-    contact_label:'\u8054\u7CFB\u6211',
-    contact_heading:'\u4E00\u8D77\u5408\u4F5C\u5427',
-    contact_sub:'\u53EF\u63A5\u53D7\u81EA\u7531\u804C\u4E1A\u9879\u76EE',
-    contact_email:'\u90AE\u7BB1',
-    form_name_label:'\u59D3\u540D',
-    form_email_label:'\u90AE\u7BB1',
-    form_message_label:'\u6D88\u606F',
-    form_submit:'\u53D1\u9001 >',
-    gallery_link:'\u2190 \u753B\u5ECA'
-  }
-};
+  <!-- Pixel Rulers -->
+  <div class="ruler-x" aria-hidden="true">
+    <div class="ruler-tick">0</div>
+    <div class="ruler-tick">100</div>
+    <div class="ruler-tick">200</div>
+    <div class="ruler-tick">300</div>
+    <div class="ruler-tick">400</div>
+    <div class="ruler-tick">500</div>
+    <div class="ruler-tick">600</div>
+    <div class="ruler-tick">700</div>
+    <div class="ruler-tick">800</div>
+    <div class="ruler-tick">900</div>
+    <div class="ruler-tick">1000</div>
+    <div class="ruler-tick">1100</div>
+    <div class="ruler-tick">1200</div>
+    <div class="ruler-tick">1300</div>
+    <div class="ruler-tick">1400</div>
+  </div>
+  <div class="ruler-y" aria-hidden="true">
+    <div class="ruler-tick">0</div>
+    <div class="ruler-tick">100</div>
+    <div class="ruler-tick">200</div>
+    <div class="ruler-tick">300</div>
+    <div class="ruler-tick">400</div>
+    <div class="ruler-tick">500</div>
+    <div class="ruler-tick">600</div>
+    <div class="ruler-tick">700</div>
+    <div class="ruler-tick">800</div>
+    <div class="ruler-tick">900</div>
+    <div class="ruler-tick">1000</div>
+  </div>
 
-/* === LANGUAGE SWITCHER === */
-function setLanguage(lang){
-  document.querySelectorAll('[data-i18n]').forEach(function(el){
-    var key=el.getAttribute('data-i18n');
-    if(TRANSLATIONS[lang]&&TRANSLATIONS[lang][key]){
-      if(el.tagName==='INPUT'||el.tagName==='TEXTAREA'){
-        el.placeholder=TRANSLATIONS[lang][key];
+  <!-- Origin Crosshair -->
+  <div class="origin-cross" aria-hidden="true"></div>
+
+  <!-- Scanning Line -->
+  <div class="scan-line" id="scanLine" aria-hidden="true"></div>
+
+  <!-- Coordinate Display -->
+  <div class="coord-display" id="coordDisplay" aria-hidden="true">
+    <span>X:</span> <span id="coordX">0</span> &nbsp; <span>Y:</span> <span id="coordY">0</span> &nbsp; <span>SEC:</span> <span id="coordSec">HERO</span>
+  </div>
+
+  <div class="watermark">SPEC // REV 2.0 // DRAFT // PORTFOLIO BLUEPRINT // CONFIDENTIAL</div>
+
+  <nav class="nav">
+    <a href="../index.html" class="gallery-link" data-i18n="gallery_link">&#8592; Gallery</a>
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en" onclick="setLanguage('en')">EN</button>
+      <button class="lang-btn" data-lang="ko" onclick="setLanguage('ko')">&#54620;&#44397;&#50612;</button>
+      <button class="lang-btn" data-lang="ja" onclick="setLanguage('ja')">&#26085;&#26412;&#35486;</button>
+      <button class="lang-btn" data-lang="zh" onclick="setLanguage('zh')">&#20013;&#25991;</button>
+    </div>
+  </nav>
+
+  <div class="content">
+    <!-- Circuit Trace SVG -->
+    <svg class="circuit-traces" id="circuitTraces" aria-hidden="true">
+      <path class="draw-line" id="trace1" d="" style="--dash-len:600"/>
+      <path class="draw-line" id="trace2" d="" style="--dash-len:400"/>
+      <path class="draw-line" id="trace3" d="" style="--dash-len:500"/>
+    </svg>
+
+    <!-- Hero Section -->
+    <section class="hero" id="heroSection" data-coord-label="HERO">
+      <!-- Hero SVG ornaments -->
+      <svg class="hero-svg hero-svg-left" aria-hidden="true">
+        <line class="draw-line" x1="60" y1="0" x2="60" y2="180" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:180"/>
+        <line class="draw-line" x1="40" y1="30" x2="80" y2="30" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:40"/>
+        <line class="draw-line" x1="40" y1="80" x2="80" y2="80" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:40"/>
+        <line class="draw-line" x1="40" y1="130" x2="80" y2="130" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:40"/>
+        <circle cx="60" cy="30" r="3" fill="none" stroke="var(--accent)" stroke-width="1" opacity="0.5"/>
+        <circle cx="60" cy="130" r="3" fill="none" stroke="var(--accent)" stroke-width="1" opacity="0.5"/>
+      </svg>
+      <svg class="hero-svg hero-svg-right" aria-hidden="true">
+        <line class="draw-line" x1="20" y1="0" x2="20" y2="180" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:180"/>
+        <line class="draw-line" x1="0" y1="50" x2="40" y2="50" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:40"/>
+        <line class="draw-line" x1="0" y1="100" x2="40" y2="100" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:40"/>
+        <line class="draw-line" x1="0" y1="150" x2="40" y2="150" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:40"/>
+        <circle cx="20" cy="50" r="3" fill="none" stroke="var(--accent)" stroke-width="1" opacity="0.5"/>
+        <circle cx="20" cy="150" r="3" fill="none" stroke="var(--accent)" stroke-width="1" opacity="0.5"/>
+      </svg>
+      <div class="hero-dim hero-dim-top">W: 1000px MAX / FLUID</div>
+      <div class="hero-coords" data-i18n="hero_coords">X: 0.00 &nbsp; Y: 0.00 &nbsp; Z: 1.00</div>
+      <h1 class="hero-name" data-i18n="name">Your Name</h1><span class="blink-cursor"></span>
+      <p class="hero-title" data-i18n="title">Creative Developer &amp; Designer</p>
+      <div class="hero-spec">SPEC: PORTFOLIO // REV 2.0 // STATUS: ACTIVE // BUILD: 2025.12</div>
+      <div class="spec-annotation" style="display:inline-block;margin-top:24px;text-align:left">
+        FONT: IBM Plex Mono 52px/700<br>
+        COLOR: #E0F0FF / ACCENT: #7CB9E8<br>
+        PADDING-TOP: 100px / PADDING-BOTTOM: 120px
+      </div>
+    </section>
+
+    <div class="connector"></div>
+
+    <!-- About Section -->
+    <section class="section" id="about" data-coord-label="ABOUT">
+      <div class="section-coords">Y: 480 // OFFSET: 120px</div>
+      <div class="target-marker">
+        <div class="target-icon"></div>SECTION_01 // ABOUT
+      </div>
+      <div class="wire-card" data-label="ABOUT">
+        <div class="corner-tl"></div>
+        <div class="corner-tr"></div>
+        <div class="corner-bl"></div>
+        <div class="corner-br"></div>
+        <!-- Draw SVG borders -->
+        <svg class="section-draw-svg" aria-hidden="true">
+          <rect class="draw-line" x="0" y="0" width="100%" height="100%" fill="none" stroke="var(--line-faint)" stroke-width="1" style="--dash-len:2000" rx="0"/>
+        </svg>
+        <div class="section-header">
+          <div class="crosshair"></div>
+          <h2 class="section-title" data-i18n="about_label">About</h2>
+          <span class="section-rev">REV 2.0</span>
+        </div>
+        <div class="measure">
+          <span class="measure-label">W: 100%</span>
+          <div class="measure-line"></div>
+          <span class="measure-label">H: AUTO</span>
+        </div>
+        <p class="about-text" data-i18n="about_text">A creative developer crafting digital experiences at the intersection of design and technology. Building beautiful and functional products through clean code and thoughtful interfaces.</p>
+        <div class="about-details">
+          <div class="about-detail-item">
+            <span class="detail-label">Focus</span>
+            <span class="detail-val" data-i18n="about_focus">Web & Mobile</span>
+          </div>
+          <div class="about-detail-item">
+            <span class="detail-label">Stack</span>
+            <span class="detail-val" data-i18n="about_stack">React / Node.js</span>
+          </div>
+          <div class="about-detail-item">
+            <span class="detail-label">Design</span>
+            <span class="detail-val" data-i18n="about_design">Figma / Systems</span>
+          </div>
+          <div class="about-detail-item">
+            <span class="detail-label">Passion</span>
+            <span class="detail-val" data-i18n="about_passion">Creative Code</span>
+          </div>
+        </div>
+        <div class="about-annotation">
+          <span>PADDING: 32px</span>
+          <span>FONT: IBM Plex Mono 15px/2</span>
+          <span>BORDER: 1px SOLID</span>
+          <span>BG: rgba(13, 27, 42, 0.6)</span>
+        </div>
+        <div class="spec-annotation">
+          LINE-HEIGHT: 2.0 // FONT-WEIGHT: 300<br>
+          GRID: 2-COL / GAP: 12px // DETAIL-PADDING: 8px 12px
+        </div>
+      </div>
+    </section>
+
+    <div class="connector"></div>
+
+    <!-- Skills Section -->
+    <section class="section" id="skills" data-coord-label="SKILLS">
+      <div class="section-coords">Y: 960 // OFFSET: 240px</div>
+      <div class="target-marker">
+        <div class="target-icon"></div>SECTION_02 // EXPERTISE
+      </div>
+      <div class="wire-card" data-label="EXPERTISE">
+        <div class="corner-tl"></div>
+        <div class="corner-tr"></div>
+        <div class="corner-bl"></div>
+        <div class="corner-br"></div>
+        <svg class="section-draw-svg" aria-hidden="true">
+          <rect class="draw-line" x="0" y="0" width="100%" height="100%" fill="none" stroke="var(--line-faint)" stroke-width="1" style="--dash-len:2000" rx="0"/>
+        </svg>
+        <div class="section-header">
+          <div class="crosshair"></div>
+          <h2 class="section-title" data-i18n="skills_label">Expertise</h2>
+          <span class="section-rev">GRID: AUTO-FIT / MIN: 220px</span>
+        </div>
+        <div class="measure">
+          <span class="measure-label">COLS: AUTO</span>
+          <div class="measure-line"></div>
+          <span class="measure-label">GAP: 16px</span>
+        </div>
+        <div class="skills-grid">
+          <div class="skill-box" data-id="#01">
+            <div class="corner-tl"></div>
+            <div class="corner-tr"></div>
+            <div class="skill-name" data-i18n="skill_frontend">Frontend</div>
+            <div class="skill-tech">React / Vue / TypeScript<br>Next.js / Tailwind CSS</div>
+            <div class="skill-bar-track">
+              <div class="skill-bar-fill" style="width:0%" data-width="92%"></div>
+              <div class="skill-bar-dot" style="right:100%" data-right="8%"></div>
+              <span class="skill-percent">92%</span>
+            </div>
+          </div>
+          <div class="skill-box" data-id="#02">
+            <div class="corner-tl"></div>
+            <div class="corner-tr"></div>
+            <div class="skill-name" data-i18n="skill_uiux">UI/UX Design</div>
+            <div class="skill-tech">Figma / Prototyping<br>User Research / Systems</div>
+            <div class="skill-bar-track">
+              <div class="skill-bar-fill" style="width:0%" data-width="88%"></div>
+              <div class="skill-bar-dot" style="right:100%" data-right="12%"></div>
+              <span class="skill-percent">88%</span>
+            </div>
+          </div>
+          <div class="skill-box" data-id="#03">
+            <div class="corner-tl"></div>
+            <div class="corner-tr"></div>
+            <div class="skill-name" data-i18n="skill_backend">Backend</div>
+            <div class="skill-tech">Node.js / Python<br>REST APIs / GraphQL</div>
+            <div class="skill-bar-track">
+              <div class="skill-bar-fill" style="width:0%" data-width="80%"></div>
+              <div class="skill-bar-dot" style="right:100%" data-right="20%"></div>
+              <span class="skill-percent">80%</span>
+            </div>
+          </div>
+          <div class="skill-box" data-id="#04">
+            <div class="corner-tl"></div>
+            <div class="corner-tr"></div>
+            <div class="skill-name" data-i18n="skill_mobile">Mobile</div>
+            <div class="skill-tech">React Native / Flutter<br>iOS / Android</div>
+            <div class="skill-bar-track">
+              <div class="skill-bar-fill" style="width:0%" data-width="78%"></div>
+              <div class="skill-bar-dot" style="right:100%" data-right="22%"></div>
+              <span class="skill-percent">78%</span>
+            </div>
+          </div>
+          <div class="skill-box" data-id="#05">
+            <div class="corner-tl"></div>
+            <div class="corner-tr"></div>
+            <div class="skill-name" data-i18n="skill_creative">Creative Code</div>
+            <div class="skill-tech">Canvas / WebGL<br>GSAP / Animations</div>
+            <div class="skill-bar-track">
+              <div class="skill-bar-fill" style="width:0%" data-width="85%"></div>
+              <div class="skill-bar-dot" style="right:100%" data-right="15%"></div>
+              <span class="skill-percent">85%</span>
+            </div>
+          </div>
+          <div class="skill-box" data-id="#06">
+            <div class="corner-tl"></div>
+            <div class="corner-tr"></div>
+            <div class="skill-name" data-i18n="skill_devops">DevOps</div>
+            <div class="skill-tech">Docker / CI/CD<br>AWS / Vercel</div>
+            <div class="skill-bar-track">
+              <div class="skill-bar-fill" style="width:0%" data-width="75%"></div>
+              <div class="skill-bar-dot" style="right:100%" data-right="25%"></div>
+              <span class="skill-percent">75%</span>
+            </div>
+          </div>
+        </div>
+        <div class="dim-row">
+          <div class="dim-item"><div class="dim-dot"></div>GRID-GAP: 16px</div>
+          <div class="dim-item"><div class="dim-dot"></div>MIN-COL: 220px</div>
+          <div class="dim-item"><div class="dim-dot"></div>ITEMS: 6</div>
+          <div class="dim-item"><div class="dim-dot"></div>BAR-H: 2px</div>
+        </div>
+        <div class="spec-annotation">
+          SKILL-BOX PADDING: 20px // BORDER: 1px SOLID rgba(124, 185, 232, 0.2)<br>
+          FONT-SIZE: NAME 16px/600 / TECH 12px/400 // TRANSITION: 0.4s ALL
+        </div>
+      </div>
+    </section>
+
+    <div class="connector"></div>
+
+    <!-- Projects Section -->
+    <section class="section" id="projects" data-coord-label="PROJECTS">
+      <div class="section-coords">Y: 1680 // OFFSET: 360px</div>
+      <div class="target-marker">
+        <div class="target-icon"></div>SECTION_03 // PROJECTS
+      </div>
+      <div class="wire-card" data-label="PROJECTS">
+        <div class="corner-tl"></div>
+        <div class="corner-tr"></div>
+        <div class="corner-bl"></div>
+        <div class="corner-br"></div>
+        <svg class="section-draw-svg" aria-hidden="true">
+          <rect class="draw-line" x="0" y="0" width="100%" height="100%" fill="none" stroke="var(--line-faint)" stroke-width="1" style="--dash-len:2000" rx="0"/>
+        </svg>
+        <div class="section-header">
+          <div class="crosshair"></div>
+          <h2 class="section-title" data-i18n="projects_label">Projects</h2>
+          <span class="section-rev">GRID: 2-COL / GAP: 20px</span>
+        </div>
+        <div class="measure">
+          <span class="measure-label">LAYOUT: GRID</span>
+          <div class="measure-line"></div>
+          <span class="measure-label">COLS: 2</span>
+        </div>
+        <div class="projects-grid">
+          <!-- Project 1 -->
+          <div class="project-card">
+            <div class="corner-tl"></div>
+            <div class="corner-tr"></div>
+            <div class="corner-bl"></div>
+            <div class="corner-br"></div>
+            <div class="project-header">
+              <span class="project-num">PRJ-001</span>
+              <span class="project-dims">W: 480 H: AUTO</span>
+            </div>
+            <div class="project-wireframe" aria-hidden="true">
+              <svg width="100%" height="100%" viewBox="0 0 400 80" preserveAspectRatio="none">
+                <rect class="draw-line" x="10" y="8" width="120" height="12" fill="none" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:270" rx="1"/>
+                <rect class="draw-line" x="10" y="28" width="380" height="6" fill="none" stroke="var(--line-faint)" stroke-width="1" style="--dash-len:780" rx="1"/>
+                <rect class="draw-line" x="10" y="40" width="340" height="6" fill="none" stroke="var(--line-faint)" stroke-width="1" style="--dash-len:700" rx="1"/>
+                <rect class="draw-line" x="10" y="56" width="80" height="16" fill="none" stroke="var(--accent)" stroke-width="1" style="--dash-len:200" rx="1" opacity="0.5"/>
+                <rect class="draw-line" x="100" y="56" width="80" height="16" fill="none" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:200" rx="1"/>
+                <line class="draw-line" x1="280" y1="10" x2="390" y2="10" stroke="var(--line-faint)" stroke-width="1" stroke-dasharray="4 3" style="--dash-len:110"/>
+                <circle cx="290" cy="56" r="8" fill="none" stroke="var(--line-dim)" stroke-width="1" opacity="0.4"/>
+                <circle cx="310" cy="56" r="8" fill="none" stroke="var(--line-dim)" stroke-width="1" opacity="0.4"/>
+              </svg>
+            </div>
+            <h3 class="project-title" data-i18n="project1_title">E-Commerce Platform</h3>
+            <p class="project-desc" data-i18n="project1_desc">Full-stack marketplace with real-time inventory, payment processing, and admin dashboard.</p>
+            <div class="project-tags">
+              <span class="project-tag">React</span>
+              <span class="project-tag">Node.js</span>
+              <span class="project-tag">PostgreSQL</span>
+              <span class="project-tag">Stripe</span>
+            </div>
+            <div class="project-meta">
+              <span>STATUS: DEPLOYED</span>
+              <span>SCALE: 10K+ USERS</span>
+            </div>
+          </div>
+          <!-- Project 2 -->
+          <div class="project-card">
+            <div class="corner-tl"></div>
+            <div class="corner-tr"></div>
+            <div class="corner-bl"></div>
+            <div class="corner-br"></div>
+            <div class="project-header">
+              <span class="project-num">PRJ-002</span>
+              <span class="project-dims">W: 480 H: AUTO</span>
+            </div>
+            <div class="project-wireframe" aria-hidden="true">
+              <svg width="100%" height="100%" viewBox="0 0 400 80" preserveAspectRatio="none">
+                <rect class="draw-line" x="10" y="8" width="60" height="60" fill="none" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:250" rx="1"/>
+                <line class="draw-line" x1="80" y1="14" x2="200" y2="14" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:120"/>
+                <line class="draw-line" x1="80" y1="30" x2="260" y2="30" stroke="var(--line-faint)" stroke-width="1" style="--dash-len:180"/>
+                <line class="draw-line" x1="80" y1="42" x2="220" y2="42" stroke="var(--line-faint)" stroke-width="1" style="--dash-len:140"/>
+                <rect class="draw-line" x="280" y="8" width="110" height="60" fill="none" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:350" rx="1"/>
+                <line class="draw-line" x1="290" y1="24" x2="380" y2="24" stroke="var(--line-faint)" stroke-width="1" style="--dash-len:90"/>
+                <line class="draw-line" x1="290" y1="38" x2="360" y2="38" stroke="var(--line-faint)" stroke-width="1" style="--dash-len:70"/>
+              </svg>
+            </div>
+            <h3 class="project-title" data-i18n="project2_title">Design System</h3>
+            <p class="project-desc" data-i18n="project2_desc">Comprehensive component library with tokens, accessibility guidelines, and interactive documentation.</p>
+            <div class="project-tags">
+              <span class="project-tag">TypeScript</span>
+              <span class="project-tag">Storybook</span>
+              <span class="project-tag">Figma</span>
+            </div>
+            <div class="project-meta">
+              <span>STATUS: MAINTAINED</span>
+              <span>COMPONENTS: 80+</span>
+            </div>
+          </div>
+          <!-- Project 3 -->
+          <div class="project-card">
+            <div class="corner-tl"></div>
+            <div class="corner-tr"></div>
+            <div class="corner-bl"></div>
+            <div class="corner-br"></div>
+            <div class="project-header">
+              <span class="project-num">PRJ-003</span>
+              <span class="project-dims">W: 480 H: AUTO</span>
+            </div>
+            <div class="project-wireframe" aria-hidden="true">
+              <svg width="100%" height="100%" viewBox="0 0 400 80" preserveAspectRatio="none">
+                <circle class="draw-line" cx="40" cy="40" r="25" fill="none" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:160"/>
+                <line class="draw-line" x1="70" y1="40" x2="150" y2="40" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:80"/>
+                <rect class="draw-line" x="155" y="20" width="100" height="40" fill="none" stroke="var(--accent)" stroke-width="1" style="--dash-len:280" rx="2" opacity="0.5"/>
+                <line class="draw-line" x1="260" y1="40" x2="300" y2="20" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:45"/>
+                <line class="draw-line" x1="260" y1="40" x2="300" y2="40" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:40"/>
+                <line class="draw-line" x1="260" y1="40" x2="300" y2="60" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:45"/>
+                <circle cx="300" cy="20" r="4" fill="none" stroke="var(--line-dim)" stroke-width="1" opacity="0.5"/>
+                <circle cx="300" cy="40" r="4" fill="none" stroke="var(--line-dim)" stroke-width="1" opacity="0.5"/>
+                <circle cx="300" cy="60" r="4" fill="none" stroke="var(--line-dim)" stroke-width="1" opacity="0.5"/>
+              </svg>
+            </div>
+            <h3 class="project-title" data-i18n="project3_title">Analytics Dashboard</h3>
+            <p class="project-desc" data-i18n="project3_desc">Real-time data visualization platform with custom charts, filtering, and PDF report generation.</p>
+            <div class="project-tags">
+              <span class="project-tag">Next.js</span>
+              <span class="project-tag">D3.js</span>
+              <span class="project-tag">WebSocket</span>
+            </div>
+            <div class="project-meta">
+              <span>STATUS: PRODUCTION</span>
+              <span>DATA: REAL-TIME</span>
+            </div>
+          </div>
+          <!-- Project 4 -->
+          <div class="project-card">
+            <div class="corner-tl"></div>
+            <div class="corner-tr"></div>
+            <div class="corner-bl"></div>
+            <div class="corner-br"></div>
+            <div class="project-header">
+              <span class="project-num">PRJ-004</span>
+              <span class="project-dims">W: 480 H: AUTO</span>
+            </div>
+            <div class="project-wireframe" aria-hidden="true">
+              <svg width="100%" height="100%" viewBox="0 0 400 80" preserveAspectRatio="none">
+                <rect class="draw-line" x="10" y="8" width="180" height="64" fill="none" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:500" rx="4"/>
+                <rect class="draw-line" x="20" y="16" width="160" height="8" fill="none" stroke="var(--line-faint)" stroke-width="1" style="--dash-len:340" rx="2"/>
+                <rect class="draw-line" x="20" y="32" width="100" height="32" fill="none" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:270" rx="2"/>
+                <rect class="draw-line" x="130" y="32" width="50" height="14" fill="none" stroke="var(--accent)" stroke-width="1" style="--dash-len:130" rx="2" opacity="0.4"/>
+                <rect class="draw-line" x="220" y="8" width="170" height="64" fill="none" stroke="var(--line-dim)" stroke-width="1" style="--dash-len:470" rx="4"/>
+                <line class="draw-line" x1="230" y1="20" x2="380" y2="20" stroke="var(--line-faint)" stroke-width="1" style="--dash-len:150"/>
+                <line class="draw-line" x1="230" y1="36" x2="350" y2="36" stroke="var(--line-faint)" stroke-width="1" style="--dash-len:120"/>
+                <line class="draw-line" x1="230" y1="52" x2="320" y2="52" stroke="var(--line-faint)" stroke-width="1" style="--dash-len:90"/>
+              </svg>
+            </div>
+            <h3 class="project-title" data-i18n="project4_title">Mobile App</h3>
+            <p class="project-desc" data-i18n="project4_desc">Cross-platform mobile application with offline-first architecture and biometric authentication.</p>
+            <div class="project-tags">
+              <span class="project-tag">React Native</span>
+              <span class="project-tag">Redux</span>
+              <span class="project-tag">Firebase</span>
+            </div>
+            <div class="project-meta">
+              <span>STATUS: SHIPPED</span>
+              <span>PLATFORMS: iOS/Android</span>
+            </div>
+          </div>
+        </div>
+        <div class="dim-row">
+          <div class="dim-item"><div class="dim-dot"></div>GRID: 2-COL</div>
+          <div class="dim-item"><div class="dim-dot"></div>GAP: 20px</div>
+          <div class="dim-item"><div class="dim-dot"></div>CARD-PAD: 24px</div>
+          <div class="dim-item"><div class="dim-dot"></div>WIREFRAME-H: 80px</div>
+        </div>
+        <div class="spec-annotation">
+          PROJECT-CARD: BORDER 1px SOLID rgba(124, 185, 232, 0.2) // BG: rgba(13, 27, 42, 0.6)<br>
+          TITLE: 18px/600 // DESC: 13px/1.7 // TAGS: 10px BORDER-BOX
+        </div>
+      </div>
+    </section>
+
+    <div class="connector"></div>
+
+    <!-- Contact Section -->
+    <section class="section" id="contact" data-coord-label="CONTACT">
+      <div class="section-coords">Y: 2880 // OFFSET: 480px</div>
+      <div class="target-marker">
+        <div class="target-icon"></div>SECTION_04 // CONTACT
+      </div>
+      <div class="wire-card" data-label="CONTACT">
+        <div class="corner-tl"></div>
+        <div class="corner-tr"></div>
+        <div class="corner-bl"></div>
+        <div class="corner-br"></div>
+        <svg class="section-draw-svg" aria-hidden="true">
+          <rect class="draw-line" x="0" y="0" width="100%" height="100%" fill="none" stroke="var(--line-faint)" stroke-width="1" style="--dash-len:2000" rx="0"/>
+        </svg>
+        <div class="section-header">
+          <div class="crosshair"></div>
+          <h2 class="section-title" data-i18n="contact_label">Get in Touch</h2>
+          <span class="section-rev">ALIGN: CENTER</span>
+        </div>
+        <div class="contact-box">
+          <h3 class="contact-heading" data-i18n="contact_heading">Let's Work Together</h3>
+          <p class="contact-sub" data-i18n="contact_sub">Available for freelance projects</p>
+          <div class="contact-links">
+            <a href="mailto:hello@example.com" class="contact-link" data-i18n="contact_email">email</a>
+            <a href="#" class="contact-link">github</a>
+            <a href="#" class="contact-link">linkedin</a>
+            <a href="#" class="contact-link">twitter</a>
+          </div>
+          <div class="contact-form">
+            <div class="measure" style="margin-top:28px;margin-bottom:20px">
+              <span class="measure-label">FORM: CONTACT</span>
+              <div class="measure-line"></div>
+              <span class="measure-label">MAX-W: 400px</span>
+            </div>
+            <div class="form-field">
+              <label class="form-label" data-i18n="form_name_label">Name</label>
+              <span class="spec-inline">// TYPE: TEXT / REQ</span>
+              <input type="text" class="form-input" placeholder="John Doe" autocomplete="name">
+            </div>
+            <div class="form-field">
+              <label class="form-label" data-i18n="form_email_label">Email</label>
+              <span class="spec-inline">// TYPE: EMAIL / REQ</span>
+              <input type="email" class="form-input" placeholder="john@example.com" autocomplete="email">
+            </div>
+            <div class="form-field">
+              <label class="form-label" data-i18n="form_message_label">Message</label>
+              <span class="spec-inline">// TYPE: TEXTAREA / MIN: 10</span>
+              <textarea class="form-textarea" placeholder="Your message..."></textarea>
+            </div>
+            <button type="button" class="form-submit" data-i18n="form_submit">TRANSMIT &gt;</button>
+          </div>
+        </div>
+        <div class="spec-annotation" style="text-align:center">
+          FORM-INPUT: FONT 13px / PAD 10px 14px / BORDER: 1px SOLID<br>
+          SUBMIT: UPPERCASE / LETTER-SPACING: 0.1em // HOVER: ACCENT-BG
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-grid">
+      <span class="footer-item">BLUEPRINT PORTFOLIO v2.0</span>
+      <span class="footer-item">DRAFTED 2025</span>
+      <span class="footer-item">ALL DIMENSIONS IN PX</span>
+      <span class="footer-item">FONT: IBM PLEX MONO</span>
+      <span class="footer-item">GRID: 20px MINOR / 100px MAJOR</span>
+    </div>
+    <p>SPEC REVISION 2.0 // STATUS: FINAL // APPROVED FOR DEPLOYMENT</p>
+  </footer>
+
+  <script>
+    /* === TRANSLATIONS === */
+    var TRANSLATIONS = {
+      ko: {
+        name: '\uD64D\uAE38\uB3D9',
+        title: '\uD06C\uB9AC\uC5D0\uC774\uD2F0\uBE0C \uAC1C\uBC1C\uC790 & \uB514\uC790\uC774\uB108',
+        about_label: '\uC18C\uAC1C',
+        about_text: '\uB514\uC790\uC778\uACFC \uAE30\uC220\uC758 \uAD50\uCC28\uC810\uC5D0\uC11C \uB514\uC9C0\uD138 \uACBD\uD5D8\uC744 \uB9CC\uB4DC\uB294 \uD06C\uB9AC\uC5D0\uC774\uD2F0\uBE0C \uAC1C\uBC1C\uC790\uC785\uB2C8\uB2E4. \uAE54\uB054\uD55C \uCF54\uB4DC\uC640 \uC138\uC2EC\uD55C \uC778\uD130\uD398\uC774\uC2A4\uB97C \uD1B5\uD574 \uC544\uB984\uB2F5\uACE0 \uAE30\uB2A5\uC801\uC778 \uC81C\uD488\uC744 \uB9CC\uB4ED\uB2C8\uB2E4.',
+        about_focus: '\uC6F9 & \uBAA8\uBC14\uC77C',
+        about_stack: 'React / Node.js',
+        about_design: 'Figma / \uC2DC\uC2A4\uD15C',
+        about_passion: '\uD06C\uB9AC\uC5D0\uC774\uD2F0\uBE0C \uCF54\uB4DC',
+        skills_label: '\uC804\uBB38 \uBD84\uC57C',
+        projects_label: '\uD504\uB85C\uC81D\uD2B8',
+        project1_title: '\uC804\uC790\uC0C1\uAC70\uB798 \uD50C\uB7AB\uD3FC',
+        project1_desc: '\uC2E4\uC2DC\uAC04 \uC7AC\uACE0 \uAD00\uB9AC, \uACB0\uC81C \uCC98\uB9AC, \uAD00\uB9AC\uC790 \uB300\uC2DC\uBCF4\uB4DC\uB97C \uAC16\uCD98 \uD480\uC2A4\uD0DD \uB9C8\uCF13\uD50C\uB808\uC774\uC2A4.',
+        project2_title: '\uB514\uC790\uC778 \uC2DC\uC2A4\uD15C',
+        project2_desc: '\uD1A0\uD070, \uC811\uADFC\uC131 \uAC00\uC774\uB4DC\uB77C\uC778, \uC778\uD130\uB799\uD2F0\uBE0C \uBB38\uC11C\uB97C \uD3EC\uD568\uD55C \uD3EC\uAD04\uC801\uC778 \uCEF4\uD3EC\uB10C\uD2B8 \uB77C\uC774\uBE0C\uB7EC\uB9AC.',
+        project3_title: '\uBD84\uC11D \uB300\uC2DC\uBCF4\uB4DC',
+        project3_desc: '\uCEE4\uC2A4\uD140 \uCC28\uD2B8, \uD544\uD130\uB9C1, PDF \uBCF4\uACE0\uC11C \uC0DD\uC131 \uAE30\uB2A5\uC758 \uC2E4\uC2DC\uAC04 \uB370\uC774\uD130 \uC2DC\uAC01\uD654 \uD50C\uB7AB\uD3FC.',
+        project4_title: '\uBAA8\uBC14\uC77C \uC571',
+        project4_desc: '\uC624\uD504\uB77C\uC778 \uC6B0\uC120 \uC544\uD0A4\uD14D\uCC98\uC640 \uC0DD\uCCB4 \uC778\uC99D\uC744 \uAC16\uCD98 \uD06C\uB85C\uC2A4 \uD50C\uB7AB\uD3FC \uBAA8\uBC14\uC77C \uC571.',
+        contact_label: '\uC5F0\uB77D\uD558\uAE30',
+        contact_heading: '\uD568\uAED8 \uC77C\uD574\uC694',
+        contact_sub: '\uD504\uB9AC\uB79C\uC11C \uD504\uB85C\uC81D\uD2B8 \uAC00\uB2A5',
+        contact_email: '\uC774\uBA54\uC77C',
+        form_name_label: '\uC774\uB984',
+        form_email_label: '\uC774\uBA54\uC77C',
+        form_message_label: '\uBA54\uC2DC\uC9C0',
+        form_submit: '\uC804\uC1A1 >',
+        gallery_link: '\u2190 \uAC24\uB7EC\uB9AC'
+      },
+      en: {
+        name: 'Your Name',
+        title: 'Creative Developer & Designer',
+        about_label: 'About',
+        about_text: 'A creative developer crafting digital experiences at the intersection of design and technology. Building beautiful and functional products through clean code and thoughtful interfaces.',
+        about_focus: 'Web & Mobile',
+        about_stack: 'React / Node.js',
+        about_design: 'Figma / Systems',
+        about_passion: 'Creative Code',
+        skills_label: 'Expertise',
+        projects_label: 'Projects',
+        project1_title: 'E-Commerce Platform',
+        project1_desc: 'Full-stack marketplace with real-time inventory, payment processing, and admin dashboard.',
+        project2_title: 'Design System',
+        project2_desc: 'Comprehensive component library with tokens, accessibility guidelines, and interactive documentation.',
+        project3_title: 'Analytics Dashboard',
+        project3_desc: 'Real-time data visualization platform with custom charts, filtering, and PDF report generation.',
+        project4_title: 'Mobile App',
+        project4_desc: 'Cross-platform mobile application with offline-first architecture and biometric authentication.',
+        contact_label: 'Get in Touch',
+        contact_heading: "Let's Work Together",
+        contact_sub: 'Available for freelance projects',
+        contact_email: 'email',
+        form_name_label: 'Name',
+        form_email_label: 'Email',
+        form_message_label: 'Message',
+        form_submit: 'TRANSMIT >',
+        gallery_link: '\u2190 Gallery'
+      },
+      ja: {
+        name: '\u3042\u306A\u305F\u306E\u540D\u524D',
+        title: '\u30AF\u30EA\u30A8\u30A4\u30C6\u30A3\u30D6\u30C7\u30D9\u30ED\u30C3\u30D1\u30FC & \u30C7\u30B6\u30A4\u30CA\u30FC',
+        about_label: '\u7D39\u4ECB',
+        about_text: '\u30C7\u30B6\u30A4\u30F3\u3068\u30C6\u30AF\u30CE\u30ED\u30B8\u30FC\u306E\u4EA4\u5DEE\u70B9\u3067\u30C7\u30B8\u30BF\u30EB\u4F53\u9A13\u3092\u751F\u307F\u51FA\u3059\u30AF\u30EA\u30A8\u30A4\u30C6\u30A3\u30D6\u30C7\u30D9\u30ED\u30C3\u30D1\u30FC\u3067\u3059\u3002\u30AF\u30EA\u30FC\u30F3\u306A\u30B3\u30FC\u30C9\u3068\u601D\u616E\u6DF1\u3044\u30A4\u30F3\u30BF\u30FC\u30D5\u30A7\u30FC\u30B9\u3067\u7F8E\u3057\u304F\u6A5F\u80FD\u7684\u306A\u88FD\u54C1\u3092\u69CB\u7BC9\u3057\u307E\u3059\u3002',
+        about_focus: '\u30A6\u30A7\u30D6 & \u30E2\u30D0\u30A4\u30EB',
+        about_stack: 'React / Node.js',
+        about_design: 'Figma / \u30B7\u30B9\u30C6\u30E0',
+        about_passion: '\u30AF\u30EA\u30A8\u30A4\u30C6\u30A3\u30D6\u30B3\u30FC\u30C9',
+        skills_label: '\u5C02\u9580\u5206\u91CE',
+        projects_label: '\u30D7\u30ED\u30B8\u30A7\u30AF\u30C8',
+        project1_title: 'E\u30B3\u30DE\u30FC\u30B9\u30D7\u30E9\u30C3\u30C8\u30D5\u30A9\u30FC\u30E0',
+        project1_desc: '\u30EA\u30A2\u30EB\u30BF\u30A4\u30E0\u5728\u5EAB\u7BA1\u7406\u3001\u6C7A\u6E08\u51E6\u7406\u3001\u7BA1\u7406\u30C0\u30C3\u30B7\u30E5\u30DC\u30FC\u30C9\u3092\u5099\u3048\u305F\u30D5\u30EB\u30B9\u30BF\u30C3\u30AF\u30DE\u30FC\u30B1\u30C3\u30C8\u30D7\u30EC\u30A4\u30B9\u3002',
+        project2_title: '\u30C7\u30B6\u30A4\u30F3\u30B7\u30B9\u30C6\u30E0',
+        project2_desc: '\u30C8\u30FC\u30AF\u30F3\u3001\u30A2\u30AF\u30BB\u30B7\u30D3\u30EA\u30C6\u30A3\u30AC\u30A4\u30C9\u30E9\u30A4\u30F3\u3001\u30A4\u30F3\u30BF\u30E9\u30AF\u30C6\u30A3\u30D6\u30C9\u30AD\u30E5\u30E1\u30F3\u30C8\u3092\u542B\u3080\u5305\u62EC\u7684\u306A\u30B3\u30F3\u30DD\u30FC\u30CD\u30F3\u30C8\u30E9\u30A4\u30D6\u30E9\u30EA\u3002',
+        project3_title: '\u5206\u6790\u30C0\u30C3\u30B7\u30E5\u30DC\u30FC\u30C9',
+        project3_desc: '\u30AB\u30B9\u30BF\u30E0\u30C1\u30E3\u30FC\u30C8\u3001\u30D5\u30A3\u30EB\u30BF\u30EA\u30F3\u30B0\u3001PDF\u30EC\u30DD\u30FC\u30C8\u751F\u6210\u6A5F\u80FD\u306E\u30EA\u30A2\u30EB\u30BF\u30A4\u30E0\u30C7\u30FC\u30BF\u53EF\u8996\u5316\u30D7\u30E9\u30C3\u30C8\u30D5\u30A9\u30FC\u30E0\u3002',
+        project4_title: '\u30E2\u30D0\u30A4\u30EB\u30A2\u30D7\u30EA',
+        project4_desc: '\u30AA\u30D5\u30E9\u30A4\u30F3\u30D5\u30A1\u30FC\u30B9\u30C8\u30A2\u30FC\u30AD\u30C6\u30AF\u30C1\u30E3\u3068\u751F\u4F53\u8A8D\u8A3C\u3092\u5099\u3048\u305F\u30AF\u30ED\u30B9\u30D7\u30E9\u30C3\u30C8\u30D5\u30A9\u30FC\u30E0\u30E2\u30D0\u30A4\u30EB\u30A2\u30D7\u30EA\u3002',
+        contact_label: '\u304A\u554F\u3044\u5408\u308F\u305B',
+        contact_heading: '\u4E00\u7DD2\u306B\u50CD\u304D\u307E\u3057\u3087\u3046',
+        contact_sub: '\u30D5\u30EA\u30FC\u30E9\u30F3\u30B9\u30D7\u30ED\u30B8\u30A7\u30AF\u30C8\u5BFE\u5FDC\u53EF\u80FD',
+        contact_email: '\u30E1\u30FC\u30EB',
+        form_name_label: '\u540D\u524D',
+        form_email_label: '\u30E1\u30FC\u30EB',
+        form_message_label: '\u30E1\u30C3\u30BB\u30FC\u30B8',
+        form_submit: '\u9001\u4FE1 >',
+        gallery_link: '\u2190 \u30AE\u30E3\u30E9\u30EA\u30FC'
+      },
+      zh: {
+        name: '\u4F60\u7684\u540D\u5B57',
+        title: '\u521B\u610F\u5F00\u53D1\u8005 & \u8BBE\u8BA1\u5E08',
+        about_label: '\u5173\u4E8E',
+        about_text: '\u5728\u8BBE\u8BA1\u4E0E\u6280\u672F\u7684\u4EA4\u6C47\u5904\u521B\u9020\u6570\u5B57\u4F53\u9A8C\u7684\u521B\u610F\u5F00\u53D1\u8005\u3002\u901A\u8FC7\u7B80\u6D01\u7684\u4EE3\u7801\u548C\u7CBE\u5FC3\u8BBE\u8BA1\u7684\u754C\u9762\uFF0C\u6784\u5EFA\u65E2\u7F8E\u89C2\u53C8\u5B9E\u7528\u7684\u4EA7\u54C1\u3002',
+        about_focus: '\u7F51\u9875 & \u79FB\u52A8\u7AEF',
+        about_stack: 'React / Node.js',
+        about_design: 'Figma / \u7CFB\u7EDF',
+        about_passion: '\u521B\u610F\u7F16\u7801',
+        skills_label: '\u4E13\u4E1A\u9886\u57DF',
+        projects_label: '\u9879\u76EE',
+        project1_title: '\u7535\u5B50\u5546\u52A1\u5E73\u53F0',
+        project1_desc: '\u5177\u5907\u5B9E\u65F6\u5E93\u5B58\u7BA1\u7406\u3001\u652F\u4ED8\u5904\u7406\u548C\u7BA1\u7406\u540E\u53F0\u7684\u5168\u6808\u5E02\u573A\u3002',
+        project2_title: '\u8BBE\u8BA1\u7CFB\u7EDF',
+        project2_desc: '\u5305\u542B\u4EE4\u724C\u3001\u65E0\u969C\u788D\u6307\u5357\u548C\u4EA4\u4E92\u5F0F\u6587\u6863\u7684\u7EFC\u5408\u7EC4\u4EF6\u5E93\u3002',
+        project3_title: '\u5206\u6790\u4EEA\u8868\u677F',
+        project3_desc: '\u5177\u5907\u81EA\u5B9A\u4E49\u56FE\u8868\u3001\u7B5B\u9009\u548CPDF\u62A5\u544A\u751F\u6210\u529F\u80FD\u7684\u5B9E\u65F6\u6570\u636E\u53EF\u89C6\u5316\u5E73\u53F0\u3002',
+        project4_title: '\u79FB\u52A8\u5E94\u7528',
+        project4_desc: '\u5177\u5907\u79BB\u7EBF\u4F18\u5148\u67B6\u6784\u548C\u751F\u7269\u8BC6\u522B\u8BA4\u8BC1\u7684\u8DE8\u5E73\u53F0\u79FB\u52A8\u5E94\u7528\u3002',
+        contact_label: '\u8054\u7CFB\u6211',
+        contact_heading: '\u4E00\u8D77\u5408\u4F5C\u5427',
+        contact_sub: '\u53EF\u63A5\u53D7\u81EA\u7531\u804C\u4E1A\u9879\u76EE',
+        contact_email: '\u90AE\u7BB1',
+        form_name_label: '\u59D3\u540D',
+        form_email_label: '\u90AE\u7BB1',
+        form_message_label: '\u6D88\u606F',
+        form_submit: '\u53D1\u9001 >',
+        gallery_link: '\u2190 \u753B\u5ECA'
+      }
+    };
+
+    /* === LANGUAGE SWITCHER === */
+    function setLanguage(lang) {
+      document.querySelectorAll('[data-i18n]').forEach(function (el) {
+        var key = el.getAttribute('data-i18n');
+        if (TRANSLATIONS[lang] && TRANSLATIONS[lang][key]) {
+          if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+            el.placeholder = TRANSLATIONS[lang][key];
+          } else {
+            el.textContent = TRANSLATIONS[lang][key];
+          }
+        }
+      });
+      document.querySelectorAll('.lang-btn').forEach(function (btn) {
+        btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+      });
+      try { localStorage.setItem('preferred-lang', lang); } catch (e) {}
+      document.documentElement.lang = lang === 'ko' ? 'ko' : lang === 'ja' ? 'ja' : lang === 'zh' ? 'zh' : 'en';
+    }
+
+    /* === INIT LANGUAGE === */
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var lang = params.get('lang') || (function () { try { return localStorage.getItem('preferred-lang'); } catch (e) { return null; } })() || 'en';
+      if (lang !== 'en') {
+        setLanguage(lang);
       } else {
-        el.textContent=TRANSLATIONS[lang][key];
-      }
-    }
-  });
-  document.querySelectorAll('.lang-btn').forEach(function(btn){
-    btn.classList.toggle('active',btn.getAttribute('data-lang')===lang);
-  });
-  try{localStorage.setItem('preferred-lang',lang)}catch(e){}
-  document.documentElement.lang=lang==='ko'?'ko':lang==='ja'?'ja':lang==='zh'?'zh':'en';
-}
-
-/* === INIT LANGUAGE === */
-(function(){
-  var params=new URLSearchParams(window.location.search);
-  var lang=params.get('lang')||(function(){try{return localStorage.getItem('preferred-lang')}catch(e){return null}})() ||'en';
-  if(lang!=='en')setLanguage(lang);
-  else document.querySelectorAll('.lang-btn').forEach(function(btn){btn.classList.toggle('active',btn.getAttribute('data-lang')==='en')});
-})();
-
-/* === REDUCED MOTION CHECK === */
-var prefersReducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-/* === INTERSECTION OBSERVER: Scroll Reveal + Skill Bars + Draw Lines === */
-var sections=document.querySelectorAll('.section');
-var revealObserver=new IntersectionObserver(function(entries){
-  entries.forEach(function(entry){
-    if(entry.isIntersecting){
-      entry.target.classList.add('visible');
-      /* Animate skill bars */
-      var bars=entry.target.querySelectorAll('.skill-bar-fill');
-      var dots=entry.target.querySelectorAll('.skill-bar-dot');
-      bars.forEach(function(bar){
-        setTimeout(function(){bar.style.width=bar.getAttribute('data-width')},300);
-      });
-      dots.forEach(function(dot){
-        setTimeout(function(){dot.style.right=dot.getAttribute('data-right')},300);
-      });
-      /* Animate draw lines */
-      var drawLines=entry.target.querySelectorAll('.draw-line');
-      drawLines.forEach(function(line,i){
-        setTimeout(function(){line.classList.add('drawn')},150*i);
-      });
-      /* Trigger scan line */
-      if(!prefersReducedMotion){
-        triggerScanLine(entry.target);
-      }
-      revealObserver.unobserve(entry.target);
-    }
-  });
-},{threshold:0.12});
-sections.forEach(function(s){revealObserver.observe(s)});
-
-/* === HERO DRAW LINES === */
-(function(){
-  var heroLines=document.querySelectorAll('.hero-svg .draw-line');
-  setTimeout(function(){
-    heroLines.forEach(function(line,i){
-      setTimeout(function(){line.classList.add('drawn')},200*i);
-    });
-  },500);
-})();
-
-/* === SCANNING LINE === */
-var scanLine=document.getElementById('scanLine');
-function triggerScanLine(target){
-  if(prefersReducedMotion)return;
-  var rect=target.getBoundingClientRect();
-  var startY=rect.top;
-  scanLine.style.top=startY+'px';
-  scanLine.classList.add('active');
-  var currentY=startY;
-  var endY=startY+rect.height;
-  var speed=3;
-  function animateScan(){
-    currentY+=speed;
-    if(currentY>=endY){
-      scanLine.classList.remove('active');
-      return;
-    }
-    scanLine.style.top=currentY+'px';
-    requestAnimationFrame(animateScan);
-  }
-  requestAnimationFrame(animateScan);
-}
-
-/* === COORDINATE DISPLAY === */
-var coordX=document.getElementById('coordX');
-var coordY=document.getElementById('coordY');
-var coordSec=document.getElementById('coordSec');
-var coordSections=document.querySelectorAll('[data-coord-label]');
-
-function updateCoords(){
-  var scrollY=window.scrollY||window.pageYOffset;
-  var viewH=window.innerHeight;
-  var centerY=scrollY+viewH/2;
-  coordY.textContent=Math.round(scrollY);
-  coordX.textContent=Math.round(window.innerWidth/2);
-  var currentLabel='HERO';
-  coordSections.forEach(function(sec){
-    var rect=sec.getBoundingClientRect();
-    var secTop=rect.top+scrollY;
-    if(centerY>=secTop){
-      currentLabel=sec.getAttribute('data-coord-label');
-    }
-  });
-  coordSec.textContent=currentLabel;
-}
-var coordTicking=false;
-window.addEventListener('scroll',function(){
-  if(!coordTicking){
-    requestAnimationFrame(function(){
-      updateCoords();
-      coordTicking=false;
-    });
-    coordTicking=true;
-  }
-},{passive:true});
-updateCoords();
-
-/* === CIRCUIT TRACES === */
-(function(){
-  function updateTraces(){
-    var content=document.querySelector('.content');
-    if(!content)return;
-    var cRect=content.getBoundingClientRect();
-    var cW=cRect.width;
-    var aboutSec=document.getElementById('about');
-    var skillsSec=document.getElementById('skills');
-    var projectsSec=document.getElementById('projects');
-    var contactSec=document.getElementById('contact');
-    if(!aboutSec||!skillsSec||!projectsSec||!contactSec)return;
-    function getRelTop(el){
-      return el.offsetTop;
-    }
-    var aY=getRelTop(aboutSec);
-    var sY=getRelTop(skillsSec);
-    var pY=getRelTop(projectsSec);
-    var cY=getRelTop(contactSec);
-    /* Trace 1: left side connecting about to skills */
-    var t1='M -10 '+aY+' L -30 '+aY+' L -30 '+sY+' L -10 '+sY;
-    document.getElementById('trace1').setAttribute('d',t1);
-    /* Trace 2: right side connecting skills to projects */
-    var t2='M '+(cW+10)+' '+sY+' L '+(cW+30)+' '+sY+' L '+(cW+30)+' '+pY+' L '+(cW+10)+' '+pY;
-    document.getElementById('trace2').setAttribute('d',t2);
-    /* Trace 3: left side connecting projects to contact */
-    var t3='M -10 '+pY+' L -25 '+pY+' L -25 '+cY+' L -10 '+cY;
-    document.getElementById('trace3').setAttribute('d',t3);
-  }
-  setTimeout(updateTraces,100);
-  window.addEventListener('resize',updateTraces);
-  /* Draw traces on scroll */
-  var tracesDrawn=false;
-  var traceObserver=new IntersectionObserver(function(entries){
-    entries.forEach(function(entry){
-      if(entry.isIntersecting&&!tracesDrawn){
-        tracesDrawn=true;
-        document.querySelectorAll('.circuit-traces .draw-line').forEach(function(line,i){
-          setTimeout(function(){line.classList.add('drawn')},400*i);
+        document.querySelectorAll('.lang-btn').forEach(function (btn) {
+          btn.classList.toggle('active', btn.getAttribute('data-lang') === 'en');
         });
       }
-    });
-  },{threshold:0.05});
-  var aboutEl=document.getElementById('about');
-  if(aboutEl)traceObserver.observe(aboutEl);
-})();
+    })();
 
-/* === NAV SCROLL EFFECT === */
-(function(){
-  var nav=document.querySelector('.nav');
-  var lastScroll=0;
-  window.addEventListener('scroll',function(){
-    var scrollY=window.scrollY||window.pageYOffset;
-    if(scrollY>100){
-      nav.style.borderBottomColor='rgba(124,185,232,0.3)';
-    } else {
-      nav.style.borderBottomColor='';
+    /* === REDUCED MOTION CHECK === */
+    var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* === INTERSECTION OBSERVER: Scroll Reveal + Skill Bars + Draw Lines === */
+    var sections = document.querySelectorAll('.section');
+    var revealObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          /* Animate skill bars */
+          var bars = entry.target.querySelectorAll('.skill-bar-fill');
+          var dots = entry.target.querySelectorAll('.skill-bar-dot');
+          bars.forEach(function (bar) {
+            setTimeout(function () { bar.style.width = bar.getAttribute('data-width'); }, 300);
+          });
+          dots.forEach(function (dot) {
+            setTimeout(function () { dot.style.right = dot.getAttribute('data-right'); }, 300);
+          });
+          /* Animate draw lines */
+          var drawLines = entry.target.querySelectorAll('.draw-line');
+          drawLines.forEach(function (line, i) {
+            setTimeout(function () { line.classList.add('drawn'); }, 150 * i);
+          });
+          /* Trigger scan line */
+          if (!prefersReducedMotion) {
+            triggerScanLine(entry.target);
+          }
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    sections.forEach(function (s) { revealObserver.observe(s); });
+
+    /* === HERO DRAW LINES === */
+    (function () {
+      var heroLines = document.querySelectorAll('.hero-svg .draw-line');
+      setTimeout(function () {
+        heroLines.forEach(function (line, i) {
+          setTimeout(function () { line.classList.add('drawn'); }, 200 * i);
+        });
+      }, 500);
+    })();
+
+    /* === SCANNING LINE === */
+    var scanLine = document.getElementById('scanLine');
+    function triggerScanLine(target) {
+      if (prefersReducedMotion) return;
+      var rect = target.getBoundingClientRect();
+      var startY = rect.top;
+      scanLine.style.top = startY + 'px';
+      scanLine.classList.add('active');
+      var currentY = startY;
+      var endY = startY + rect.height;
+      var speed = 3;
+      function animateScan() {
+        currentY += speed;
+        if (currentY >= endY) {
+          scanLine.classList.remove('active');
+          return;
+        }
+        scanLine.style.top = currentY + 'px';
+        requestAnimationFrame(animateScan);
+      }
+      requestAnimationFrame(animateScan);
     }
-    lastScroll=scrollY;
-  },{passive:true});
-})();
-</script>
+
+    /* === COORDINATE DISPLAY === */
+    var coordX = document.getElementById('coordX');
+    var coordY = document.getElementById('coordY');
+    var coordSec = document.getElementById('coordSec');
+    var coordSections = document.querySelectorAll('[data-coord-label]');
+
+    function updateCoords() {
+      var scrollY = window.scrollY || window.pageYOffset;
+      var viewH = window.innerHeight;
+      var centerY = scrollY + viewH / 2;
+      coordY.textContent = Math.round(scrollY);
+      coordX.textContent = Math.round(window.innerWidth / 2);
+      var currentLabel = 'HERO';
+      coordSections.forEach(function (sec) {
+        var rect = sec.getBoundingClientRect();
+        var secTop = rect.top + scrollY;
+        if (centerY >= secTop) {
+          currentLabel = sec.getAttribute('data-coord-label');
+        }
+      });
+      coordSec.textContent = currentLabel;
+    }
+
+    var coordTicking = false;
+    window.addEventListener('scroll', function () {
+      if (!coordTicking) {
+        requestAnimationFrame(function () {
+          updateCoords();
+          coordTicking = false;
+        });
+        coordTicking = true;
+      }
+    }, { passive: true });
+    updateCoords();
+
+    /* === CIRCUIT TRACES === */
+    (function () {
+      function updateTraces() {
+        var content = document.querySelector('.content');
+        if (!content) return;
+        var cRect = content.getBoundingClientRect();
+        var cW = cRect.width;
+        var aboutSec = document.getElementById('about');
+        var skillsSec = document.getElementById('skills');
+        var projectsSec = document.getElementById('projects');
+        var contactSec = document.getElementById('contact');
+        if (!aboutSec || !skillsSec || !projectsSec || !contactSec) return;
+        function getRelTop(el) {
+          return el.offsetTop;
+        }
+        var aY = getRelTop(aboutSec);
+        var sY = getRelTop(skillsSec);
+        var pY = getRelTop(projectsSec);
+        var cY = getRelTop(contactSec);
+        /* Trace 1: left side connecting about to skills */
+        var t1 = 'M -10 ' + aY + ' L -30 ' + aY + ' L -30 ' + sY + ' L -10 ' + sY;
+        document.getElementById('trace1').setAttribute('d', t1);
+        /* Trace 2: right side connecting skills to projects */
+        var t2 = 'M ' + (cW + 10) + ' ' + sY + ' L ' + (cW + 30) + ' ' + sY + ' L ' + (cW + 30) + ' ' + pY + ' L ' + (cW + 10) + ' ' + pY;
+        document.getElementById('trace2').setAttribute('d', t2);
+        /* Trace 3: left side connecting projects to contact */
+        var t3 = 'M -10 ' + pY + ' L -25 ' + pY + ' L -25 ' + cY + ' L -10 ' + cY;
+        document.getElementById('trace3').setAttribute('d', t3);
+      }
+      setTimeout(updateTraces, 100);
+      window.addEventListener('resize', updateTraces);
+      /* Draw traces on scroll */
+      var tracesDrawn = false;
+      var traceObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting && !tracesDrawn) {
+            tracesDrawn = true;
+            document.querySelectorAll('.circuit-traces .draw-line').forEach(function (line, i) {
+              setTimeout(function () { line.classList.add('drawn'); }, 400 * i);
+            });
+          }
+        });
+      }, { threshold: 0.05 });
+      var aboutEl = document.getElementById('about');
+      if (aboutEl) traceObserver.observe(aboutEl);
+    })();
+
+    /* === NAV SCROLL EFFECT === */
+    (function () {
+      var nav = document.querySelector('.nav');
+      var lastScroll = 0;
+      window.addEventListener('scroll', function () {
+        var scrollY = window.scrollY || window.pageYOffset;
+        if (scrollY > 100) {
+          nav.style.borderBottomColor = 'rgba(124, 185, 232, 0.3)';
+        } else {
+          nav.style.borderBottomColor = '';
+        }
+        lastScroll = scrollY;
+      }, { passive: true });
+    })();
+  </script>
 </body>
 </html>
