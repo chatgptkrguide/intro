@@ -446,11 +446,20 @@ body.amber .glow {
     font-size: 0.45rem;
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
 </style>
 </head>
 <body>
 
-<a href="../index.html" class="back-link" aria-label="Back to gallery">$ cd ../gallery</a>
+<a href="../index.html" class="back-link" aria-label="Back to gallery" data-i18n="gallery_link">$ cd ../gallery</a>
 
 <div class="lang-switcher" aria-label="Language selector">
   <button class="lang-btn" data-lang="en">EN</button>
@@ -1092,7 +1101,8 @@ var TERM_TRANSLATIONS = {
     ],
     welcome: '  Welcome to PortfolioOS v2.0',
     helpHint: '  Type "help" for available commands.',
-    helpCmdHint: '  Type "help" to see all available commands.'
+    helpCmdHint: '  Type "help" to see all available commands.',
+    gallery_link: '$ cd ../gallery'
   },
   ko: {
     name: '\ud64d\uae38\ub3d9', title: '\ud06c\ub9ac\uc5d0\uc774\ud2f0\ube0c \uac1c\ubc1c\uc790 & \ub514\uc790\uc774\ub108', location: '\ub300\ud55c\ubbfc\uad6d \uc11c\uc6b8', status: '\ucc44\uc6a9 \uac00\ub2a5',
@@ -1107,7 +1117,8 @@ var TERM_TRANSLATIONS = {
     ],
     welcome: '  PortfolioOS v2.0\uc5d0 \uc624\uc2e0 \uac83\uc744 \ud658\uc601\ud569\ub2c8\ub2e4',
     helpHint: '  \uc0ac\uc6a9 \uac00\ub2a5\ud55c \uba85\ub839\uc5b4\ub294 "help"\uc744 \uc785\ub825\ud558\uc138\uc694.',
-    helpCmdHint: '  \uc0ac\uc6a9 \uac00\ub2a5\ud55c \ubaa8\ub4e0 \uba85\ub839\uc5b4\ub294 "help"\uc744 \uc785\ub825\ud558\uc138\uc694.'
+    helpCmdHint: '  \uc0ac\uc6a9 \uac00\ub2a5\ud55c \ubaa8\ub4e0 \uba85\ub839\uc5b4\ub294 "help"\uc744 \uc785\ub825\ud558\uc138\uc694.',
+    gallery_link: '$ cd ../\uac24\ub7ec\ub9ac'
   },
   ja: {
     name: '\u304a\u540d\u524d', title: '\u30af\u30ea\u30a8\u30a4\u30c6\u30a3\u30d6\u30c7\u30d9\u30ed\u30c3\u30d1\u30fc & \u30c7\u30b6\u30a4\u30ca\u30fc', location: '\u97d3\u56fd \u30bd\u30a6\u30eb', status: '\u63a1\u7528\u53ef\u80fd',
@@ -1122,7 +1133,8 @@ var TERM_TRANSLATIONS = {
     ],
     welcome: '  PortfolioOS v2.0\u3078\u3088\u3046\u3053\u305d',
     helpHint: '  \u4f7f\u7528\u53ef\u80fd\u306a\u30b3\u30de\u30f3\u30c9\u306f"help"\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044\u3002',
-    helpCmdHint: '  \u5229\u7528\u53ef\u80fd\u306a\u5168\u30b3\u30de\u30f3\u30c9\u306f"help"\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044\u3002'
+    helpCmdHint: '  \u5229\u7528\u53ef\u80fd\u306a\u5168\u30b3\u30de\u30f3\u30c9\u306f"help"\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044\u3002',
+    gallery_link: '$ cd ../\u30ae\u30e3\u30e9\u30ea\u30fc'
   },
   zh: {
     name: '\u4f60\u7684\u540d\u5b57', title: '\u521b\u610f\u5f00\u53d1\u8005 & \u8bbe\u8ba1\u5e08', location: '\u97e9\u56fd \u9996\u5c14', status: '\u53ef\u63a5\u53d7\u5de5\u4f5c',
@@ -1137,7 +1149,8 @@ var TERM_TRANSLATIONS = {
     ],
     welcome: '  \u6b22\u8fce\u6765\u5230 PortfolioOS v2.0',
     helpHint: '  \u8f93\u5165"help"\u67e5\u770b\u53ef\u7528\u547d\u4ee4\u3002',
-    helpCmdHint: '  \u8f93\u5165"help"\u67e5\u770b\u6240\u6709\u53ef\u7528\u547d\u4ee4\u3002'
+    helpCmdHint: '  \u8f93\u5165"help"\u67e5\u770b\u6240\u6709\u53ef\u7528\u547d\u4ee4\u3002',
+    gallery_link: '$ cd ../\u753b\u5eca'
   }
 };
 

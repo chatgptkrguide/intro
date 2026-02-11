@@ -521,6 +521,15 @@
     .timeline-item::before{left:-28px}
     .back-btn{left:12px;padding:6px 12px;font-size:0.75rem}
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 </style>
 </head>
 <body>
